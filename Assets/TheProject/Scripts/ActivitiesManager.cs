@@ -36,13 +36,20 @@ namespace MainSpace
                 tileMapManager.ShowCorrelationGrid();
                 currentSelectionUnit = _unit;
 
-                sceneWindowsCanvas.SetData(currentSelectionUnit);
+                if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
+                {
+                    sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as CommanderUnit);
+                }
+                else
+                {
+                    sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as SoliderUnit);
+                }
             }
             else if (_unit == currentSelectionUnit)
             {
                 // 点击了原点这个情况
                 var temp = currentSelectionUnit.currentPos;
-                temp.z = 0;
+                temp.z = -1;
 
                 //OnFinishedUnitMove(currentSelectionUnit);
                 ClickTilePos(temp);
@@ -58,10 +65,11 @@ namespace MainSpace
         {
             if (currentSelectionUnit != null)
             {
-                if (tileMapManager.MoveToUnit(_cellPos))
+                if (tileMapManager.GetMoveToUnitAllow(_cellPos))
                 {
                     if (!currentSelectionUnit.isActionOver)
                     {
+                        _cellPos.z = -1;
                         currentSelectionUnit.MoveTo(_cellPos);
                     }
                     else
@@ -114,6 +122,34 @@ namespace MainSpace
             return UnitList.Where(x => _centerPos.Vector3IntRangeValue(x.currentPos) <= _range).ToArray();
         }
 
+        /// <summary>
+        /// 添加可行动单位
+        /// </summary>
+        /// <param name="_unit"></param>
+        public void AddActivitiesUnit(ActivitiesUnit _unit)
+        {
+            if (!UnitList.Contains(_unit))
+            {
+                Debug.Log(_unit.currentPos);
+                UnitList.Add(_unit);
+                _unit.transform.SetParent(transform);
+            }
+            else
+            {
+                UnitList[UnitList.IndexOf(_unit)] = _unit;
+            }
+        }
+
+
+        /// <summary>
+        /// 输入位置，返回该位置是否有士兵.
+        /// </summary>
+        /// <param name="_pos"></param>
+        /// <returns></returns>
+        public bool GetUnitPosContains(Vector3Int _pos)
+        {
+            return UnitList.Any(x => x.currentPos.Vector3IntRangeValue(_pos) == 0);
+        }
     }
 
     public static class Vector3IntExtends

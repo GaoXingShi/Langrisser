@@ -1,36 +1,57 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 namespace MainSpace.Activities
 {
-    public enum BehaviorPatternType
+    public enum SoliderType
     {
-        SwordMan,                           // 步兵
-        SpearMan,                           // 枪兵
-        CavalryMan,                         // 骑兵
-        Archers,                            // 弓箭兵
-        Other
+        步兵,重装步兵,
+        骑兵,重装骑兵,
+        枪兵,重装枪兵,
+    }
+
+    public enum RoleType
+    {
+        战士,兵长,领主,步兵统帅,将军,
+            骑士,骑士长,骑士统帅,封号骑士,
+        法师,
+        牧师
     }
 
     public class ActivitiesUnit : MonoBehaviour
     {
         public Vector3Int currentPos;
-        public int grossHp, grossMp, grossMv;
-        public bool isActionOver = false;
+        public int[] healthValue, magicValue, moveValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
+        public Sprite unitRenderSprite, affiliationSprite;
+        public string affiliationName;
+
+        public bool isActionOver = false;                       // 是否结束行动
         public ActivitiesManager manager;
-        private int currentHp, currentMp, currentMv;
+
+        public SpriteRenderer mRendererComponent;
+        public Text hpImage;
+        public Image professionImage;
         private Material mMaterial;
 
         public void Start()
         {
             mMaterial = GetComponentInChildren<SpriteRenderer>().material;
+        }
 
-            if (manager == null)
-            {
-                manager = LoadInfo.Instance.activitiesManager;
-            }
+        public virtual void InitData()
+        {
+            healthValue = magicValue = moveValue = attackValue =
+                defenseValue = new int[2];
+        }
+
+        public void SetIntArrayData(ref int[] _array, int _value)
+        {
+            _array = new int[2];
+            _array[0] = _value;
+            _array[1] = _value;
         }
 
         public void MoveTo(Vector3Int[] _posArray)
