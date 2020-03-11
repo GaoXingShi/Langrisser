@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using MainSpace.Activities;
+using MainSpace.Grid;
 using UnityEngine;
 
 namespace MainSpace
@@ -30,10 +31,10 @@ namespace MainSpace
 
             if (currentSelectionUnit == null || _unit != currentSelectionUnit)
             {
-                tileMapManager.HideAllGrid();
+                tileMapManager.HideCanMoveCorrelationGrid();
 
                 tileMapManager.CalculateMovingRange(_unit);
-                tileMapManager.ShowCorrelationGrid();
+                tileMapManager.ShowCanMoveCorrelationGrid();
                 currentSelectionUnit = _unit;
 
                 if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
@@ -85,7 +86,7 @@ namespace MainSpace
                 }
 
                 currentSelectionUnit = null;
-                tileMapManager.HideAllGrid();
+                tileMapManager.HideCanMoveCorrelationGrid();
             }
         }
 
@@ -100,7 +101,7 @@ namespace MainSpace
             if (currentSelectionUnit)
             {
                 currentSelectionUnit = null;
-                tileMapManager.HideAllGrid();
+                tileMapManager.HideCanMoveCorrelationGrid();
             }
 
         }

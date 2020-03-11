@@ -14,7 +14,7 @@ namespace MainSpace
     public class GameCursor : MonoBehaviour
     {
         public CinemachineVirtualCamera cinemachine;
-        public Grid grid;
+        public UnityEngine.Grid grid;
         public Tilemap map1, map2;
 
         private CinemachineFramingTransposer cine;

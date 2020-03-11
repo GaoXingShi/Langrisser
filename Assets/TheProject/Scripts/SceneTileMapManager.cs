@@ -5,21 +5,20 @@ using MainSpace.Activities;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-namespace MainSpace
+namespace MainSpace.Grid
 {
     [System.Serializable]
     public struct TileSaveData
     {
         public TileBase tile;                           // 瓦片信息
         public Vector3Int widthHeighValue;              // 瓦片坐标
-        public SpriteRenderer activitiesAllowUnit;      // 坐标位置的可移动方块
+        public AllowUnitInfo activitiesAllowUnit;      // 坐标位置的可移动方块
 
-        public void InfoEntry(TileBase _tile, Vector3Int _widthHeigh, SpriteRenderer _activitiesAllowUnit)
+        public void InfoEntry(TileBase _tile, Vector3Int _widthHeigh, AllowUnitInfo _activitiesAllowUnit)
         {
             tile = _tile;
             widthHeighValue = _widthHeigh;
             activitiesAllowUnit = _activitiesAllowUnit;
-            _activitiesAllowUnit.enabled = false;
         }
     }
 
@@ -58,7 +57,7 @@ namespace MainSpace
             // 目前不计算障碍。
             // ActivitiesManager.GetActivitiesUnit 需要计算
             cacheSaveData = tileList
-                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] && !activitiesManager.GetUnitPosContains(x.widthHeighValue))
+                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] /*&& !activitiesManager.GetUnitPosContains(x.widthHeighValue)*/)
                 .ToArray();
 
             
@@ -92,45 +91,6 @@ namespace MainSpace
             }
         }
 
-        private Vector3Int? GetUnitRangeSpacePos(Vector3Int _pos, int _range)
-        {
-            var array = tileList
-                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_pos) == _range).ToArray();
-
-
-            // 优先左 右 上 下 右上 左下
-            if (_range == 2)
-            {
-                Vector3Int temp = _pos;
-                TileSaveData? a = GetTileSaveData(temp + Vector3Int.up + Vector3Int.right);
-                TileSaveData? b = GetTileSaveData(temp + Vector3Int.down + Vector3Int.left);
-                if (a != null && !activitiesManager.GetUnitPosContains(a.Value.widthHeighValue))
-                {
-                    return a?.widthHeighValue;
-                }
-                else if (b != null && !activitiesManager.GetUnitPosContains(b.Value.widthHeighValue))
-                {
-                    return b?.widthHeighValue;
-                }
-            }
-
-            foreach (var v in array)
-            {
-                if (!activitiesManager.GetUnitPosContains(v.widthHeighValue))
-                {
-                    return v.widthHeighValue;
-                }
-            }
-
-            return null;
-        }
-
-
-        private TileSaveData? GetTileSaveData(Vector3Int _pos)
-        {
-            return tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_pos) == 0);
-        }
-
         public bool GetMoveToUnitAllow(Vector3Int _pos)
         {
             if (cacheSaveData == null || cacheSaveData.Length == 0) return false;
@@ -146,26 +106,39 @@ namespace MainSpace
             return false;
         }
 
-        public void ShowCorrelationGrid()
+        public void ShowCanMoveCorrelationGrid()
         {
+            foreach (var v in tileList)
+            {
+                v.activitiesAllowUnit.ShowMoveGrid();
+            }
+
             foreach (var v in cacheSaveData)
             {
-                v.activitiesAllowUnit.enabled = true;
-                v.activitiesAllowUnit.color = new Color(0, 118, 255, 160);
+                v.activitiesAllowUnit.HideMoveGrid();
             }
         }
 
-        public void HideAllGrid()
+        public void HideCanMoveCorrelationGrid()
         {
             if (cacheSaveData == null) return;
 
-            foreach (var v in cacheSaveData)
+            foreach (var v in tileList)
             {
-                v.activitiesAllowUnit.enabled = false;
-                v.activitiesAllowUnit.color = new Color(255, 255, 255, 255);
+                v.activitiesAllowUnit.HideMoveGrid();
             }
 
             cacheSaveData = null;
+        }
+
+        public void ShowCommanderCircleGrid(CommanderUnit _unit)
+        {
+            TileSaveData[] array = tileList.Where(x =>
+                x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.commandRangeValue[0]).ToArray();
+            foreach (var v in array)
+            {
+                v.activitiesAllowUnit.ShowCommanderCircleGrid();
+            }
         }
 
         private void InitCalculateValue()
@@ -201,7 +174,7 @@ namespace MainSpace
                 for (int j = 0; j < width; j++)
                 {
                     _vector3.x = j;
-                    tileArray[i, j].InfoEntry(this.GetTile(_vector3), _vector3, Instantiate(moveSprite, _vector3, Quaternion.identity, activitiesAllowUnitRoot).GetComponent<SpriteRenderer>());
+                    tileArray[i, j].InfoEntry(this.GetTile(_vector3), _vector3, Instantiate(moveSprite, _vector3, Quaternion.identity, activitiesAllowUnitRoot).GetComponent<AllowUnitInfo>());
                     tileList.Add(tileArray[i, j]);
 
                     if (tileArray[i, j].tile == null)
@@ -214,7 +187,42 @@ namespace MainSpace
             Debug.Log(tileArray[height - 1, width - 1].tile);
         }
 
+        private Vector3Int? GetUnitRangeSpacePos(Vector3Int _pos, int _range)
+        {
+            var array = tileList
+                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_pos) == _range).ToArray();
 
+            // 优先左 右 上 下 右上 左下
+            if (_range == 2)
+            {
+                Vector3Int temp = _pos;
+                TileSaveData? a = GetTileSaveData(temp + Vector3Int.up + Vector3Int.right);
+                TileSaveData? b = GetTileSaveData(temp + Vector3Int.down + Vector3Int.left);
+                if (a != null && !activitiesManager.GetUnitPosContains(a.Value.widthHeighValue))
+                {
+                    return a?.widthHeighValue;
+                }
+                else if (b != null && !activitiesManager.GetUnitPosContains(b.Value.widthHeighValue))
+                {
+                    return b?.widthHeighValue;
+                }
+            }
+
+            foreach (var v in array)
+            {
+                if (!activitiesManager.GetUnitPosContains(v.widthHeighValue))
+                {
+                    return v.widthHeighValue;
+                }
+            }
+
+            return null;
+        }
+
+        private TileSaveData? GetTileSaveData(Vector3Int _pos)
+        {
+            return tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_pos) == 0);
+        }
         private TileBase GetTile(Vector3Int _pos)
         {
             return supplement.GetTile(_pos) == null ? ground.GetTile(_pos) : supplement.GetTile(_pos);
