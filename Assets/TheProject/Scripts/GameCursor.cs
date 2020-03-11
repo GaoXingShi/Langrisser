@@ -34,13 +34,36 @@ namespace MainSpace
             // 非UI层。
             if (!EventSystem.current.IsPointerOverGameObject())
             {
-                // 按下了鼠标左键
-                if (Input.GetMouseButtonDown(0))
-                {
-                    var hit2D = Physics2D.Raycast(worldPointV3, Vector2.zero, 10);
-                    if (hit2D.transform != null)
-                    {
+                //// 按下了鼠标左键
+                //if (Input.GetMouseButtonDown(0))
+                //{
+                //    var hit2D = Physics2D.Raycast(worldPointV3, Vector2.zero, 10);
+                //    if (hit2D.transform != null)
+                //    {
 
+                //        if (hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer"))
+                //        {
+                //            // 告诉士兵管理系统
+                //            activitiesManager.SelectionUnit(hit2D.transform
+                //                .GetComponent<ActivitiesUnit>());
+                //        }
+                //        else
+                //        {
+                //            // todo 如果通知的脚本过多不如弄成事件。
+                //            activitiesManager.ClickTilePos(cellPos);
+                //        }
+                //    }
+                //}
+                //else if(Input.GetMouseButtonDown(1))
+                //{
+                //    activitiesManager.CancelTileSelection();
+                //}
+
+                var hit2D = Physics2D.Raycast(worldPointV3, Vector2.zero, 10);
+                if (hit2D.transform != null)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
                         if (hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer"))
                         {
                             // 告诉士兵管理系统
@@ -53,11 +76,13 @@ namespace MainSpace
                             activitiesManager.ClickTilePos(cellPos);
                         }
                     }
+                    else if (Input.GetMouseButtonDown(1))
+                    {
+                        activitiesManager.CancelTileSelection();
+                    }
+
                 }
-                else if(Input.GetMouseButtonDown(1))
-                {
-                    activitiesManager.CancelTileSelection();
-                }
+
             }
 
 
