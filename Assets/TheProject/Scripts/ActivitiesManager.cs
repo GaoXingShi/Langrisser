@@ -58,6 +58,16 @@ namespace MainSpace
             }
         }
 
+        public void EnterCommanderOrSoliderUnit(CommanderUnit _unit)
+        {
+            tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0]);
+        }
+
+        public void ExitCommanderOrSoliderUnit()
+        {
+            tileMapManager.HideCommanderCircleGrid();
+        }
+
         /// <summary>
         /// 点击了该瓦片.
         /// </summary>

@@ -12,20 +12,15 @@ namespace MainSpace.Grid
 
         }
 
-        public void HideMoveGrid()
+        public void SetMoveGrid(bool _enabled)
         {
-            moveSpriteRenderer.enabled = false;
+            moveSpriteRenderer.enabled = _enabled;
         }
 
-        public void ShowMoveGrid()
-        {
-            moveSpriteRenderer.enabled = true;
-        }
-
-        public void ShowCommanderCircleGrid()
+        public void SetCommanderCircleGrid(bool _enabled)
         {
             // 需要有动画
-            commandSpriteRenderer.enabled = true;
+            commandSpriteRenderer.enabled = _enabled;
         }
     }
 }

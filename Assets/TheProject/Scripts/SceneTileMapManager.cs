@@ -110,12 +110,12 @@ namespace MainSpace.Grid
         {
             foreach (var v in tileList)
             {
-                v.activitiesAllowUnit.ShowMoveGrid();
+                v.activitiesAllowUnit.SetMoveGrid(true);
             }
 
             foreach (var v in cacheSaveData)
             {
-                v.activitiesAllowUnit.HideMoveGrid();
+                v.activitiesAllowUnit.SetMoveGrid(false);
             }
         }
 
@@ -125,19 +125,27 @@ namespace MainSpace.Grid
 
             foreach (var v in tileList)
             {
-                v.activitiesAllowUnit.HideMoveGrid();
+                v.activitiesAllowUnit.SetMoveGrid(false);
             }
 
             cacheSaveData = null;
         }
 
-        public void ShowCommanderCircleGrid(CommanderUnit _unit)
+        public void ShowCommanderCircleGrid(Vector3Int _pos,int _range)
         {
             TileSaveData[] array = tileList.Where(x =>
-                x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.commandRangeValue[0]).ToArray();
+                x.widthHeighValue.Vector3IntRangeValue(_pos) <= _range).ToArray();
             foreach (var v in array)
             {
-                v.activitiesAllowUnit.ShowCommanderCircleGrid();
+                v.activitiesAllowUnit.SetCommanderCircleGrid(true);
+            }
+        }
+
+        public void HideCommanderCircleGrid()
+        {
+            foreach (var v in tileList.Where(x=>x.activitiesAllowUnit.commandSpriteRenderer.enabled))
+            {
+                v.activitiesAllowUnit.SetCommanderCircleGrid(false);
             }
         }
 

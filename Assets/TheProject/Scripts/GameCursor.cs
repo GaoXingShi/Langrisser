@@ -62,31 +62,51 @@ namespace MainSpace
                 var hit2D = Physics2D.Raycast(worldPointV3, Vector2.zero, 10);
                 if (hit2D.transform != null)
                 {
-                    if (Input.GetMouseButtonDown(0))
+                    bool gridPlayerLayer = hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer");
+                    ActivitiesUnit unit = hit2D.transform.GetComponent<ActivitiesUnit>();
+                    if (gridPlayerLayer)
                     {
-                        if (hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer"))
+                        if (Input.GetMouseButtonDown(0))
                         {
                             // 告诉士兵管理系统
-                            activitiesManager.SelectionUnit(hit2D.transform
-                                .GetComponent<ActivitiesUnit>());
+                            activitiesManager.SelectionUnit(unit);
                         }
                         else
+                        {
+                            CommanderRangeUnit(unit);
+                        }
+                    }
+                    else
+                    {
+                        if (Input.GetMouseButtonDown(0))
                         {
                             // todo 如果通知的脚本过多不如弄成事件。
                             activitiesManager.ClickTilePos(cellPos);
                         }
+                        else
+                        {
+                            activitiesManager.ExitCommanderOrSoliderUnit();
+                        }
                     }
-                    else if (Input.GetMouseButtonDown(1))
-                    {
-                        activitiesManager.CancelTileSelection();
-                    }
-
                 }
 
+                if (Input.GetMouseButtonDown(1))
+                {
+                    activitiesManager.CancelTileSelection();
+                }
             }
+        }
 
-
-
+        private void CommanderRangeUnit(ActivitiesUnit _unit)
+        {
+            if (_unit.GetType() == typeof(CommanderUnit))
+            {
+                activitiesManager.EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
+            }
+            else if (_unit.GetType() == typeof(SoliderUnit))
+            {
+                activitiesManager.EnterCommanderOrSoliderUnit((_unit as SoliderUnit)?.mineCommanderUnit);
+            }
         }
 
         private bool isMouseBtn;
