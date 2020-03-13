@@ -32,8 +32,8 @@ namespace MainSpace.Activities
         public ActivitiesManager manager;
 
         public SpriteRenderer mRendererComponent;
-        public Text hpImage;
-        public Image professionImage;
+        public TextMesh hpText;
+        public SpriteRenderer professionSprite;
         private Material mMaterial;
 
         public void Start()

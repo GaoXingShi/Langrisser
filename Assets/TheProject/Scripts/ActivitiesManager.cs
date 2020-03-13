@@ -60,7 +60,9 @@ namespace MainSpace
 
         public void EnterCommanderOrSoliderUnit(CommanderUnit _unit)
         {
-            if (_unit != cacheRangeUnit)
+            tileMapManager.ColorValueChange(true);
+
+            if (_unit != cacheRangeUnit || cacheRangeUnit == null)
             {
                 tileMapManager.HideCommanderCircleGrid();
             }
@@ -83,6 +85,10 @@ namespace MainSpace
                 {
                     EnterCommanderOrSoliderUnit((currentSelectionUnit as SoliderUnit)?.mineCommanderUnit);
                 }
+            }
+            else
+            {
+                tileMapManager.ColorValueChange(false);
             }
         }
 
@@ -114,7 +120,6 @@ namespace MainSpace
                 }
 
                 currentSelectionUnit = null;
-                tileMapManager.HideCanMoveCorrelationGrid();
             }
         }
 
@@ -136,8 +141,12 @@ namespace MainSpace
 
         public void OnFinishedUnitMove(ActivitiesUnit _unit)
         {
+            // ui 变化
             if (currentSelectionUnit == null || currentSelectionUnit == _unit)
                 sceneWindowsCanvas.ClearUnitData();
+
+            tileMapManager.HideCanMoveCorrelationGrid();
+            tileMapManager.HideCommanderCircleGrid();
         }
 
         /// <summary>

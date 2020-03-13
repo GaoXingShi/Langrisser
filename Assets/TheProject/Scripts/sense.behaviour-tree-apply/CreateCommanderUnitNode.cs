@@ -57,8 +57,8 @@ namespace Sense.BehaviourTree.Apply
 
             // component
             temp.mRendererComponent.sprite = unitRenderSprite;
-            temp.hpImage.text = healthValue.ToString();
-            temp.professionImage.sprite = affiliationSprite;
+            temp.hpText.text = healthValue.ToString();
+            temp.professionSprite.sprite = affiliationSprite;
 
             // enum
             temp.roleTpe = roleType;

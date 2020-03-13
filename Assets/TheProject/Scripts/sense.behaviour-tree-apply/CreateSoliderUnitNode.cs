@@ -44,8 +44,8 @@ namespace Sense.BehaviourTree.Apply
 
             // component
             temp.mRendererComponent.sprite = data.mRenderSprite;
-            temp.hpImage.text = data.healthValue.ToString();
-            temp.professionImage.sprite = followCommander.affiliationSprite;
+            temp.hpText.text = data.healthValue.ToString();
+            temp.professionSprite.sprite = followCommander.affiliationSprite;
 
             // enum
             temp.soliderType = soliderType;

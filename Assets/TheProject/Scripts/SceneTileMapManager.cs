@@ -35,7 +35,7 @@ namespace MainSpace.Grid
         public Tilemap supplement;
         public Transform activitiesAllowUnitRoot;
 
-        //[HideInInspector]
+        [HideInInspector]
         public float colorAValue = 0;
         // 边界数目
         private int width, height;
@@ -44,30 +44,35 @@ namespace MainSpace.Grid
         private readonly List<TileSaveData> tileList = new List<TileSaveData>();
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
-        private bool isLerpUp;
+        private bool isLerpUp,lerpStart;
         void Start()
         {
             InitCalculateValue();
             activitiesManager = LoadInfo.Instance.activitiesManager;
         }
 
-        void Update()
+        void FixedUpdate()
         {
+            if (!lerpStart)
+            {
+                return;
+            }
+
             if (isLerpUp)
             {
-                colorAValue = Mathf.Lerp(colorAValue, 160, 0.15f);
-                if (Mathf.Abs(colorAValue - 160) < 1)
+                colorAValue = Mathf.Lerp(colorAValue, 120, 0.08f);
+                if (Mathf.Abs(colorAValue - 120) < 1)
                 {
-                    colorAValue = 160;
+                    colorAValue = 120;
                     isLerpUp = !isLerpUp;
                 }
             }
             else
             {
-                colorAValue = Mathf.Lerp(colorAValue, 60, 0.15f);
-                if (Mathf.Abs(colorAValue - 60) < 1)
+                colorAValue = Mathf.Lerp(colorAValue, 10, 0.08f);
+                if (Mathf.Abs(colorAValue - 10) < 1)
                 {
-                    colorAValue = 60;
+                    colorAValue = 10;
                     isLerpUp = !isLerpUp;
                 }
             }
@@ -178,6 +183,18 @@ namespace MainSpace.Grid
             {
                 v.activitiesAllowUnit.SetCommanderCircleGrid(false,Color.clear);
             }
+        }
+
+        public void ColorValueChange(bool _enabled)
+        {
+            if (_enabled == lerpStart)
+            {
+                return;
+            }
+
+            lerpStart = _enabled;
+            isLerpUp = true;
+            colorAValue = 10;
         }
 
         private void InitCalculateValue()

@@ -64,6 +64,11 @@ namespace MainSpace
                         }
                     }
                 }
+                else
+                {
+                    // 通知现在没点到士兵
+                    CommanderRangeUnit(null);
+                }
 
 
                 if (Input.GetMouseButtonDown(1))
