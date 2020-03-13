@@ -3803,6 +3803,7 @@ MonoBehaviour:
   ground: {fileID: 1675228029}
   supplement: {fileID: 770702960}
   activitiesAllowUnitRoot: {fileID: 1627261326}
+  colorAValue: 0
 --- !u!1 &1086363771
 GameObject:
   m_ObjectHideFlags: 0
@@ -3950,6 +3951,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 21287704, guid: 305897e3ced9e7b4694eca8fddfa4b27, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 21287704, guid: 305897e3ced9e7b4694eca8fddfa4b27, type: 3}
+      propertyPath: m_Color.a
+      value: 0.24705882
+      objectReference: {fileID: 0}
+    - target: {fileID: 21287704, guid: 305897e3ced9e7b4694eca8fddfa4b27, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2405892836595763467, guid: 305897e3ced9e7b4694eca8fddfa4b27,
         type: 3}
       propertyPath: m_Name
@@ -5436,8 +5449,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cinemachine: {fileID: 1052381756}
   grid: {fileID: 1070924769}
-  map1: {fileID: 1675228029}
-  map2: {fileID: 1675228029}
 --- !u!4 &1594465679
 Transform:
   m_ObjectHideFlags: 0

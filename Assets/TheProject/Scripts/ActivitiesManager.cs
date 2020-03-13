@@ -15,6 +15,7 @@ namespace MainSpace
         public readonly List<ActivitiesUnit> UnitList = new List<ActivitiesUnit>();
 
         private ActivitiesUnit currentSelectionUnit;
+        private CommanderUnit cacheRangeUnit;
         private SceneTileMapManager tileMapManager;
         private SceneWindowsCanvas sceneWindowsCanvas;
         private void Start()
@@ -28,7 +29,6 @@ namespace MainSpace
         /// <param name="_unit"></param>
         public void SelectionUnit(ActivitiesUnit _unit)
         {
-
             if (currentSelectionUnit == null || _unit != currentSelectionUnit)
             {
                 tileMapManager.HideCanMoveCorrelationGrid();
@@ -60,12 +60,30 @@ namespace MainSpace
 
         public void EnterCommanderOrSoliderUnit(CommanderUnit _unit)
         {
+            if (_unit != cacheRangeUnit)
+            {
+                tileMapManager.HideCommanderCircleGrid();
+            }
+
             tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0]);
+
+            cacheRangeUnit = _unit;
         }
 
-        public void ExitCommanderOrSoliderUnit()
+        public void NoneActivitiesUnit()
         {
             tileMapManager.HideCommanderCircleGrid();
+            if (currentSelectionUnit != null)
+            {
+                if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
+                {
+                    EnterCommanderOrSoliderUnit(currentSelectionUnit as CommanderUnit);
+                }
+                else if(currentSelectionUnit.GetType() == typeof(SoliderUnit))
+                {
+                    EnterCommanderOrSoliderUnit((currentSelectionUnit as SoliderUnit)?.mineCommanderUnit);
+                }
+            }
         }
 
         /// <summary>
@@ -141,7 +159,6 @@ namespace MainSpace
         {
             if (!UnitList.Contains(_unit))
             {
-                Debug.Log(_unit.currentPos);
                 UnitList.Add(_unit);
                 _unit.transform.SetParent(transform);
             }

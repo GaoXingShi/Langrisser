@@ -34,6 +34,9 @@ namespace MainSpace.Grid
         public Tilemap ground;
         public Tilemap supplement;
         public Transform activitiesAllowUnitRoot;
+
+        //[HideInInspector]
+        public float colorAValue = 0;
         // 边界数目
         private int width, height;
 
@@ -41,10 +44,33 @@ namespace MainSpace.Grid
         private readonly List<TileSaveData> tileList = new List<TileSaveData>();
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
+        private bool isLerpUp;
         void Start()
         {
             InitCalculateValue();
             activitiesManager = LoadInfo.Instance.activitiesManager;
+        }
+
+        void Update()
+        {
+            if (isLerpUp)
+            {
+                colorAValue = Mathf.Lerp(colorAValue, 160, 0.15f);
+                if (Mathf.Abs(colorAValue - 160) < 1)
+                {
+                    colorAValue = 160;
+                    isLerpUp = !isLerpUp;
+                }
+            }
+            else
+            {
+                colorAValue = Mathf.Lerp(colorAValue, 60, 0.15f);
+                if (Mathf.Abs(colorAValue - 60) < 1)
+                {
+                    colorAValue = 60;
+                    isLerpUp = !isLerpUp;
+                }
+            }
         }
 
         /// <summary>
@@ -137,15 +163,20 @@ namespace MainSpace.Grid
                 x.widthHeighValue.Vector3IntRangeValue(_pos) <= _range).ToArray();
             foreach (var v in array)
             {
-                v.activitiesAllowUnit.SetCommanderCircleGrid(true);
+                v.activitiesAllowUnit.SetCommanderCircleGrid(true,Color.blue);
             }
         }
 
         public void HideCommanderCircleGrid()
         {
+            if (!tileList.Any(x => x.activitiesAllowUnit.commandSpriteRenderer.enabled))
+            {
+                return;
+            }
+
             foreach (var v in tileList.Where(x=>x.activitiesAllowUnit.commandSpriteRenderer.enabled))
             {
-                v.activitiesAllowUnit.SetCommanderCircleGrid(false);
+                v.activitiesAllowUnit.SetCommanderCircleGrid(false,Color.clear);
             }
         }
 

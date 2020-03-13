@@ -12,15 +12,26 @@ namespace MainSpace.Grid
 
         }
 
+        private void Update()
+        {
+            if (commandSpriteRenderer.enabled)
+            {
+                Color temp = commandSpriteRenderer.color;
+                temp.a = LoadInfo.Instance.sceneTileMapManager.colorAValue / 255.0f;
+                commandSpriteRenderer.color = temp;
+            }
+        }
+
         public void SetMoveGrid(bool _enabled)
         {
             moveSpriteRenderer.enabled = _enabled;
         }
 
-        public void SetCommanderCircleGrid(bool _enabled)
+        public void SetCommanderCircleGrid(bool _enabled,Color _color)
         {
             // 需要有动画
             commandSpriteRenderer.enabled = _enabled;
+            commandSpriteRenderer.color = _color;
         }
     }
 }

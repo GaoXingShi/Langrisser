@@ -9,17 +9,15 @@ using UnityEngine.Tilemaps;
 namespace MainSpace
 {
     /// <summary>
-    /// 游戏光标类
+    /// 游戏光标类 只负责光标产生的信息传递，不处理逻辑
     /// </summary>
     public class GameCursor : MonoBehaviour
     {
         public CinemachineVirtualCamera cinemachine;
         public UnityEngine.Grid grid;
-        public Tilemap map1, map2;
 
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
-
         void Start()
         {
             cine = ((CinemachineFramingTransposer)cinemachine.GetComponentPipeline()[0]);
@@ -34,36 +32,12 @@ namespace MainSpace
             // 非UI层。
             if (!EventSystem.current.IsPointerOverGameObject())
             {
-                //// 按下了鼠标左键
-                //if (Input.GetMouseButtonDown(0))
-                //{
-                //    var hit2D = Physics2D.Raycast(worldPointV3, Vector2.zero, 10);
-                //    if (hit2D.transform != null)
-                //    {
-
-                //        if (hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer"))
-                //        {
-                //            // 告诉士兵管理系统
-                //            activitiesManager.SelectionUnit(hit2D.transform
-                //                .GetComponent<ActivitiesUnit>());
-                //        }
-                //        else
-                //        {
-                //            // todo 如果通知的脚本过多不如弄成事件。
-                //            activitiesManager.ClickTilePos(cellPos);
-                //        }
-                //    }
-                //}
-                //else if(Input.GetMouseButtonDown(1))
-                //{
-                //    activitiesManager.CancelTileSelection();
-                //}
-
                 var hit2D = Physics2D.Raycast(worldPointV3, Vector2.zero, 10);
                 if (hit2D.transform != null)
                 {
                     bool gridPlayerLayer = hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer");
                     ActivitiesUnit unit = hit2D.transform.GetComponent<ActivitiesUnit>();
+                    
                     if (gridPlayerLayer)
                     {
                         if (Input.GetMouseButtonDown(0))
@@ -85,10 +59,12 @@ namespace MainSpace
                         }
                         else
                         {
-                            activitiesManager.ExitCommanderOrSoliderUnit();
+                            // 通知现在没点到士兵
+                            CommanderRangeUnit(null);
                         }
                     }
                 }
+
 
                 if (Input.GetMouseButtonDown(1))
                 {
@@ -97,8 +73,18 @@ namespace MainSpace
             }
         }
 
+        /// <summary>
+        /// 指挥圈变更通知
+        /// </summary>
+        /// <param name="_unit"></param>
         private void CommanderRangeUnit(ActivitiesUnit _unit)
         {
+            if (_unit == null)
+            {
+                activitiesManager.NoneActivitiesUnit();
+                return;
+            }
+
             if (_unit.GetType() == typeof(CommanderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
