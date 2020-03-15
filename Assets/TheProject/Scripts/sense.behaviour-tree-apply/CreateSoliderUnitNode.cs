@@ -36,16 +36,17 @@ namespace Sense.BehaviourTree.Apply
             temp.SetIntArrayData(ref temp.defenseValue, data.defenseValue);
             temp.SetIntArrayData(ref temp.moveValue, data.moveValue);
 
-            temp.affiliationName = followCommander.affiliationName;
+            temp.affiliationName = followCommander.GetCampData().campType.ToString();
+            temp.managerKeyName = followCommander.managerKeyName;
 
             // sprite
             temp.unitRenderSprite = data.mRenderSprite;
-            temp.affiliationSprite = followCommander.affiliationSprite;
+            temp.affiliationSprite = followCommander.GetCampData().affiliationSprite;
 
             // component
             temp.mRendererComponent.sprite = data.mRenderSprite;
             temp.hpText.text = data.healthValue.ToString();
-            temp.professionSprite.sprite = followCommander.affiliationSprite;
+            temp.professionSprite.sprite = followCommander.GetCampData().affiliationSprite;
 
             // enum
             temp.soliderType = soliderType;

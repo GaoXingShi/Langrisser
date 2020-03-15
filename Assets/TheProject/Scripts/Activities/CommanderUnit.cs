@@ -26,5 +26,10 @@ namespace MainSpace.Activities
         {
             mSoliderUnits.Add(_unit);
         }
+
+        public SoliderUnit[] GetSoliderUnitArray()
+        {
+            return mSoliderUnits.ToArray();
+        }
     }
 }

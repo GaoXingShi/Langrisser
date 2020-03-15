@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using MainSpace.Grid;
+using Sense.BehaviourTree;
 using UnityEngine;
 
 namespace MainSpace
@@ -10,8 +11,12 @@ namespace MainSpace
         public GameManager gameManager;
         public SceneTileMapManager sceneTileMapManager;
         public ActivitiesManager activitiesManager;
+        public AISystem aiSystem;
         public GameCursor gameCursor;
         public SceneWindowsCanvas sceneWindowsCanvas;
+
+        public SequenceNode sequenceNode;
+
 
         public static LoadInfo Instance;
         void Awake()
@@ -25,6 +30,12 @@ namespace MainSpace
                 Destroy(this);
             }
 
+        }
+
+        void Start()
+        {
+            sequenceNode.ResetNode(0, 0, null);
+            sequenceNode.Execute(true);
         }
 
     }

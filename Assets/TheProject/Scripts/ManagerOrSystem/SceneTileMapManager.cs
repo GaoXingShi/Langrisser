@@ -35,7 +35,7 @@ namespace MainSpace.Grid
         public Tilemap supplement;
         public Transform activitiesAllowUnitRoot;
 
-        [HideInInspector]
+
         public float colorAValue = 0;
         // 边界数目
         private int width, height;
@@ -45,6 +45,8 @@ namespace MainSpace.Grid
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
         private bool isLerpUp,lerpStart;
+        private const int MAXAVALUE = 120,MINAVALUE = 10;
+        private const float LERPSPEED = 0.15f;
         void Start()
         {
             InitCalculateValue();
@@ -60,19 +62,19 @@ namespace MainSpace.Grid
 
             if (isLerpUp)
             {
-                colorAValue = Mathf.Lerp(colorAValue, 120, 0.08f);
-                if (Mathf.Abs(colorAValue - 120) < 1)
+                colorAValue = Mathf.Lerp(colorAValue, MAXAVALUE, LERPSPEED);
+                if (Mathf.Abs(colorAValue - MAXAVALUE) < LERPSPEED * 20)
                 {
-                    colorAValue = 120;
+                    colorAValue = MAXAVALUE;
                     isLerpUp = !isLerpUp;
                 }
             }
             else
             {
-                colorAValue = Mathf.Lerp(colorAValue, 10, 0.08f);
-                if (Mathf.Abs(colorAValue - 10) < 1)
+                colorAValue = Mathf.Lerp(colorAValue, MINAVALUE, LERPSPEED);
+                if (Mathf.Abs(colorAValue - MINAVALUE) < LERPSPEED * 20)
                 {
-                    colorAValue = 10;
+                    colorAValue = MINAVALUE;
                     isLerpUp = !isLerpUp;
                 }
             }
@@ -88,7 +90,7 @@ namespace MainSpace.Grid
             // 目前不计算障碍。
             // ActivitiesManager.GetActivitiesUnit 需要计算
             cacheSaveData = tileList
-                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] /*&& !activitiesManager.GetUnitPosContains(x.widthHeighValue)*/)
+                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] && !activitiesManager.GetUnitPosContains(x.widthHeighValue))
                 .ToArray();
 
             
@@ -122,6 +124,11 @@ namespace MainSpace.Grid
             }
         }
 
+        /// <summary>
+        /// 获取该Vector3 Pos 点是否允许移动
+        /// </summary>
+        /// <param name="_pos"></param>
+        /// <returns></returns>
         public bool GetMoveToUnitAllow(Vector3Int _pos)
         {
             if (cacheSaveData == null || cacheSaveData.Length == 0) return false;
@@ -137,6 +144,9 @@ namespace MainSpace.Grid
             return false;
         }
 
+        /// <summary>
+        /// 显示可移动相关区域
+        /// </summary>
         public void ShowCanMoveCorrelationGrid()
         {
             foreach (var v in tileList)
@@ -150,6 +160,9 @@ namespace MainSpace.Grid
             }
         }
 
+        /// <summary>
+        /// 隐藏可移动相关区域
+        /// </summary>
         public void HideCanMoveCorrelationGrid()
         {
             if (cacheSaveData == null) return;
@@ -162,16 +175,25 @@ namespace MainSpace.Grid
             cacheSaveData = null;
         }
 
-        public void ShowCommanderCircleGrid(Vector3Int _pos,int _range)
+        /// <summary>
+        /// 显示指挥圈相关区域
+        /// </summary>
+        /// <param name="_pos"></param>
+        /// <param name="_range"></param>
+        /// <param name="_commanderCirclecolor"></param>
+        public void ShowCommanderCircleGrid(Vector3Int _pos,int _range,Color _commanderCirclecolor)
         {
             TileSaveData[] array = tileList.Where(x =>
                 x.widthHeighValue.Vector3IntRangeValue(_pos) <= _range).ToArray();
             foreach (var v in array)
             {
-                v.activitiesAllowUnit.SetCommanderCircleGrid(true,Color.blue);
+                v.activitiesAllowUnit.SetCommanderCircleGrid(true, _commanderCirclecolor);
             }
         }
 
+        /// <summary>
+        /// 隐藏指挥圈相关区域
+        /// </summary>
         public void HideCommanderCircleGrid()
         {
             if (!tileList.Any(x => x.activitiesAllowUnit.commandSpriteRenderer.enabled))
@@ -185,6 +207,10 @@ namespace MainSpace.Grid
             }
         }
 
+        /// <summary>
+        /// 控制FixedUpdate运行的方法 ,更改指挥圈起始颜色
+        /// </summary>
+        /// <param name="_enabled"></param>
         public void ColorValueChange(bool _enabled)
         {
             if (_enabled == lerpStart)
@@ -194,7 +220,7 @@ namespace MainSpace.Grid
 
             lerpStart = _enabled;
             isLerpUp = true;
-            colorAValue = 10;
+            colorAValue = MINAVALUE;
         }
 
         private void InitCalculateValue()

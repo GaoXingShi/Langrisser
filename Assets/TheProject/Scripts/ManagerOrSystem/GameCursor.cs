@@ -16,16 +16,25 @@ namespace MainSpace
         public CinemachineVirtualCamera cinemachine;
         public UnityEngine.Grid grid;
 
+        [HideInInspector]
+        public bool isExecute = true;
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
         void Start()
         {
             cine = ((CinemachineFramingTransposer)cinemachine.GetComponentPipeline()[0]);
             activitiesManager = LoadInfo.Instance.activitiesManager;
+            isExecute = true;
         }
 
         void Update()
         {
+            // 不懂为什么，将Enable关闭了之后，会出现鼠标经过两次的问题
+            if (!isExecute)
+            {
+                return;
+            }
+
             var worldPointV3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int cellPos = grid.WorldToCell(worldPointV3);
 
@@ -107,9 +116,13 @@ namespace MainSpace
 
         void LateUpdate()
         {
+            if (!isExecute)
+            {
+                return;
+            }
+
             var worldPointV3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             worldPointV3.z = 0;
-            //var screenV3 = Camera.main.ScreenToViewportPoint(Input.mousePosition);
             if (Input.GetMouseButtonDown(2))
             {
                 cacheDeadZone = 0.03f;

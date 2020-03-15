@@ -8,15 +8,15 @@ namespace MainSpace.Activities
 {
     public enum SoliderType
     {
-        步兵,重装步兵,
-        骑兵,重装骑兵,
-        枪兵,重装枪兵,
+        步兵, 重装步兵,
+        骑兵, 重装骑兵,
+        枪兵, 重装枪兵,
     }
 
     public enum RoleType
     {
-        战士,兵长,领主,步兵统帅,将军,
-            骑士,骑士长,骑士统帅,封号骑士,
+        战士, 兵长, 领主, 步兵统帅, 将军,
+        骑士, 骑士长, 骑士统帅, 封号骑士,
         法师,
         牧师
     }
@@ -26,7 +26,7 @@ namespace MainSpace.Activities
         public Vector3Int currentPos;
         public int[] healthValue, magicValue, moveValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
         public Sprite unitRenderSprite, affiliationSprite;
-        public string affiliationName;
+        public string affiliationName, managerKeyName;
 
         public bool isActionOver = false;                       // 是否结束行动
         public ActivitiesManager manager;
@@ -34,6 +34,9 @@ namespace MainSpace.Activities
         public SpriteRenderer mRendererComponent;
         public TextMesh hpText;
         public SpriteRenderer professionSprite;
+        public Color campColor;
+        public TroopsType troopsType;
+
         private Material mMaterial;
 
         public void Start()
@@ -69,6 +72,7 @@ namespace MainSpace.Activities
         public void UnitColorChange(bool _isGray)
         {
             mMaterial.SetFloat("GrayLone", _isGray ? 1 : 0);
+            isActionOver = _isGray;
         }
 
         private IEnumerator MoveLerp(Vector3Int[] _posArray)
@@ -93,9 +97,13 @@ namespace MainSpace.Activities
             {
                 UnitColorChange(true);
             }
-            isActionOver = true;
+
             // 单位完成了移动。
-            manager.OnFinishedUnitMove(this);
+            if (LoadInfo.Instance.gameManager.GetCampData(managerKeyName).ctrlType == CtrlType.Player)
+            {
+                manager.OnFinishedUnitMove(this);
+            }
+
 
         }
 

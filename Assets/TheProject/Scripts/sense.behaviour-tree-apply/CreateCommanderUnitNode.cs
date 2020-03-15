@@ -10,23 +10,30 @@ namespace Sense.BehaviourTree.Apply
     {
         public CommanderUnit template;
 
-        public Sprite unitFaceSprite, unitRenderSprite, affiliationSprite;
+        public Sprite unitFaceSprite, unitRenderSprite;
 
-        public string unitName, affiliationName;
+        public string unitName , managerKeyName;
         public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
         public int levelSliderValue, levelSliderUpgradeValue, attackValue, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
         public Vector3Int showPos;
         private CommanderUnit cacheCommanderUnit = null;
-
+        private CampData campData;
 
         public override void ResetNode(int _depth, int _nodeNumber, BehaviourNode _parentNode)
         {
             base.ResetNode(_depth, _nodeNumber, _parentNode);
         }
 
+        public CampData GetCampData()
+        {
+            return campData;
+        }
+
         public override void Execute(bool _isLinear)
         {
+            campData = LoadInfo.Instance.gameManager.GetCampData(managerKeyName);
+
             CommanderUnit temp = Instantiate(template);
 
             temp.InitData();
@@ -48,28 +55,34 @@ namespace Sense.BehaviourTree.Apply
 
             // string
             temp.unitName = unitName;
-            temp.affiliationName = affiliationName;
+            temp.affiliationName = campData.campType.ToString();
+            temp.managerKeyName = managerKeyName;
 
             // sprite
             temp.unitFaceSprite = unitFaceSprite;
             temp.unitRenderSprite = unitRenderSprite;
-            temp.affiliationSprite = affiliationSprite;
+            temp.affiliationSprite = campData.affiliationSprite;
 
             // component
             temp.mRendererComponent.sprite = unitRenderSprite;
             temp.hpText.text = healthValue.ToString();
-            temp.professionSprite.sprite = affiliationSprite;
+            temp.professionSprite.sprite = campData.affiliationSprite;
 
             // enum
             temp.roleTpe = roleType;
+            temp.troopsType = campData.troopType;
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);
             temp.transform.position = calculateValue;
             temp.currentPos = calculateValue;
 
+            // other
+            temp.campColor = campData.campColor;
             temp.manager = LoadInfo.Instance.activitiesManager;
             temp.manager.AddActivitiesUnit(temp);
+
+
 
             cacheCommanderUnit = temp;
 

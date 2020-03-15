@@ -29,6 +29,12 @@ namespace MainSpace.Grid
 
         public void SetCommanderCircleGrid(bool _enabled,Color _color)
         {
+            if (_enabled == commandSpriteRenderer.enabled)
+            {
+                return;
+            }
+
+
             // 需要有动画
             commandSpriteRenderer.enabled = _enabled;
             commandSpriteRenderer.color = _color;

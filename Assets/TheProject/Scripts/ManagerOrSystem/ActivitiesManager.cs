@@ -12,16 +12,18 @@ namespace MainSpace
     /// </summary>
     public class ActivitiesManager : MonoBehaviour
     {
-        public readonly List<ActivitiesUnit> UnitList = new List<ActivitiesUnit>();
+        private readonly List<ActivitiesUnit> UnitList = new List<ActivitiesUnit>();
 
         private ActivitiesUnit currentSelectionUnit;
         private CommanderUnit cacheRangeUnit;
         private SceneTileMapManager tileMapManager;
         private SceneWindowsCanvas sceneWindowsCanvas;
+        private GameManager gameManager;
         private void Start()
         {
             tileMapManager = LoadInfo.Instance.sceneTileMapManager;
             sceneWindowsCanvas = LoadInfo.Instance.sceneWindowsCanvas;
+            gameManager = LoadInfo.Instance.gameManager;
         }
         /// <summary>
         /// 选中了可行动单位.
@@ -58,30 +60,42 @@ namespace MainSpace
             }
         }
 
+        /// <summary>
+        /// 触发指挥圈范围
+        /// </summary>
+        /// <param name="_unit"></param>
         public void EnterCommanderOrSoliderUnit(CommanderUnit _unit)
         {
-            tileMapManager.ColorValueChange(true);
 
-            if (_unit != cacheRangeUnit || cacheRangeUnit == null)
+            if (_unit != cacheRangeUnit /*|| cacheRangeUnit == null*/)
             {
                 tileMapManager.HideCommanderCircleGrid();
             }
+            else
+            {
+                tileMapManager.ColorValueChange(true);
+                return;
+            }
 
-            tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0]);
+            tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
 
             cacheRangeUnit = _unit;
         }
 
+        /// <summary>
+        /// 退出指挥圈范围
+        /// </summary>
         public void NoneActivitiesUnit()
         {
             tileMapManager.HideCommanderCircleGrid();
+
             if (currentSelectionUnit != null)
             {
                 if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
                 {
                     EnterCommanderOrSoliderUnit(currentSelectionUnit as CommanderUnit);
                 }
-                else if(currentSelectionUnit.GetType() == typeof(SoliderUnit))
+                else if (currentSelectionUnit.GetType() == typeof(SoliderUnit))
                 {
                     EnterCommanderOrSoliderUnit((currentSelectionUnit as SoliderUnit)?.mineCommanderUnit);
                 }
@@ -90,6 +104,8 @@ namespace MainSpace
             {
                 tileMapManager.ColorValueChange(false);
             }
+
+            cacheRangeUnit = null;
         }
 
         /// <summary>
@@ -100,7 +116,7 @@ namespace MainSpace
         {
             if (currentSelectionUnit != null)
             {
-                if (tileMapManager.GetMoveToUnitAllow(_cellPos))
+                if (gameManager.IsLocalPlayerAround(currentSelectionUnit.managerKeyName) && tileMapManager.GetMoveToUnitAllow(_cellPos))
                 {
                     if (!currentSelectionUnit.isActionOver)
                     {
@@ -121,6 +137,7 @@ namespace MainSpace
 
                 currentSelectionUnit = null;
             }
+
         }
 
         /// <summary>
@@ -139,6 +156,10 @@ namespace MainSpace
 
         }
 
+        /// <summary>
+        /// ActivitiesUnit完成移动时的回调
+        /// </summary>
+        /// <param name="_unit"></param>
         public void OnFinishedUnitMove(ActivitiesUnit _unit)
         {
             // ui 变化
@@ -177,7 +198,6 @@ namespace MainSpace
             }
         }
 
-
         /// <summary>
         /// 输入位置，返回该位置是否有士兵.
         /// </summary>
@@ -186,6 +206,24 @@ namespace MainSpace
         public bool GetUnitPosContains(Vector3Int _pos)
         {
             return UnitList.Any(x => x.currentPos.Vector3IntRangeValue(_pos) == 0);
+        }
+
+        /// <summary>
+        /// 所有士兵的颜色以及行动设置
+        /// </summary>
+        /// <param name="_isGray"></param>
+        public void AllUnitColorChange(bool _isGray)
+        {
+            foreach (var v in UnitList)
+            {
+                v.UnitColorChange(false);
+            }
+        }
+
+        public CommanderUnit[] GetCampCommanderArray(string _keyName)
+        {
+            return UnitList.Where(x => x.managerKeyName.Equals(_keyName)
+                                       && x.GetType() == typeof(CommanderUnit)).OfType<CommanderUnit>().ToArray();
         }
     }
 
