@@ -37,21 +37,23 @@ namespace MainSpace
             {
                 TileSaveData[] commanderMovingData = sceneTileMapManager.CalculateMovingRange(v);
 
-                v.MoveTo(commanderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1));
+                //v.MoveTo(commanderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1));
+                activitiesManager.UnitMoveTo(commanderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1),v);
 
                 yield return WaitMoveOn(v);
 
                 foreach (var vv in v.GetSoliderUnitArray())
                 {
                     TileSaveData[] soliderMovingData = sceneTileMapManager.CalculateMovingRange(vv);
-                    vv.MoveTo(soliderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1));
+                    //vv.MoveTo(soliderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1));
+                    activitiesManager.UnitMoveTo(soliderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1), vv);
 
                     yield return WaitMoveOn(vv);
                 }
             }
 
             Debug.Log("Move Over ?");
-            gameManager.FinishRoundTurn();
+            gameManager.FinishCurrentRoundTurn();
         }
 
         private IEnumerator WaitMoveOn(ActivitiesUnit _unit)

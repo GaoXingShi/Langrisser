@@ -88,9 +88,8 @@ namespace MainSpace.Grid
         public TileSaveData[] CalculateMovingRange(ActivitiesUnit _unit)
         {
             // 目前不计算障碍。
-            // ActivitiesManager.GetActivitiesUnit 需要计算
             cacheSaveData = tileList
-                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] && !activitiesManager.GetUnitPosContains(x.widthHeighValue))
+                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] && (!activitiesManager.GetUnitPosContains(x.widthHeighValue) || x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0))
                 .ToArray();
 
             
@@ -135,7 +134,7 @@ namespace MainSpace.Grid
 
             foreach (var v in cacheSaveData)
             {
-                if (v.widthHeighValue == _pos)
+                if (v.widthHeighValue.Vector3IntRangeValue(_pos) == 0)
                 {
                     return true;
                 }

@@ -10,7 +10,7 @@ namespace MainSpace
     {
         public CanvasGroup intBtnArray, commanderPlane, soliderPlane;
         [Header("IntBtnArray Link")] public bool intBtnArrayData;
-        public Button turnOverBtn, setAsBtn, saveBtn, loadBtn;
+        public Button turnOverBtn, setAsBtn, saveBtn, loadBtn, cancelBtn;
         [Header("CommanderPlane Link")] public bool commanderPlaneData;
         public Image faceImage, commanderAffiliationImage;
         public Text nameText, roleText, commanderAffiliationText, levelText;
@@ -49,6 +49,9 @@ namespace MainSpace
             CanvasGroupAdjust(soliderPlane, false);
             CanvasGroupAdjust(commanderPlane, true);
 
+            SetCanNotClickPanelState(false);
+
+
             faceImage.sprite = _unit.unitFaceSprite;
             commanderAffiliationImage.sprite = _unit.affiliationSprite;
 
@@ -78,6 +81,9 @@ namespace MainSpace
             CanvasGroupAdjust(commanderPlane, false);
             CanvasGroupAdjust(soliderPlane, true);
 
+            SetCanNotClickPanelState(false);
+
+
             soliderAffiliationImage.sprite = _unit.affiliationSprite;
             soliderText.text = _unit.soliderType.ToString();
             soliderAffiliationText.text = _unit.affiliationName;
@@ -94,11 +100,22 @@ namespace MainSpace
         /// <summary>
         /// 清空选中信息
         /// </summary>
-        public void ClearUnitData()
+        public void ClearUIInfo()
+        {
+            CanvasGroupAdjust(intBtnArray, false);
+            CanvasGroupAdjust(commanderPlane, false);
+            CanvasGroupAdjust(soliderPlane, false);
+
+            SetCanNotClickPanelState(false);
+
+        }
+        public void SetInitPanel()
         {
             CanvasGroupAdjust(intBtnArray, true);
             CanvasGroupAdjust(commanderPlane, false);
             CanvasGroupAdjust(soliderPlane, false);
+
+            SetCanNotClickPanelState(true);
         }
 
         /// <summary>
@@ -116,12 +133,13 @@ namespace MainSpace
             setAsBtn.onClick.AddListener(SetAsBtnEvent);
             saveBtn.onClick.AddListener(SaveBtnEvent);
             loadBtn.onClick.AddListener(LoadBtnEvent);
+            cancelBtn.onClick.AddListener(CancelBtnEvent);
         }
 
         private void TurnOverBtnEvent()
         {
-            LoadInfo.Instance.gameManager.FinishRoundTurn();
-            
+            LoadInfo.Instance.gameManager.FinishCurrentRoundTurn();
+            ClearUIInfo();
         }
 
         private void SetAsBtnEvent()
@@ -141,7 +159,7 @@ namespace MainSpace
 
         private void CancelBtnEvent()
         {
-            
+            ClearUIInfo();
         }
 
         private void CanvasGroupAdjust(CanvasGroup _group, bool _isAlpha)

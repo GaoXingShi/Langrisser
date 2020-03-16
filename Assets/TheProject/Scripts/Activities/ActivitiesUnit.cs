@@ -57,55 +57,56 @@ namespace MainSpace.Activities
             _array[1] = _value;
         }
 
-        public void MoveTo(Vector3Int[] _posArray)
-        {
-            StopAllCoroutines();
-            StartCoroutine(MoveLerp(_posArray));
-        }
-
-        public void MoveTo(Vector3Int _pos)
-        {
-            Vector3Int[] temp = new Vector3Int[] { _pos };
-            MoveTo(temp);
-        }
-
         public void UnitColorChange(bool _isGray)
         {
             mMaterial.SetFloat("GrayLone", _isGray ? 1 : 0);
             isActionOver = _isGray;
         }
 
-        private IEnumerator MoveLerp(Vector3Int[] _posArray)
-        {
-            WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
-            for (int i = 0; i < _posArray.Length; i++)
-            {
-                while (Vector3.Distance(transform.position, _posArray[i]) >= 0.05f)
-                {
-                    transform.position = Vector3.Lerp(transform.position, _posArray[i], 0.1f);
-                    yield return endOfFrame;
-                }
+        //public void MoveTo(Vector3Int[] _posArray)
+        //{
+        //    StopAllCoroutines();
+        //    StartCoroutine(MoveLerp(_posArray));
+        //}
 
-                transform.position = _posArray[i];
-            }
-            Debug.Log("over");
-
-            currentPos = _posArray[_posArray.Length - 1];
-
-            // 玩家才会变灰.
-            if (true)
-            {
-                UnitColorChange(true);
-            }
-
-            // 单位完成了移动。
-            if (LoadInfo.Instance.gameManager.GetCampData(managerKeyName).ctrlType == CtrlType.Player)
-            {
-                manager.OnFinishedUnitMove(this);
-            }
+        //public void MoveTo(Vector3Int _pos)
+        //{
+        //    Vector3Int[] temp = new Vector3Int[] { _pos };
+        //    MoveTo(temp);
+        //}
 
 
-        }
+        //private IEnumerator MoveLerp(Vector3Int[] _posArray)
+        //{
+        //    WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
+        //    for (int i = 0; i < _posArray.Length; i++)
+        //    {
+        //        while (Vector3.Distance(transform.position, _posArray[i]) >= 0.05f)
+        //        {
+        //            transform.position = Vector3.Lerp(transform.position, _posArray[i], 0.1f);
+        //            yield return endOfFrame;
+        //        }
+
+        //        transform.position = _posArray[i];
+        //    }
+        //    Debug.Log("over");
+
+        //    currentPos = _posArray[_posArray.Length - 1];
+
+        //    // 玩家才会变灰.
+        //    if (true)
+        //    {
+        //        UnitColorChange(true);
+        //    }
+
+        //    // 单位完成了移动。
+        //    if (LoadInfo.Instance.gameManager.GetCampData(managerKeyName).ctrlType == CtrlType.Player)
+        //    {
+        //        manager.OnFinishedUnitMove(this);
+        //    }
+
+
+        //}
 
     }
 

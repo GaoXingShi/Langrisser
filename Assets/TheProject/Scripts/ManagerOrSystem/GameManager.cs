@@ -2,8 +2,11 @@
 using System;
 using UnityEditor;
 #endif
+using System.Collections;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MainSpace
 {
@@ -54,21 +57,38 @@ namespace MainSpace
         private int currentRoundCampDataIndex;
         private AISystem aiSystem;
         private ActivitiesManager activitiesManager;
+
+        private RectTransform backageImage;
+        private CanvasGroup group;
+        private Text turnText, playerText;
+        private Image turnImage;
+        private Sequence doTweenSequence;
+
         private void Start()
         {
+            DOTween.Init(true, false, LogBehaviour.ErrorsOnly);
             aiSystem = LoadInfo.Instance.aiSystem;
             activitiesManager = LoadInfo.Instance.activitiesManager;
 
-            PlayGame();
+            backageImage = transform.Find("TurnCanvas/BackAgeImage").GetComponent<RectTransform>();
+            group = transform.Find("TurnCanvas/group").GetComponent<CanvasGroup>();
+            turnText = group.transform.Find("TurnText").GetComponent<Text>();
+            playerText = group.transform.Find("PlayerText").GetComponent<Text>();
+            turnImage = group.transform.Find("TurnImage").GetComponent<Image>();
+
+            roundValue = 1;
+            currentRoundCampDataIndex = 0;
+            Invoke(nameof(PlayGame), 0.3f);
         }
 
         public void PlayGame()
         {
-            roundValue = 1;
-            currentRoundCampDataIndex = 0;
+            LoadInfo.Instance.gameCursor.isExecute = false;
+            PlayMovie(roundValue, campData[currentRoundCampDataIndex].campType, campData[currentRoundCampDataIndex].campColor,
+                campData[currentRoundCampDataIndex].affiliationSprite, false);
         }
 
-        public void FinishRoundTurn()
+        public void FinishCurrentRoundTurn()
         {
             // 所有的士兵颜色恢复
             activitiesManager.AllUnitColorChange(false);
@@ -89,11 +109,19 @@ namespace MainSpace
                 currentRoundCampDataIndex++;
             }
 
+            // 播放动画
+            PlayMovie(roundValue, campData[currentRoundCampDataIndex].campType, campData[currentRoundCampDataIndex].campColor,
+                campData[currentRoundCampDataIndex].affiliationSprite, true);
+
+        }
+
+        private void StartNextRoundTurn()
+        {
             if (campData[currentRoundCampDataIndex].ctrlType == CtrlType.Player)
             {
                 // 手动操作
                 LoadInfo.Instance.sceneWindowsCanvas.SetCanNotClickPanelState(false);
-               
+
                 LoadInfo.Instance.gameCursor.isExecute = true;
             }
             else if (campData[currentRoundCampDataIndex].ctrlType == CtrlType.AI)
@@ -104,8 +132,6 @@ namespace MainSpace
                 aiSystem.SetAIData(
                     activitiesManager.GetCampCommanderArray(campData[currentRoundCampDataIndex].identifyValue));
             }
-
-            // 播放动画 ?
         }
 
 
@@ -122,6 +148,49 @@ namespace MainSpace
         public CampData GetCampData(string _keyName)
         {
             return campData.FirstOrDefault(x => x.identifyValue.Equals(_keyName));
+        }
+
+        private void PlayMovie(int _turnIndex, CampType _campType, Color _textColor, Sprite _campSprite, bool _isNext)
+        {
+            _textColor = new Color(_textColor.r, _textColor.g, _textColor.b, 200 / 255.0f);
+            turnText.text = String.Concat("Around ", _turnIndex.ToString());
+            turnImage.sprite = _campSprite;
+            playerText.text = _campType.ToString();
+            playerText.color = _textColor;
+
+            doTweenSequence = DOTween.Sequence();
+            doTweenSequence.Append(DOTween.To(() => backageImage.anchoredPosition,
+                x => backageImage.anchoredPosition = x, Vector2.zero, 0.75f));
+            doTweenSequence.Append(DOTween.To(() => @group.alpha, x => @group.alpha = x, 1, 0.5f));
+            doTweenSequence.AppendCallback(() =>
+            {
+                @group.interactable = true;
+                @group.blocksRaycasts = true;
+            });
+            doTweenSequence.AppendInterval(2);
+            doTweenSequence.Append(DOTween.To(() => backageImage.anchoredPosition,
+                x => backageImage.anchoredPosition = x, new Vector2(1929.7f, 0), 0.75f));
+            doTweenSequence.Join(DOTween.To(() => @group.alpha, x => @group.alpha = x, 0, 0.2f));
+            doTweenSequence.AppendCallback(() =>
+            {
+                @group.interactable = false;
+                @group.blocksRaycasts = false;
+            });
+            doTweenSequence.AppendInterval(0.35f);
+            doTweenSequence.AppendCallback(() =>
+            {
+                backageImage.anchoredPosition = new Vector2(-1929.7f, 0);
+                if (_isNext)
+                {
+                    StartNextRoundTurn();
+                }
+                else
+                {
+                    Debug.Log("???");
+                    LoadInfo.Instance.gameCursor.isExecute = true;
+                }
+            });
+
         }
     }
 
