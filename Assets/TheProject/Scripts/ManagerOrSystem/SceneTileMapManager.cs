@@ -46,7 +46,7 @@ namespace MainSpace.Grid
         private ActivitiesManager activitiesManager;
         private bool isLerpUp,lerpStart;
         private const int MAXAVALUE = 120,MINAVALUE = 10;
-        private const float LERPSPEED = 0.15f;
+        private const float LERPSPEED = 0.1f;
         void Start()
         {
             InitCalculateValue();

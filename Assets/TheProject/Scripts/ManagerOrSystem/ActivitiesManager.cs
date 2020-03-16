@@ -196,6 +196,7 @@ namespace MainSpace
             {
                 UnitList.Add(_unit);
                 _unit.transform.SetParent(transform);
+                _unit.ManagerInitData();
             }
             else
             {

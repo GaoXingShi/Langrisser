@@ -33,22 +33,34 @@ namespace MainSpace.Activities
 
         public SpriteRenderer mRendererComponent;
         public TextMesh hpText;
-        public SpriteRenderer professionSprite;
+        public SpriteRenderer professionSprite , playerColorSprite;
         public Color campColor;
         public TroopsType troopsType;
 
         private Material mMaterial;
-
-        public void Start()
+        private GameManager gameManager;
+        private void Start()
         {
             mMaterial = GetComponentInChildren<SpriteRenderer>().material;
+            gameManager = LoadInfo.Instance.gameManager;
         }
 
-        public virtual void InitData()
+        public virtual void NodeInitData()
         {
             healthValue = magicValue = moveValue = attackValue =
                 defenseValue = new int[2];
         }
+
+        public virtual void ManagerInitData()
+        {
+            playerColorSprite.color = campColor;
+        }
+
+        private void Update()
+        {
+            playerColorSprite.transform.localScale = gameManager.lerpVector3Value;
+        }
+
 
         public void SetIntArrayData(ref int[] _array, int _value)
         {

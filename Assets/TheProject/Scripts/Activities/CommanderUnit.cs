@@ -16,9 +16,9 @@ namespace MainSpace.Activities
         private List<SoliderUnit> mSoliderUnits = new List<SoliderUnit>();
 
 
-        public override void InitData()
+        public override void NodeInitData()
         {
-            base.InitData();
+            base.NodeInitData();
             commandRangeValue = correctedAttack = correctedDefense = new int[2];
         }
 

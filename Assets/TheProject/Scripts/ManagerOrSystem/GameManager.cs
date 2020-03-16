@@ -53,7 +53,8 @@ namespace MainSpace
     {
         public int roundValue = 1;
         public CampData[] campData;
-
+        public float lerpValue;
+        public Vector3 lerpVector3Value => new Vector3(lerpValue, lerpValue, lerpValue);
         private int currentRoundCampDataIndex;
         private AISystem aiSystem;
         private ActivitiesManager activitiesManager;
@@ -62,7 +63,7 @@ namespace MainSpace
         private CanvasGroup group;
         private Text turnText, playerText;
         private Image turnImage;
-        private Sequence doTweenSequence;
+        private Sequence doTweenSequence, lerpSequence;
 
         private void Start()
         {
@@ -78,6 +79,11 @@ namespace MainSpace
 
             roundValue = 1;
             currentRoundCampDataIndex = 0;
+
+            lerpValue = 0.35f;
+            lerpSequence = DOTween.Sequence();
+            lerpSequence.Append(DOTween.To(() => lerpValue, x => lerpValue = x, 0.7f, 1));
+            lerpSequence.SetLoops(-1, LoopType.Yoyo);
             Invoke(nameof(PlayGame), 0.3f);
         }
 
@@ -134,7 +140,6 @@ namespace MainSpace
             }
         }
 
-
         /// <summary>
         /// 如果是该回合允许单位，则返回真
         /// </summary>
@@ -149,6 +154,7 @@ namespace MainSpace
         {
             return campData.FirstOrDefault(x => x.identifyValue.Equals(_keyName));
         }
+
 
         private void PlayMovie(int _turnIndex, CampType _campType, Color _textColor, Sprite _campSprite, bool _isNext)
         {

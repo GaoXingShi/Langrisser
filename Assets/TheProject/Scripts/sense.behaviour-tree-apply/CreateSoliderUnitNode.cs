@@ -25,7 +25,7 @@ namespace Sense.BehaviourTree.Apply
         {
             SoliderUnit temp = Instantiate(template);
 
-            temp.InitData();
+            temp.NodeInitData();
 
             SoliderConfig.SoliderData data = soliderConfig.soliderDataArray.FirstOrDefault(x => x.mType == soliderType);
             
@@ -59,6 +59,7 @@ namespace Sense.BehaviourTree.Apply
             temp.mineCommanderUnit = followCommander.GetCacheCommanderUnit();
             temp.mineCommanderUnit.AddSoliderUnits(temp);
 
+            temp.campColor = followCommander.GetCampData().campColor;
             temp.manager = LoadInfo.Instance.activitiesManager;
             temp.manager.AddActivitiesUnit(temp);
 

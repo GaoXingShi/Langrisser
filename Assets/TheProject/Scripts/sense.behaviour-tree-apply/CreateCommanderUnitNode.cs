@@ -36,7 +36,7 @@ namespace Sense.BehaviourTree.Apply
 
             CommanderUnit temp = Instantiate(template);
 
-            temp.InitData();
+            temp.NodeInitData();
 
             // int[]
             temp.SetIntArrayData(ref temp.healthValue, healthValue);
@@ -81,7 +81,6 @@ namespace Sense.BehaviourTree.Apply
             temp.campColor = campData.campColor;
             temp.manager = LoadInfo.Instance.activitiesManager;
             temp.manager.AddActivitiesUnit(temp);
-
 
 
             cacheCommanderUnit = temp;
