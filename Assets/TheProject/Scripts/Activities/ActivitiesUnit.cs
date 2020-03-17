@@ -72,7 +72,7 @@ namespace MainSpace.Activities
         public void UnitColorChange(bool _isGray)
         {
             mMaterial.SetFloat("GrayLone", _isGray ? 1 : 0);
-            isActionOver = _isGray;
+            //isActionOver = _isGray;
         }
 
         //public void MoveTo(Vector3Int[] _posArray)

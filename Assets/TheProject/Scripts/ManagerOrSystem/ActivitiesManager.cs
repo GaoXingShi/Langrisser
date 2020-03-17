@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using MainSpace.Activities;
 using MainSpace.Grid;
 using UnityEngine;
@@ -19,12 +20,15 @@ namespace MainSpace
         private SceneTileMapManager tileMapManager;
         private SceneWindowsCanvas sceneWindowsCanvas;
         private GameManager gameManager;
+        private Sequence dotweenSequence;
         private void Start()
         {
+            DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
             tileMapManager = LoadInfo.Instance.sceneTileMapManager;
             sceneWindowsCanvas = LoadInfo.Instance.sceneWindowsCanvas;
             gameManager = LoadInfo.Instance.gameManager;
         }
+        #region 移动相关
         /// <summary>
         /// 选中了可行动单位.
         /// </summary>
@@ -53,13 +57,11 @@ namespace MainSpace
                 // 点击了原点这个情况
                 var temp = currentSelectionUnit.currentPos;
                 temp.z = -1;
-                Debug.Log("same");
                 //OnFinishedUnitMove(currentSelectionUnit);
                 ClickTilePos(temp);
 
             }
         }
-
 
         /// <summary>
         /// 点击了该瓦片.
@@ -69,7 +71,6 @@ namespace MainSpace
         {
             if (currentSelectionUnit != null)
             {
-                Debug.Log(gameManager.IsLocalPlayerAround(currentSelectionUnit.managerKeyName) + "  " + tileMapManager.GetMoveToUnitAllow(_cellPos));
                 if (gameManager.IsLocalPlayerAround(currentSelectionUnit.managerKeyName) && tileMapManager.GetMoveToUnitAllow(_cellPos))
                 {
                     if (!currentSelectionUnit.isActionOver)
@@ -126,7 +127,9 @@ namespace MainSpace
             tileMapManager.HideCanMoveCorrelationGrid();
             tileMapManager.HideCommanderCircleGrid();
         }
+        #endregion
 
+        #region 指挥圈相关
         /// <summary>
         /// 触发指挥圈范围
         /// </summary>
@@ -175,17 +178,7 @@ namespace MainSpace
             cacheRangeUnit = null;
         }
 
-        /// <summary>
-        /// 输入中心点以及范围，返回方格内，活动单元的信息。
-        /// </summary>
-        /// <param name="_centerPos"></param>
-        /// <param name="_range"></param>
-        /// <returns></returns>
-        public ActivitiesUnit[] GetActivitiesUnit(Vector3Int _centerPos, int _range)
-        {
-            return UnitList.Where(x => _centerPos.Vector3IntRangeValue(x.currentPos) <= _range).ToArray();
-        }
-
+        #endregion
         /// <summary>
         /// 添加可行动单位
         /// </summary>
@@ -202,6 +195,17 @@ namespace MainSpace
             {
                 UnitList[UnitList.IndexOf(_unit)] = _unit;
             }
+        }
+
+        /// <summary>
+        /// 输入中心点以及范围，返回方格内，活动单元的信息。
+        /// </summary>
+        /// <param name="_centerPos"></param>
+        /// <param name="_range"></param>
+        /// <returns></returns>
+        public ActivitiesUnit[] GetActivitiesUnit(Vector3Int _centerPos, int _range)
+        {
+            return UnitList.Where(x => _centerPos.Vector3IntRangeValue(x.currentPos) <= _range).ToArray();
         }
 
         /// <summary>
@@ -223,6 +227,7 @@ namespace MainSpace
             foreach (var v in UnitList)
             {
                 v.UnitColorChange(false);
+                v.isActionOver = false;
             }
         }
 
@@ -234,51 +239,54 @@ namespace MainSpace
         public void UnitMoveTo(Vector3Int[] _posArray, ActivitiesUnit _unit)
         {
             StopAllCoroutines();
-            StartCoroutine(UnitMoveLerp(_posArray, _unit));
+            UnitMoveLerp(_posArray, _unit);
         }
         /// <summary>
         /// 控制单位移动
         /// </summary>
         /// <param name="_pos"></param>
         /// <param name="_unit"></param>
-        public void UnitMoveTo(Vector3Int _pos,ActivitiesUnit _unit)
+        public void UnitMoveTo(Vector3Int _pos, ActivitiesUnit _unit)
         {
             Vector3Int[] temp = new Vector3Int[] { _pos };
             UnitMoveTo(temp, _unit);
         }
 
-        private IEnumerator UnitMoveLerp(Vector3Int[] _posArray, ActivitiesUnit _unit)
+        private void UnitMoveLerp(Vector3Int[] _posArray, ActivitiesUnit _unit)
         {
-            WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
-            for (int i = 0; i < _posArray.Length; i++)
+            if (_posArray.Length == 1 && _posArray[0].Vector3IntRangeValue(_unit.currentPos) == 0)
             {
-                while (Vector3.Distance(_unit.transform.position, _posArray[i]) >= 0.05f)
-                {
-                    _unit.transform.position = Vector3.Lerp(_unit.transform.position, _posArray[i], 0.1f);
-                    yield return endOfFrame;
-                }
-
-                _unit.transform.position = _posArray[i];
+                UnitOnFinish(_unit);
+                return;
             }
-            Debug.Log("over");
+            dotweenSequence = DOTween.Sequence();
+            foreach (var forValue in _posArray)
+            {
+                dotweenSequence.Append(DOTween.To(() => _unit.transform.position, x => _unit.transform.position = x,
+                    forValue, 0.3f));
+            }
 
-            _unit.currentPos = _posArray[_posArray.Length - 1];
+            dotweenSequence.AppendCallback(() =>
+            {
+                _unit.currentPos = _posArray[_posArray.Length - 1];
 
+                UnitOnFinish(_unit);
+            });
+
+        }
+
+        private void UnitOnFinish(ActivitiesUnit _unit)
+        {
             // 玩家才会变灰.
-            if (true)
-            {
-                _unit.UnitColorChange(true);
-            }
+            _unit.UnitColorChange(LoadInfo.Instance.gameManager.GetCampData(_unit.managerKeyName).ctrlType == CtrlType.Player);
+            _unit.isActionOver = true;
 
             // 单位完成了移动。
             if (LoadInfo.Instance.gameManager.GetCampData(_unit.managerKeyName).ctrlType == CtrlType.Player)
             {
                 OnFinishedUnitMove(_unit);
             }
-
-
         }
-
 
 
         /// <summary>

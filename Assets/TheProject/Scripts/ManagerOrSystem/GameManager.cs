@@ -192,7 +192,6 @@ namespace MainSpace
                 }
                 else
                 {
-                    Debug.Log("???");
                     LoadInfo.Instance.gameCursor.isExecute = true;
                 }
             });

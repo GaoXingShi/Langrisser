@@ -36,8 +36,7 @@ namespace MainSpace
             foreach (var v in _commanderArray)
             {
                 TileSaveData[] commanderMovingData = sceneTileMapManager.CalculateMovingRange(v);
-
-                //v.MoveTo(commanderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1));
+                yield return new WaitForSeconds(1);
                 activitiesManager.UnitMoveTo(commanderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1),v);
 
                 yield return WaitMoveOn(v);
@@ -52,7 +51,6 @@ namespace MainSpace
                 }
             }
 
-            Debug.Log("Move Over ?");
             gameManager.FinishCurrentRoundTurn();
         }
 

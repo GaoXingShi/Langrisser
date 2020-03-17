@@ -264,8 +264,6 @@ namespace MainSpace.Grid
                     }
                 }
             }
-
-            Debug.Log(tileArray[height - 1, width - 1].tile);
         }
 
         private Vector3Int? GetUnitRangeSpacePos(Vector3Int _pos, int _range)
