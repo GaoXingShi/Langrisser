@@ -40,11 +40,11 @@ namespace Sense.BehaviourTree.Apply
             temp.managerKeyName = followCommander.managerKeyName;
 
             // sprite
-            temp.unitRenderSprite = data.mRenderSprite;
+            temp.activityConfig = data.activityConfig;
             temp.affiliationSprite = followCommander.GetCampData().affiliationSprite;
 
             // component
-            temp.mRendererComponent.sprite = data.mRenderSprite;
+            temp.PlayActivityAnim(true);
             temp.hpText.text = data.healthValue.ToString();
             temp.professionSprite.sprite = followCommander.GetCampData().affiliationSprite;
 

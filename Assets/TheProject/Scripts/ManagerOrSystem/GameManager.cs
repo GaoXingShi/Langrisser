@@ -80,8 +80,9 @@ namespace MainSpace
             roundValue = 1;
             currentRoundCampDataIndex = 0;
 
-            lerpValue = 0.35f;
+            lerpValue = 0;
             lerpSequence = DOTween.Sequence();
+            lerpSequence.AppendInterval(.4f);
             lerpSequence.Append(DOTween.To(() => lerpValue, x => lerpValue = x, 0.7f, 1));
             lerpSequence.SetLoops(-1, LoopType.Yoyo);
             Invoke(nameof(PlayGame), 0.3f);

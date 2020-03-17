@@ -14,21 +14,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soliderDataArray:
   - mType: 0
-    mRenderSprite: {fileID: 21300000, guid: c5ca000c3c11f77459bdd0ab0a26b360, type: 3}
+    activityConfig: {fileID: 11400000, guid: 8b1f6576033d5d14780dc82ad59c8980, type: 2}
     attackValue: 20
     defenseValue: 18
     moveValue: 5
     healthValue: 100
     magicValue: 0
   - mType: 1
-    mRenderSprite: {fileID: 21300000, guid: 9c8f4d08f7c20bc4785ae18fda10d76a, type: 3}
-    attackValue: 28
-    defenseValue: 26
+    activityConfig: {fileID: 11400000, guid: 127f30774fd47da4f95591c9d4ba9a41, type: 2}
+    attackValue: 25
+    defenseValue: 19
     moveValue: 5
     healthValue: 100
     magicValue: 0
   - mType: 2
-    mRenderSprite: {fileID: 21300000, guid: e89d12c9b0130164584bffde825591ad, type: 3}
+    activityConfig: {fileID: 11400000, guid: 9fb9ab4a5be7f62448d5588d1816d4a4, type: 2}
     attackValue: 23
     defenseValue: 16
     moveValue: 7

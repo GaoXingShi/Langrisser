@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MainSpace;
 using MainSpace.Activities;
+using MainSpace.ScriptableObject;
 using UnityEngine;
 
 namespace Sense.BehaviourTree.Apply
@@ -10,8 +11,8 @@ namespace Sense.BehaviourTree.Apply
     {
         public CommanderUnit template;
 
-        public Sprite unitFaceSprite, unitRenderSprite;
-
+        public Sprite unitFaceSprite;
+        public ActivityConfig activityConfig;
         public string unitName , managerKeyName;
         public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
@@ -58,13 +59,15 @@ namespace Sense.BehaviourTree.Apply
             temp.affiliationName = campData.campType.ToString();
             temp.managerKeyName = managerKeyName;
 
+            // scriptable
+            temp.activityConfig = activityConfig;
+
             // sprite
             temp.unitFaceSprite = unitFaceSprite;
-            temp.unitRenderSprite = unitRenderSprite;
             temp.affiliationSprite = campData.affiliationSprite;
 
             // component
-            temp.mRendererComponent.sprite = unitRenderSprite;
+            temp.PlayActivityAnim(true);
             temp.hpText.text = healthValue.ToString();
             temp.professionSprite.sprite = campData.affiliationSprite;
 

@@ -1086,7 +1086,7 @@ MonoBehaviour:
   template: {fileID: 7278477648041135556, guid: 0e2c806ed11570040aabac73a033db72,
     type: 3}
   unitFaceSprite: {fileID: 21300000, guid: 96b692da4ee80264788106d2f8204040, type: 3}
-  unitRenderSprite: {fileID: 21300000, guid: 44345c766eef49b4290fbff1ef41bb56, type: 3}
+  activityConfig: {fileID: 11400000, guid: 6f6dd70ab24dd8a459dc7c004bec331a, type: 2}
   unitName: "\u674E\u56DB"
   managerKeyName: $Friend
   roleType: 0
@@ -3999,7 +3999,7 @@ MonoBehaviour:
   template: {fileID: 7278477648041135556, guid: 0e2c806ed11570040aabac73a033db72,
     type: 3}
   unitFaceSprite: {fileID: 21300000, guid: 96b692da4ee80264788106d2f8204040, type: 3}
-  unitRenderSprite: {fileID: 21300000, guid: 44345c766eef49b4290fbff1ef41bb56, type: 3}
+  activityConfig: {fileID: 11400000, guid: 6f6dd70ab24dd8a459dc7c004bec331a, type: 2}
   unitName: "\u5F20\u4E09"
   managerKeyName: $Enemy
   roleType: 0
@@ -4454,7 +4454,7 @@ MonoBehaviour:
   template: {fileID: 7278477648041135556, guid: 0e2c806ed11570040aabac73a033db72,
     type: 3}
   unitFaceSprite: {fileID: 21300000, guid: 992e293390a23e1449ab3a084fa78c29, type: 3}
-  unitRenderSprite: {fileID: 21300000, guid: e9b81115a767fde4d8cdbbb07793cb44, type: 3}
+  activityConfig: {fileID: 11400000, guid: 7c1a2e2546d280448a2102d4bd4cc411, type: 2}
   unitName: "\u9093\u5EB7"
   managerKeyName: $Player
   roleType: 0
@@ -16569,7 +16569,7 @@ MonoBehaviour:
   template: {fileID: 7278477648041135556, guid: 0e2c806ed11570040aabac73a033db72,
     type: 3}
   unitFaceSprite: {fileID: 21300000, guid: 96b692da4ee80264788106d2f8204040, type: 3}
-  unitRenderSprite: {fileID: 21300000, guid: 44345c766eef49b4290fbff1ef41bb56, type: 3}
+  activityConfig: {fileID: 11400000, guid: 6f6dd70ab24dd8a459dc7c004bec331a, type: 2}
   unitName: "\u79D1\u8D5B\u6602"
   managerKeyName: $Player
   roleType: 0

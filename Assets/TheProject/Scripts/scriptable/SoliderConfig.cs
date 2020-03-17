@@ -13,7 +13,7 @@ namespace MainSpace.ScriptableObject
         public struct SoliderData
         {
             public SoliderType mType;
-            public Sprite mRenderSprite;
+            public ActivityConfig activityConfig;
             public int attackValue, defenseValue, moveValue, healthValue, magicValue;
         }
 

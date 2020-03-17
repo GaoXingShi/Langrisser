@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using MainSpace.ScriptableObject;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ namespace MainSpace.Activities
 {
     public enum SoliderType
     {
-        步兵, 重装步兵,
+        步兵, 狂战士,
         骑兵, 重装骑兵,
         枪兵, 重装枪兵,
     }
@@ -25,7 +26,8 @@ namespace MainSpace.Activities
     {
         public Vector3Int currentPos;
         public int[] healthValue, magicValue, moveValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
-        public Sprite unitRenderSprite, affiliationSprite;
+        public ActivityConfig activityConfig;
+        public Sprite affiliationSprite;
         public string affiliationName, managerKeyName;
 
         public bool isActionOver = false;                       // 是否结束行动
@@ -75,50 +77,10 @@ namespace MainSpace.Activities
             //isActionOver = _isGray;
         }
 
-        //public void MoveTo(Vector3Int[] _posArray)
-        //{
-        //    StopAllCoroutines();
-        //    StartCoroutine(MoveLerp(_posArray));
-        //}
-
-        //public void MoveTo(Vector3Int _pos)
-        //{
-        //    Vector3Int[] temp = new Vector3Int[] { _pos };
-        //    MoveTo(temp);
-        //}
-
-
-        //private IEnumerator MoveLerp(Vector3Int[] _posArray)
-        //{
-        //    WaitForEndOfFrame endOfFrame = new WaitForEndOfFrame();
-        //    for (int i = 0; i < _posArray.Length; i++)
-        //    {
-        //        while (Vector3.Distance(transform.position, _posArray[i]) >= 0.05f)
-        //        {
-        //            transform.position = Vector3.Lerp(transform.position, _posArray[i], 0.1f);
-        //            yield return endOfFrame;
-        //        }
-
-        //        transform.position = _posArray[i];
-        //    }
-        //    Debug.Log("over");
-
-        //    currentPos = _posArray[_posArray.Length - 1];
-
-        //    // 玩家才会变灰.
-        //    if (true)
-        //    {
-        //        UnitColorChange(true);
-        //    }
-
-        //    // 单位完成了移动。
-        //    if (LoadInfo.Instance.gameManager.GetCampData(managerKeyName).ctrlType == CtrlType.Player)
-        //    {
-        //        manager.OnFinishedUnitMove(this);
-        //    }
-
-
-        //}
+        public void PlayActivityAnim(bool _enabled)
+        {
+            mRendererComponent.sprite = _enabled ? activityConfig.normalSprite : activityConfig.showOffSprite;
+        }
 
     }
 
