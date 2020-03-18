@@ -30,7 +30,7 @@ namespace MainSpace.Activities
         public Sprite affiliationSprite;
         public string affiliationName, managerKeyName;
 
-        public bool isActionOver = false;                       // 是否结束行动
+        public bool isActionOver = false,isPlayingAnim = false;                       // 是否结束行动 , 是否播放动画
         public ActivitiesManager manager;
 
         public SpriteRenderer mRendererComponent;
@@ -45,6 +45,7 @@ namespace MainSpace.Activities
         {
             mMaterial = GetComponentInChildren<SpriteRenderer>().material;
             gameManager = LoadInfo.Instance.gameManager;
+            isPlayingAnim = false;
         }
 
         public virtual void NodeInitData()
@@ -61,6 +62,15 @@ namespace MainSpace.Activities
         private void Update()
         {
             playerColorSprite.transform.localScale = gameManager.lerpVector3Value;
+
+            if (isPlayingAnim)
+            {
+                mRendererComponent.sprite = gameManager.lerpValue <= 0.7f / 2 ? activityConfig.normalSprite : activityConfig.showOffSprite;
+            }
+            else
+            {
+                mRendererComponent.sprite = activityConfig.normalSprite;
+            }
         }
 
 
@@ -79,7 +89,7 @@ namespace MainSpace.Activities
 
         public void PlayActivityAnim(bool _enabled)
         {
-            mRendererComponent.sprite = _enabled ? activityConfig.normalSprite : activityConfig.showOffSprite;
+            isPlayingAnim = _enabled;
         }
 
     }

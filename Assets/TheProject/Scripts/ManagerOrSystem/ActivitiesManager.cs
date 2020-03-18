@@ -149,6 +149,12 @@ namespace MainSpace
 
             tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
 
+            _unit.PlayActivityAnim(true);
+            foreach (var v in _unit.GetSoliderUnitArray())
+            {
+                v.PlayActivityAnim(true);
+            }
+
             cacheRangeUnit = _unit;
         }
 
@@ -175,7 +181,16 @@ namespace MainSpace
                 tileMapManager.ColorValueChange(false);
             }
 
-            cacheRangeUnit = null;
+            if (cacheRangeUnit != null)
+            {
+                cacheRangeUnit.PlayActivityAnim(false);
+                foreach (var v in cacheRangeUnit.GetSoliderUnitArray())
+                {
+                    v.PlayActivityAnim(false);
+                }
+
+                cacheRangeUnit = null;
+            }
         }
 
         #endregion

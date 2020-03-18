@@ -44,7 +44,8 @@ namespace Sense.BehaviourTree.Apply
             temp.affiliationSprite = followCommander.GetCampData().affiliationSprite;
 
             // component
-            temp.PlayActivityAnim(true);
+            temp.PlayActivityAnim(false);
+            temp.mRendererComponent.sprite = data.activityConfig.normalSprite;
             temp.hpText.text = data.healthValue.ToString();
             temp.professionSprite.sprite = followCommander.GetCampData().affiliationSprite;
 

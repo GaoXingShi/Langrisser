@@ -55,6 +55,7 @@ namespace MainSpace
         public CampData[] campData;
         public float lerpValue;
         public Vector3 lerpVector3Value => new Vector3(lerpValue, lerpValue, lerpValue);
+        public int lerpIndexValue = 0;
         private int currentRoundCampDataIndex;
         private AISystem aiSystem;
         private ActivitiesManager activitiesManager;
@@ -63,7 +64,7 @@ namespace MainSpace
         private CanvasGroup group;
         private Text turnText, playerText;
         private Image turnImage;
-        private Sequence doTweenSequence, lerpSequence;
+        private Sequence doTweenSequence, lerpSequence , lerpIndexSequence;
 
         private void Start()
         {
@@ -85,6 +86,13 @@ namespace MainSpace
             lerpSequence.AppendInterval(.4f);
             lerpSequence.Append(DOTween.To(() => lerpValue, x => lerpValue = x, 0.7f, 1));
             lerpSequence.SetLoops(-1, LoopType.Yoyo);
+
+            lerpIndexSequence = DOTween.Sequence();
+            lerpSequence = DOTween.Sequence();
+            lerpSequence.Append(DOTween.To(() => lerpIndexValue, x => lerpIndexValue = x, 1, 1));
+            lerpSequence.SetLoops(-1, LoopType.Yoyo);
+
+
             Invoke(nameof(PlayGame), 0.3f);
         }
 
