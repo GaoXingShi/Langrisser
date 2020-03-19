@@ -82,26 +82,22 @@ namespace MainSpace
                     else
                     {
                         // 相当于移动完了的情况。
-                        sceneWindowsCanvas.ClearUIInfo();
-
-                        tileMapManager.HideCanMoveCorrelationGrid();
-                        tileMapManager.HideCommanderCircleGrid();
-
+                        OverCurrentMoving();
                     }
                 }
                 else
                 {
-                    sceneWindowsCanvas.ClearUIInfo();
+                    // 不能允许移动到这里，并且取消本次移动。
+                    OverCurrentMoving();
 
-                    tileMapManager.HideCanMoveCorrelationGrid();
-                    tileMapManager.HideCommanderCircleGrid();
-                    SetAllActivityAnim(false);
                 }
 
                 currentSelectionUnit = null;
             }
 
         }
+
+
 
         /// <summary>
         /// 控制单位移动
@@ -339,7 +335,14 @@ namespace MainSpace
                 OnFinishedUnitMove(_unit);
             }
         }
-
+        private void OverCurrentMoving()
+        {
+            sceneWindowsCanvas.ClearUIInfo();
+            tileMapManager.HideCanMoveCorrelationGrid();
+            tileMapManager.HideCommanderCircleGrid();
+            SetAllActivityAnim(false);
+            LoadInfo.Instance.gameCursor.isClickUnit = false;
+        }
         /// <summary>
         /// 获取该_keyName 阵营中所有的指挥官(通过指挥官可以获得所有士兵)
         /// </summary>
