@@ -82,13 +82,20 @@ namespace MainSpace
                     else
                     {
                         // 相当于移动完了的情况。
-                        OnFinishedUnitMove(currentSelectionUnit);
-                    }
+                        sceneWindowsCanvas.ClearUIInfo();
 
+                        tileMapManager.HideCanMoveCorrelationGrid();
+                        tileMapManager.HideCommanderCircleGrid();
+
+                    }
                 }
                 else
                 {
-                    OnFinishedUnitMove(currentSelectionUnit);
+                    sceneWindowsCanvas.ClearUIInfo();
+
+                    tileMapManager.HideCanMoveCorrelationGrid();
+                    tileMapManager.HideCommanderCircleGrid();
+                    SetAllActivityAnim(false);
                 }
 
                 currentSelectionUnit = null;
@@ -106,7 +113,7 @@ namespace MainSpace
             StopAllCoroutines();
             UnitMoveLerp(_posArray, _unit);
         }
-     
+
         /// <summary>
         /// 控制单位移动
         /// </summary>
@@ -155,9 +162,11 @@ namespace MainSpace
             {
                 tileMapManager.HideCommanderCircleGrid();
 
-                CommanderUnit temp = (CommanderUnit) _unit;
+                CommanderUnit temp = (CommanderUnit)_unit;
                 tileMapManager.ShowCommanderCircleGrid(temp.currentPos, temp.commandRangeValue[0], temp.campColor);
             }
+
+            LoadInfo.Instance.gameCursor.isClickUnit = false;
         }
         #endregion
 
@@ -285,7 +294,7 @@ namespace MainSpace
         }
 
 
-        private void SetActivityAnim(CommanderUnit _unit,bool _enabled)
+        private void SetActivityAnim(CommanderUnit _unit, bool _enabled)
         {
             _unit.PlayActivityAnim(_enabled);
             foreach (var v in _unit.GetSoliderUnitArray())

@@ -17,7 +17,8 @@ namespace MainSpace
         public UnityEngine.Grid grid;
 
         [HideInInspector]
-        public bool isExecute = true;
+        public bool isExecute = true, isClickUnit = false;
+
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
         private ActivitiesUnit cacheHitRaycastUnit;
@@ -53,7 +54,11 @@ namespace MainSpace
                         if (Input.GetMouseButtonDown(0))
                         {
                             // 告诉士兵管理系统
-                            activitiesManager.SelectionUnit(unit);
+                            if (!isClickUnit)
+                            {
+                                activitiesManager.SelectionUnit(unit);
+                                isClickUnit = !isClickUnit;
+                            }
                         }
                         else
                         {
@@ -105,6 +110,10 @@ namespace MainSpace
                         // 则ui进入初始化界面
                         LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
                         //CommanderRangeUnit(null);
+                    }
+                    else
+                    {
+                        isClickUnit = false;
                     }
                 }
             }

@@ -36,10 +36,12 @@ namespace MainSpace
             foreach (var v in _commanderArray)
             {
                 TileSaveData[] commanderMovingData = sceneTileMapManager.CalculateMovingRange(v);
-                yield return new WaitForSeconds(1);
+                activitiesManager.EnterCommanderOrSoliderUnit(v);
+                yield return new WaitForSeconds(2);
                 activitiesManager.UnitMoveTo(commanderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1),v);
-
+                activitiesManager.ExitCommanderOrSoliderUnit();
                 yield return WaitMoveOn(v);
+                activitiesManager.EnterCommanderOrSoliderUnit(v);
 
                 foreach (var vv in v.GetSoliderUnitArray())
                 {
@@ -48,6 +50,8 @@ namespace MainSpace
 
                     yield return WaitMoveOn(vv);
                 }
+                activitiesManager.ExitCommanderOrSoliderUnit();
+
             }
 
             gameManager.FinishCurrentRoundTurn();
