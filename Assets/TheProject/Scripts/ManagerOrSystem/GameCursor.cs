@@ -104,8 +104,7 @@ namespace MainSpace
                     {
                         // 则ui进入初始化界面
                         LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
-                        CommanderRangeUnit(null);
-                        //activitiesManager.SetAllActivityAnim(false);
+                        //CommanderRangeUnit(null);
                     }
                 }
             }
