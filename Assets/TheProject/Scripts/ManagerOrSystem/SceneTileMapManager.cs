@@ -35,7 +35,7 @@ namespace MainSpace.Grid
         public Tilemap supplement;
         public Transform activitiesAllowUnitRoot;
 
-
+        [Header("Data")]
         public float colorAValue = 0;
         // 边界数目
         private int width, height;
@@ -44,40 +44,23 @@ namespace MainSpace.Grid
         private readonly List<TileSaveData> tileList = new List<TileSaveData>();
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
-        private bool isLerpUp,lerpStart;
-        private const int MAXAVALUE = 120,MINAVALUE = 10;
-        private const float LERPSPEED = 0.1f;
+        private bool lerpStart;
         void Start()
         {
             InitCalculateValue();
             activitiesManager = LoadInfo.Instance.activitiesManager;
+
+            HideCommanderCircleGrid();
         }
 
-        void FixedUpdate()
+        void Update()
         {
             if (!lerpStart)
             {
                 return;
             }
+            colorAValue = LoadInfo.Instance.gameManager.lerpIntValue * 1.2f;
 
-            if (isLerpUp)
-            {
-                colorAValue = Mathf.Lerp(colorAValue, MAXAVALUE, LERPSPEED);
-                if (Mathf.Abs(colorAValue - MAXAVALUE) < LERPSPEED * 20)
-                {
-                    colorAValue = MAXAVALUE;
-                    isLerpUp = !isLerpUp;
-                }
-            }
-            else
-            {
-                colorAValue = Mathf.Lerp(colorAValue, MINAVALUE, LERPSPEED);
-                if (Mathf.Abs(colorAValue - MINAVALUE) < LERPSPEED * 20)
-                {
-                    colorAValue = MINAVALUE;
-                    isLerpUp = !isLerpUp;
-                }
-            }
         }
 
         /// <summary>
@@ -207,19 +190,19 @@ namespace MainSpace.Grid
         }
 
         /// <summary>
-        /// 控制FixedUpdate运行的方法 ,更改指挥圈起始颜色
+        /// 控制指挥圈状态
         /// </summary>
         /// <param name="_enabled"></param>
-        public void ColorValueChange(bool _enabled)
+        public void SetColorValueState(bool _enabled)
         {
-            if (_enabled == lerpStart)
-            {
-                return;
-            }
+            //if (_enabled.Equals(lerpStart))
+            //{
+            //    return;
+            //}
 
             lerpStart = _enabled;
-            isLerpUp = true;
-            colorAValue = MINAVALUE;
+            //isLerpUp = true;
+            //colorAValue = MINAVALUE;
         }
 
         private void InitCalculateValue()

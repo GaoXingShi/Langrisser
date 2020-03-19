@@ -21,12 +21,14 @@ namespace MainSpace
         private SceneWindowsCanvas sceneWindowsCanvas;
         private GameManager gameManager;
         private Sequence dotweenSequence;
+
         private void Start()
         {
             DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
             tileMapManager = LoadInfo.Instance.sceneTileMapManager;
             sceneWindowsCanvas = LoadInfo.Instance.sceneWindowsCanvas;
             gameManager = LoadInfo.Instance.gameManager;
+
         }
         #region 移动相关
         /// <summary>
@@ -57,7 +59,6 @@ namespace MainSpace
                 // 点击了原点这个情况
                 var temp = currentSelectionUnit.currentPos;
                 temp.z = -1;
-                //OnFinishedUnitMove(currentSelectionUnit);
                 ClickTilePos(temp);
 
             }
@@ -96,6 +97,28 @@ namespace MainSpace
         }
 
         /// <summary>
+        /// 控制单位移动
+        /// </summary>
+        /// <param name="_posArray"></param>
+        /// <param name="_unit"></param>
+        public void UnitMoveTo(Vector3Int[] _posArray, ActivitiesUnit _unit)
+        {
+            StopAllCoroutines();
+            UnitMoveLerp(_posArray, _unit);
+        }
+     
+        /// <summary>
+        /// 控制单位移动
+        /// </summary>
+        /// <param name="_pos"></param>
+        /// <param name="_unit"></param>
+        public void UnitMoveTo(Vector3Int _pos, ActivitiesUnit _unit)
+        {
+            Vector3Int[] temp = new Vector3Int[] { _pos };
+            UnitMoveTo(temp, _unit);
+        }
+
+        /// <summary>
         /// 取消可移动单位的移动操作。
         /// </summary>
         public bool CancelTileSelection()
@@ -103,8 +126,10 @@ namespace MainSpace
             if (currentSelectionUnit)
             {
                 OnFinishedUnitMove(currentSelectionUnit);
+                tileMapManager.HideCommanderCircleGrid();
                 currentSelectionUnit = null;
                 tileMapManager.HideCanMoveCorrelationGrid();
+                SetAllActivityAnim(false);
                 return true;
             }
             else
@@ -125,7 +150,14 @@ namespace MainSpace
                 sceneWindowsCanvas.ClearUIInfo();
 
             tileMapManager.HideCanMoveCorrelationGrid();
-            tileMapManager.HideCommanderCircleGrid();
+
+            if (_unit.GetType() == typeof(CommanderUnit))
+            {
+                tileMapManager.HideCommanderCircleGrid();
+
+                CommanderUnit temp = (CommanderUnit) _unit;
+                tileMapManager.ShowCommanderCircleGrid(temp.currentPos, temp.commandRangeValue[0], temp.campColor);
+            }
         }
         #endregion
 
@@ -136,32 +168,24 @@ namespace MainSpace
         /// <param name="_unit"></param>
         public void EnterCommanderOrSoliderUnit(CommanderUnit _unit)
         {
-
-            if (_unit != cacheRangeUnit /*|| cacheRangeUnit == null*/)
+            if (_unit != cacheRangeUnit && cacheRangeUnit != null)
             {
                 tileMapManager.HideCommanderCircleGrid();
-            }
-            else
-            {
-                tileMapManager.ColorValueChange(true);
-                return;
+                SetActivityAnim(cacheRangeUnit, false);
             }
 
+            tileMapManager.SetColorValueState(true);
             tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
+            SetActivityAnim(_unit, true);
 
-            _unit.PlayActivityAnim(true);
-            foreach (var v in _unit.GetSoliderUnitArray())
-            {
-                v.PlayActivityAnim(true);
-            }
-
-            cacheRangeUnit = _unit;
+            if (currentSelectionUnit == null)
+                cacheRangeUnit = _unit;
         }
 
         /// <summary>
         /// 退出指挥圈范围
         /// </summary>
-        public void NoneActivitiesUnit()
+        public void ExitCommanderOrSoliderUnit()
         {
             tileMapManager.HideCommanderCircleGrid();
 
@@ -175,22 +199,24 @@ namespace MainSpace
                 {
                     EnterCommanderOrSoliderUnit((currentSelectionUnit as SoliderUnit)?.mineCommanderUnit);
                 }
+
+                SetAllActivityAnim(false);
+                if (cacheRangeUnit != null)
+                {
+                    SetActivityAnim(cacheRangeUnit, true);
+                }
             }
             else
             {
-                tileMapManager.ColorValueChange(false);
-            }
-
-            if (cacheRangeUnit != null)
-            {
-                cacheRangeUnit.PlayActivityAnim(false);
-                foreach (var v in cacheRangeUnit.GetSoliderUnitArray())
+                if (cacheRangeUnit != null)
                 {
-                    v.PlayActivityAnim(false);
+                    SetActivityAnim(cacheRangeUnit, false);
+                    cacheRangeUnit = null;
                 }
 
-                cacheRangeUnit = null;
+                tileMapManager.SetColorValueState(false);
             }
+
         }
 
         #endregion
@@ -247,25 +273,27 @@ namespace MainSpace
         }
 
         /// <summary>
-        /// 控制单位移动
+        /// 设置所有人物动画
         /// </summary>
-        /// <param name="_posArray"></param>
-        /// <param name="_unit"></param>
-        public void UnitMoveTo(Vector3Int[] _posArray, ActivitiesUnit _unit)
+        /// <param name="_enabled"></param>
+        public void SetAllActivityAnim(bool _enabled)
         {
-            StopAllCoroutines();
-            UnitMoveLerp(_posArray, _unit);
+            foreach (var v in UnitList.Where(x => x.isPlayingAnim))
+            {
+                v.PlayActivityAnim(_enabled);
+            }
         }
-        /// <summary>
-        /// 控制单位移动
-        /// </summary>
-        /// <param name="_pos"></param>
-        /// <param name="_unit"></param>
-        public void UnitMoveTo(Vector3Int _pos, ActivitiesUnit _unit)
+
+
+        private void SetActivityAnim(CommanderUnit _unit,bool _enabled)
         {
-            Vector3Int[] temp = new Vector3Int[] { _pos };
-            UnitMoveTo(temp, _unit);
+            _unit.PlayActivityAnim(_enabled);
+            foreach (var v in _unit.GetSoliderUnitArray())
+            {
+                v.PlayActivityAnim(_enabled);
+            }
         }
+
 
         private void UnitMoveLerp(Vector3Int[] _posArray, ActivitiesUnit _unit)
         {
@@ -278,7 +306,7 @@ namespace MainSpace
             foreach (var forValue in _posArray)
             {
                 dotweenSequence.Append(DOTween.To(() => _unit.transform.position, x => _unit.transform.position = x,
-                    forValue, 0.3f));
+                    forValue, 0.4f));
             }
 
             dotweenSequence.AppendCallback(() =>
@@ -302,7 +330,6 @@ namespace MainSpace
                 OnFinishedUnitMove(_unit);
             }
         }
-
 
         /// <summary>
         /// 获取该_keyName 阵营中所有的指挥官(通过指挥官可以获得所有士兵)

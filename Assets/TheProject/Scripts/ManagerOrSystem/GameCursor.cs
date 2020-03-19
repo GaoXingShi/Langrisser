@@ -20,6 +20,7 @@ namespace MainSpace
         public bool isExecute = true;
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
+        private ActivitiesUnit cacheHitRaycastUnit;
         void Start()
         {
             cine = ((CinemachineFramingTransposer)cinemachine.GetComponentPipeline()[0]);
@@ -46,7 +47,7 @@ namespace MainSpace
                 {
                     bool gridPlayerLayer = hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer");
                     ActivitiesUnit unit = hit2D.transform.GetComponent<ActivitiesUnit>();
-                    
+
                     if (gridPlayerLayer)
                     {
                         if (Input.GetMouseButtonDown(0))
@@ -56,7 +57,17 @@ namespace MainSpace
                         }
                         else
                         {
-                            CommanderRangeUnit(unit);
+                            // Touch Unit 
+
+                            if (cacheHitRaycastUnit != null && cacheHitRaycastUnit != unit)
+                            {
+                                CommanderRangeUnit(null);
+                            }
+
+                            if (cacheHitRaycastUnit == null || cacheHitRaycastUnit != unit)
+                            {
+                                CommanderRangeUnit(unit);
+                            }
                         }
                     }
                     else
@@ -68,15 +79,22 @@ namespace MainSpace
                         }
                         else
                         {
-                            // 通知现在没点到士兵
-                            CommanderRangeUnit(null);
+                            // Exit Unit
+                            if (cacheHitRaycastUnit != null)
+                            {
+                                CommanderRangeUnit(null);
+                            }
                         }
                     }
+
                 }
                 else
                 {
                     // 通知现在没点到士兵
-                    CommanderRangeUnit(null);
+                    if (cacheHitRaycastUnit != null)
+                    {
+                        CommanderRangeUnit(null);
+                    }
                 }
 
 
@@ -86,6 +104,8 @@ namespace MainSpace
                     {
                         // 则ui进入初始化界面
                         LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
+                        CommanderRangeUnit(null);
+                        //activitiesManager.SetAllActivityAnim(false);
                     }
                 }
             }
@@ -97,9 +117,11 @@ namespace MainSpace
         /// <param name="_unit"></param>
         private void CommanderRangeUnit(ActivitiesUnit _unit)
         {
+            cacheHitRaycastUnit = _unit;
+
             if (_unit == null)
             {
-                activitiesManager.NoneActivitiesUnit();
+                activitiesManager.ExitCommanderOrSoliderUnit();
                 return;
             }
 

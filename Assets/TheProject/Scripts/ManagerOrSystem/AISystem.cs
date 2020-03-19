@@ -44,7 +44,6 @@ namespace MainSpace
                 foreach (var vv in v.GetSoliderUnitArray())
                 {
                     TileSaveData[] soliderMovingData = sceneTileMapManager.CalculateMovingRange(vv);
-                    //vv.MoveTo(soliderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1));
                     activitiesManager.UnitMoveTo(soliderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1), vv);
 
                     yield return WaitMoveOn(vv);

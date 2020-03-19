@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using MainSpace.ScriptableObject;
+﻿using MainSpace.ScriptableObject;
 using UnityEngine;
-using UnityEngine.UI;
 
 
 namespace MainSpace.Activities
@@ -61,11 +58,11 @@ namespace MainSpace.Activities
 
         private void Update()
         {
-            playerColorSprite.transform.localScale = gameManager.lerpVector3Value;
+            playerColorSprite.transform.localScale = gameManager.lerpVector3Value * 0.7f;
 
-            if (isPlayingAnim)
+            if (isPlayingAnim && !isActionOver)
             {
-                mRendererComponent.sprite = gameManager.lerpValue <= 0.7f / 2 ? activityConfig.normalSprite : activityConfig.showOffSprite;
+                mRendererComponent.sprite = gameManager.lerpIntValue <= 50 ? activityConfig.normalSprite : activityConfig.showOffSprite;
             }
             else
             {
@@ -84,7 +81,6 @@ namespace MainSpace.Activities
         public void UnitColorChange(bool _isGray)
         {
             mMaterial.SetFloat("GrayLone", _isGray ? 1 : 0);
-            //isActionOver = _isGray;
         }
 
         public void PlayActivityAnim(bool _enabled)

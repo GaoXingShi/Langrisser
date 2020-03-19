@@ -53,9 +53,11 @@ namespace MainSpace
     {
         public int roundValue = 1;
         public CampData[] campData;
-        public float lerpValue;
+        public float lerpValue { get; set; }
+        // 人物动画切换速度、指挥权速度
+        public int lerpIntValue { get; set; }
+        // 人物左下角的阵营小星
         public Vector3 lerpVector3Value => new Vector3(lerpValue, lerpValue, lerpValue);
-        public int lerpIndexValue = 0;
         private int currentRoundCampDataIndex;
         private AISystem aiSystem;
         private ActivitiesManager activitiesManager;
@@ -84,13 +86,12 @@ namespace MainSpace
             lerpValue = 0;
             lerpSequence = DOTween.Sequence();
             lerpSequence.AppendInterval(.4f);
-            lerpSequence.Append(DOTween.To(() => lerpValue, x => lerpValue = x, 0.7f, 1));
+            lerpSequence.Append(DOTween.To(() => lerpValue, x => lerpValue = x, 1, 1));
             lerpSequence.SetLoops(-1, LoopType.Yoyo);
 
             lerpIndexSequence = DOTween.Sequence();
-            lerpSequence = DOTween.Sequence();
-            lerpSequence.Append(DOTween.To(() => lerpIndexValue, x => lerpIndexValue = x, 1, 1));
-            lerpSequence.SetLoops(-1, LoopType.Yoyo);
+            lerpIndexSequence.Append(DOTween.To(() => lerpIntValue, x => lerpIntValue = x, 100, .75f));
+            lerpIndexSequence.SetLoops(-1, LoopType.Yoyo);
 
 
             Invoke(nameof(PlayGame), 0.3f);
