@@ -27,7 +27,7 @@ namespace Sense.BehaviourTree.Apply
 
             temp.NodeInitData();
 
-            SoliderConfig.SoliderData data = soliderConfig.soliderDataArray.FirstOrDefault(x => x.mType == soliderType);
+            SoliderConfig.SoliderData data = soliderConfig.soliderDataArray.FirstOrDefault(x => x.soliderType == soliderType);
             
             // int[]
             temp.SetIntArrayData(ref temp.healthValue, data.healthValue);

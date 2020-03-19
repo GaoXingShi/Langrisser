@@ -11,6 +11,17 @@ namespace MainSpace.Activities
         枪兵, 重装枪兵,
     }
 
+    public enum TerrainActionType
+    {
+        步行,
+        骑行,
+        飞行,
+        水行,
+        步行幽灵,       // 无视地形但不能无视敌方士兵 可进入建筑物构建内
+        飞行幽灵,
+        瞬行,         // 无视地形与敌方士兵 但不能进入建筑物构建内或小山内
+    }
+
     public enum RoleType
     {
         战士, 兵长, 领主, 步兵统帅, 将军,
