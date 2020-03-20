@@ -19,7 +19,8 @@ namespace MainSpace.Activities
         水行,
         步行幽灵,       // 无视地形但不能无视敌方士兵 可进入建筑物构建内
         飞行幽灵,
-        瞬行,         // 无视地形与敌方士兵 但不能进入建筑物构建内或小山内
+        瞬行,         // 无视地形与敌方士兵 但不能停留在建筑物构建内或小山内
+
     }
 
     public enum RoleType
@@ -35,6 +36,7 @@ namespace MainSpace.Activities
         public Vector3Int currentPos;
         public int[] healthValue, magicValue, moveValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
         public ActivityConfig activityConfig;
+        public TerrainActionType movingType;
         public Sprite affiliationSprite;
         public string affiliationName, managerKeyName;
 

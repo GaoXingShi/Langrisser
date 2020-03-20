@@ -75,6 +75,7 @@ namespace Sense.BehaviourTree.Apply
             // enum
             temp.roleTpe = roleType;
             temp.troopsType = campData.troopType;
+            temp.movingType = activityConfig.movingType;
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);

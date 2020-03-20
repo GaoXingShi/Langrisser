@@ -12,6 +12,7 @@ namespace Sense.BehaviourTree.Apply
     {
         public SoliderUnit template;
         public SoliderType soliderType;
+        //public TerrainActionType movingType;
         public SoliderConfig soliderConfig;
         public CreateCommanderUnitNode followCommander;
         // 王国 位置 跟随指挥官
@@ -51,6 +52,8 @@ namespace Sense.BehaviourTree.Apply
 
             // enum
             temp.soliderType = soliderType;
+            temp.movingType = data.activityConfig.movingType;
+
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(followCommander.showPos);
             calculateValue.z = -1;
