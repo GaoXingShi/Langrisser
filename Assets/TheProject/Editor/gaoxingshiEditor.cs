@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 
 public class gaoxingshiEditor : Editor
 {
-    [MenuItem("Tools/将选中的AnimTile添加选中的roleTile中")]
+    [MenuItem("Tools/GaoXingShiEditor/将选中的AnimTile添加选中的roleTile中")]
     public static void EditorMethod1()
     {
         var selections = Selection.objects;
@@ -24,4 +24,13 @@ public class gaoxingshiEditor : Editor
         }
 
     }
+
+    [MenuItem("Tools/GaoXingShiEditor/将选中的AnimTile的所有Sprite选中")]
+    public static void EditorMethod2()
+    {
+        var selection = UnityEditor.Selection.activeObject as AnimatedTile;
+        Selection.objects = selection.m_AnimatedSprites;
+
+    }
+
 }

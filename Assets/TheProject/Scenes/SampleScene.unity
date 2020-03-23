@@ -4407,6 +4407,7 @@ MonoBehaviour:
   ground: {fileID: 1675228029}
   supplement: {fileID: 770702960}
   activitiesAllowUnitRoot: {fileID: 1627261326}
+  environmentConfig: {fileID: 11400000, guid: d23fa8ed1ae8f8e4cb810c09719b283c, type: 2}
   colorAValue: 0
 --- !u!1 &1086363771
 GameObject:
@@ -4463,7 +4464,7 @@ MonoBehaviour:
   levelSliderUpgradeValue: 130
   attackValue: 28
   defenseValue: 17
-  moveValue: 7
+  moveValue: 15
   healthValue: 100
   magicValue: 0
   commandRangeValue: 3
@@ -5152,7 +5153,6 @@ MonoBehaviour:
     campColorIndex: 4
     troopType: 1
     ctrlType: 1
-  lerpValue: 0
 --- !u!1 &1303583364
 GameObject:
   m_ObjectHideFlags: 0
@@ -6311,6 +6311,7 @@ MonoBehaviour:
   cinemachine: {fileID: 1052381756}
   grid: {fileID: 1070924769}
   isExecute: 1
+  isClickUnit: 0
 --- !u!4 &1594465679
 Transform:
   m_ObjectHideFlags: 0

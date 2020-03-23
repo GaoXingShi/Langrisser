@@ -2,23 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using MainSpace.Activities;
+using MainSpace.ScriptableObject;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityScript.Scripting.Pipeline;
 
 namespace MainSpace.Grid
 {
     [System.Serializable]
-    public struct TileSaveData
+    public class TileSaveData
     {
         public TileBase tile;                           // 瓦片信息
+        public Sprite sprite;                           // sprite信息
         public Vector3Int widthHeighValue;              // 瓦片坐标
         public AllowUnitInfo activitiesAllowUnit;      // 坐标位置的可移动方块
-
-        public void InfoEntry(TileBase _tile, Vector3Int _widthHeigh, AllowUnitInfo _activitiesAllowUnit)
+        public int aSont;
+        public void InfoEntry(TileBase _tile, Sprite _sprite, Vector3Int _widthHeigh, AllowUnitInfo _activitiesAllowUnit)
         {
             tile = _tile;
+            sprite = _sprite;
             widthHeighValue = _widthHeigh;
             activitiesAllowUnit = _activitiesAllowUnit;
+            aSont = -1;
+        }
+
+        public void SetASount(int _aSont)
+        {
+            this.aSont = _aSont;
         }
     }
 
@@ -34,6 +44,7 @@ namespace MainSpace.Grid
         public Tilemap ground;
         public Tilemap supplement;
         public Transform activitiesAllowUnitRoot;
+        public EnvironmentConfig environmentConfig;
 
         [Header("Data")]
         public float colorAValue = 0;
@@ -41,7 +52,7 @@ namespace MainSpace.Grid
         private int width, height;
 
         private TileSaveData[,] tileArray;
-        private readonly List<TileSaveData> tileList = new List<TileSaveData>();
+        private /*readonly*/ List<TileSaveData> tileList = new List<TileSaveData>();
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
         private bool lerpStart;
@@ -50,6 +61,8 @@ namespace MainSpace.Grid
             InitCalculateValue();
             activitiesManager = LoadInfo.Instance.activitiesManager;
 
+            Debug.Log(GetSprite(Vector3Int.zero));
+            Debug.Log(GetSprite(Vector3Int.up));
             HideCommanderCircleGrid();
         }
 
@@ -71,13 +84,118 @@ namespace MainSpace.Grid
         public TileSaveData[] CalculateMovingRange(ActivitiesUnit _unit)
         {
             // 目前不计算障碍。
-            cacheSaveData = tileList
-                .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] && (!activitiesManager.GetUnitPosContains(x.widthHeighValue) || x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0))
-                .ToArray();
+            //cacheSaveData = tileList
+            //    .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] && (!activitiesManager.GetUnitPosContains(x.widthHeighValue) || x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0))
+            //    .ToArray();
 
-            
+            foreach (var v in tileList.Where(x => x.aSont != -1))
+            {
+                v.SetASount(-1);
+            }
+
+            for (int i = 0; i <= _unit.moveValue[0] + 1; i++)
+            {
+                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i).ToArray())
+                {
+                    if (v.aSont == -1)
+                    {
+                        v.SetASount(i);
+                    }
+                }
+            }
+
+            List<TileSaveData> cacheData = tileList.Where(x => x.aSont != -1).ToList();
+            List<Vector3Int> cacheDataVector3Int = cacheData.Select(x => x.widthHeighValue).ToList();
+            List<Vector3Int> bywayArray = new List<Vector3Int>();
+            ActivityMoving(bywayArray, _unit, _unit.currentPos, _unit.moveValue[0], 0);
+
+            for (int i = 0; i < bywayArray.Count; i++)
+            {
+                Vector3Int ababc = bywayArray[i];
+                ababc.z = 0;
+                bywayArray[i] = ababc;
+            }
+
+            List<TileSaveData> temp = new List<TileSaveData>();
+            foreach (var v in bywayArray.Intersect(cacheDataVector3Int).ToArray())
+            {
+                if (cacheData.Any(x => x.widthHeighValue.Vector3IntRangeValue(v) == 0))
+                {
+                    temp.Add(cacheData.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(v) == 0));
+                }
+            }
+            cacheSaveData = temp.ToArray();
+
             return cacheSaveData;
         }
+
+
+        private void ActivityMoving(List<Vector3Int> bywayList, ActivitiesUnit _unit, Vector3Int _currentPos, int _movingValue, int _valueCount)
+        {
+            if (_movingValue <= 0)
+            {
+                return;
+            }
+
+            {
+                //if (bywayList.Any(x => x.Vector3IntRangeValue(_currentPos) == 0))
+                //{
+                //    if (_currentPos.z < bywayList.FirstOrDefault(x => x.Vector3IntRangeValue(_currentPos) == 0).z)
+                //    {
+                //        return;
+                //    }
+                //}
+
+            }
+
+            int differenceValue = environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(_currentPos));
+            //Debug.Log(differenceValue);
+            if (bywayList.Count == 0)
+            {
+                bywayList.Add(_currentPos.RemoveZValuie(0) + (new Vector3Int(0, 0, _movingValue)));
+            }
+            else
+            {
+                if (differenceValue <= _movingValue)
+                {
+                    _movingValue -= differenceValue;
+                    if (!bywayList.Any(x=>x.Vector3IntRangeValue(_currentPos) == 0))
+                    {
+                        bywayList.Add(_currentPos.RemoveZValuie(0) + (new Vector3Int(0,0,_movingValue)));
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            var leftData = GetTileSaveData(_currentPos + Vector3Int.left);
+            if (leftData != null && leftData.aSont == _valueCount + 1)
+            {
+                ActivityMoving(bywayList, _unit, _currentPos + Vector3Int.left, _movingValue, _valueCount + 1);
+            }
+
+            var rightData = GetTileSaveData(_currentPos + Vector3Int.right);
+            if (rightData != null && rightData.aSont == _valueCount + 1)
+            {
+                ActivityMoving(bywayList, _unit, _currentPos + Vector3Int.right, _movingValue, _valueCount + 1);
+            }
+
+            var upData = GetTileSaveData(_currentPos + Vector3Int.up);
+            if (upData != null && upData.aSont == _valueCount + 1)
+            {
+                ActivityMoving(bywayList, _unit, _currentPos + Vector3Int.up, _movingValue, _valueCount + 1);
+            }
+
+            var downData = GetTileSaveData(_currentPos + Vector3Int.down);
+            if (downData != null && downData.aSont == _valueCount + 1)
+            {
+                ActivityMoving(bywayList, _unit, _currentPos + Vector3Int.down, _movingValue, _valueCount + 1);
+            }
+
+        }
+
 
         /// <summary>
         /// 输入单位的预计放置点，返回真正的放置点(因为很可能出现单位用了同一方格的情况)。
@@ -97,7 +215,7 @@ namespace MainSpace.Grid
                         return temp.Value;
                     }
                 }
-                Debug.LogError("返回的值不对",gameObject);
+                Debug.LogError("返回的值不对", gameObject);
                 return Vector3Int.zero;
             }
             else
@@ -163,7 +281,7 @@ namespace MainSpace.Grid
         /// <param name="_pos"></param>
         /// <param name="_range"></param>
         /// <param name="_commanderCirclecolor"></param>
-        public void ShowCommanderCircleGrid(Vector3Int _pos,int _range,Color _commanderCirclecolor)
+        public void ShowCommanderCircleGrid(Vector3Int _pos, int _range, Color _commanderCirclecolor)
         {
             TileSaveData[] array = tileList.Where(x =>
                 x.widthHeighValue.Vector3IntRangeValue(_pos) <= _range).ToArray();
@@ -183,9 +301,9 @@ namespace MainSpace.Grid
                 return;
             }
 
-            foreach (var v in tileList.Where(x=>x.activitiesAllowUnit.commandSpriteRenderer.enabled))
+            foreach (var v in tileList.Where(x => x.activitiesAllowUnit.commandSpriteRenderer.enabled))
             {
-                v.activitiesAllowUnit.SetCommanderCircleGrid(false,Color.clear);
+                v.activitiesAllowUnit.SetCommanderCircleGrid(false, Color.clear);
             }
         }
 
@@ -238,7 +356,8 @@ namespace MainSpace.Grid
                 for (int j = 0; j < width; j++)
                 {
                     _vector3.x = j;
-                    tileArray[i, j].InfoEntry(this.GetTile(_vector3), _vector3, Instantiate(moveSprite, _vector3, Quaternion.identity, activitiesAllowUnitRoot).GetComponent<AllowUnitInfo>());
+                    tileArray[i, j] = new TileSaveData();
+                    tileArray[i, j].InfoEntry(this.GetTile(_vector3), GetSprite(_vector3), _vector3, Instantiate(moveSprite, _vector3, Quaternion.identity, activitiesAllowUnitRoot).GetComponent<AllowUnitInfo>());
                     tileList.Add(tileArray[i, j]);
 
                     if (tileArray[i, j].tile == null)
@@ -258,13 +377,13 @@ namespace MainSpace.Grid
             if (_range == 2)
             {
                 Vector3Int temp = _pos;
-                TileSaveData? a = GetTileSaveData(temp + Vector3Int.up + Vector3Int.right);
-                TileSaveData? b = GetTileSaveData(temp + Vector3Int.down + Vector3Int.left);
-                if (a != null && !activitiesManager.GetUnitPosContains(a.Value.widthHeighValue))
+                TileSaveData a = GetTileSaveData(temp + Vector3Int.up + Vector3Int.right);
+                TileSaveData b = GetTileSaveData(temp + Vector3Int.down + Vector3Int.left);
+                if (a != null && !activitiesManager.GetUnitPosContains(a.widthHeighValue))
                 {
                     return a?.widthHeighValue;
                 }
-                else if (b != null && !activitiesManager.GetUnitPosContains(b.Value.widthHeighValue))
+                else if (b != null && !activitiesManager.GetUnitPosContains(b.widthHeighValue))
                 {
                     return b?.widthHeighValue;
                 }
@@ -281,13 +400,24 @@ namespace MainSpace.Grid
             return null;
         }
 
-        private TileSaveData? GetTileSaveData(Vector3Int _pos)
+        private TileSaveData GetTileSaveData(Vector3Int _pos)
         {
-            return tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_pos) == 0);
+            int x = _pos.x, y = _pos.y;
+            if (y < height && x < width && y >0 && x>0)
+            {
+                return tileArray[y, x];
+            }
+
+            return tileList.FirstOrDefault(z => z.widthHeighValue.Vector3IntRangeValue(_pos) == 0);
         }
         private TileBase GetTile(Vector3Int _pos)
         {
             return supplement.GetTile(_pos) == null ? ground.GetTile(_pos) : supplement.GetTile(_pos);
+        }
+
+        private Sprite GetSprite(Vector3Int _pos)
+        {
+            return supplement.GetSprite(_pos.RemoveZValuie(0)) == null ? ground.GetSprite(_pos.RemoveZValuie(0)) : supplement.GetSprite(_pos.RemoveZValuie(0));
         }
 
     }

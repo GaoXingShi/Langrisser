@@ -12,4 +12,131 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a2193ba84d1394397bd9e921436306, type: 3}
   m_Name: EnvironmentConfig
   m_EditorClassIdentifier: 
-  data: []
+  data:
+  - movingType: 0
+    terrainMovingValue: 0100000001000000020000000200000063000000020000000100000001000000
+  - movingType: 1
+    terrainMovingValue: 0100000001000000020000000200000063000000030000000300000001000000
+  - movingType: 2
+    terrainMovingValue: 0000000000000000000000000000000000000000000000000000000000000000
+  - movingType: 3
+    terrainMovingValue: 0000000000000000000000000000000000000000000000000000000000000000
+  - movingType: 4
+    terrainMovingValue: 0000000000000000000000000000000000000000000000000000000000000000
+  - movingType: 5
+    terrainMovingValue: 0000000000000000000000000000000000000000000000000000000000000000
+  - movingType: 6
+    terrainMovingValue: 0000000000000000000000000000000000000000000000000000000000000000
+  allTerrainType:
+  - allTerrainType: 0
+    terrainTypeSpriteList:
+    - {fileID: 21300000, guid: d30e3bdbddb253844be73c9cb6e3e3d2, type: 3}
+    - {fileID: 21300000, guid: 3b3be919f0a0215449cc04dbcc7d4146, type: 3}
+    - {fileID: 21300000, guid: b327d53d7811695469b2aae3a8b0c4f3, type: 3}
+    - {fileID: 21300000, guid: 48924cc59b9b0e14cb455ed4fc03276d, type: 3}
+    - {fileID: 21300000, guid: 76ffacd4fd5923142b46e3eef08e3deb, type: 3}
+    - {fileID: 21300000, guid: 3182d577c28fc5542b17bd38ca3219e0, type: 3}
+    - {fileID: 21300000, guid: 1b0c03e876ad4624a979a90cd06c9b43, type: 3}
+    - {fileID: 21300000, guid: 46f5e2c005764c1469fd68deb1e8d96a, type: 3}
+    - {fileID: 21300000, guid: 6da23b0d2aeb1bb45afed5dafa33872b, type: 3}
+    - {fileID: 21300000, guid: 4344ee525e3602d46916ed4c3cf9cc00, type: 3}
+    - {fileID: 21300000, guid: b8c01c2e17272254f85dc15dcc596f6e, type: 3}
+  - allTerrainType: 1
+    terrainTypeSpriteList:
+    - {fileID: 21300000, guid: 05a5b40654e84a54b9289bd378e568d6, type: 3}
+    - {fileID: 21300000, guid: 0cba71fd6de7a974f9a75e54560fcc42, type: 3}
+    - {fileID: 21300000, guid: 2398db409e7b7c243b647fd93c84e6f9, type: 3}
+    - {fileID: 21300000, guid: b2a201a89b979354d8bbbbe3ac130287, type: 3}
+    - {fileID: 21300000, guid: bc655c61ef5a8f048a07a17aca87fb92, type: 3}
+    - {fileID: 21300000, guid: b1de1a43b55ffcb418c1b9d8002c0428, type: 3}
+    - {fileID: 21300000, guid: f3d9c70659dc9d540867c79f673b071f, type: 3}
+    - {fileID: 21300000, guid: 6fee594917f331540a70500fde28d1b0, type: 3}
+    - {fileID: 21300000, guid: c83b51dee2e5da540b622d75f4441ccf, type: 3}
+    - {fileID: 21300000, guid: 435a523cc68faba4c9e14011a520007f, type: 3}
+    - {fileID: 21300000, guid: b4e689f0459879a42b243c9899d338e8, type: 3}
+    - {fileID: 21300000, guid: adca97061accff441b6618fdeff824ea, type: 3}
+    - {fileID: 21300000, guid: b0562fc849a36f14bb9f54c9ae03c350, type: 3}
+    - {fileID: 21300000, guid: 8b4b46d7ebfc9df4d8ce09c317c337a2, type: 3}
+    - {fileID: 21300000, guid: b4cfa5bd84e672e48a758ea29c3f7f14, type: 3}
+    - {fileID: 21300000, guid: aa68f1967ece0b44dba20ab6d14aedf6, type: 3}
+    - {fileID: 21300000, guid: 6fffe20b7a6ca73458b8f66525f20f37, type: 3}
+    - {fileID: 21300000, guid: 0650db9e98b8de049a1a624f27fd4bf0, type: 3}
+    - {fileID: 21300000, guid: 53dbde370c65d764fa576bc887c04dc9, type: 3}
+    - {fileID: 21300000, guid: eb6815058616c9143801dced8997919e, type: 3}
+    - {fileID: 21300000, guid: 035413b18444ec84cbdf6eaf1ddd4180, type: 3}
+  - allTerrainType: 2
+    terrainTypeSpriteList:
+    - {fileID: 21300000, guid: 5fedccacf73c601489877d2ccedc5bd2, type: 3}
+    - {fileID: 21300000, guid: b3e2075379f10e64995f43ff6c3cad4f, type: 3}
+    - {fileID: 21300000, guid: 267194aa090660e4c94bc42c6b35537a, type: 3}
+    - {fileID: 21300000, guid: 796f3840422c8d74fabda215f0421e1e, type: 3}
+    - {fileID: 21300000, guid: ab4b594a40c7d8b42b1cfe78a87ed379, type: 3}
+    - {fileID: 21300000, guid: ae275cdbd69b45747838cc5e21d3be1a, type: 3}
+    - {fileID: 21300000, guid: 982194350ff7e8a4daf7f84dd46076b9, type: 3}
+    - {fileID: 21300000, guid: f35db269d9c3093428626e544898210a, type: 3}
+    - {fileID: 21300000, guid: 39575a30e1ccdec488daef46518d77f4, type: 3}
+    - {fileID: 21300000, guid: 6d12617c5d722124399bc054d8d3d484, type: 3}
+    - {fileID: 21300000, guid: 8f5ceb2cb8cd85a49a390098db468e44, type: 3}
+    - {fileID: 21300000, guid: 999a263852faeae44a7df8f23c5a5200, type: 3}
+    - {fileID: 21300000, guid: b83b7698583b3764d8f00ebf5281cc78, type: 3}
+    - {fileID: 21300000, guid: a5a55e0361fb5ec478edef37588ea5db, type: 3}
+    - {fileID: 21300000, guid: bdb6cdbc4dffeb34e950dca4b0816641, type: 3}
+    - {fileID: 21300000, guid: 7369c668c1459f046b9db00f08812839, type: 3}
+  - allTerrainType: 3
+    terrainTypeSpriteList:
+    - {fileID: 21300000, guid: 354611034b0568d4ab0e26afe4682cbf, type: 3}
+    - {fileID: 21300000, guid: a1c603bab359f874d90fcda221af7314, type: 3}
+    - {fileID: 21300000, guid: e5590a0c5dccae644aafda61ae8b0537, type: 3}
+    - {fileID: 21300000, guid: 67f370930a4a28a4d892b01b74741783, type: 3}
+    - {fileID: 21300000, guid: b738f692aa275374497e46e07a6d1dcf, type: 3}
+    - {fileID: 21300000, guid: 63ff383de6aed7549843cba58d3a31a2, type: 3}
+    - {fileID: 21300000, guid: 96000df0265fd61428a1adb790201782, type: 3}
+    - {fileID: 21300000, guid: e2666ea6490760f4b96134b036742310, type: 3}
+    - {fileID: 21300000, guid: b17ace857c014fb46a37d63000482f1a, type: 3}
+    - {fileID: 21300000, guid: 06695732237fc7246b825143da80f784, type: 3}
+    - {fileID: 21300000, guid: 1f26b72230bdae44d9075703e7c59cff, type: 3}
+    - {fileID: 21300000, guid: dde33579f53c6ff4095383afbebe6b41, type: 3}
+  - allTerrainType: 4
+    terrainTypeSpriteList:
+    - {fileID: 21300000, guid: 5d37754e93968504f8c54b5a9c110e19, type: 3}
+    - {fileID: 21300000, guid: b978013b3b81148409d4ba44f454a3d7, type: 3}
+    - {fileID: 21300000, guid: af98235e436f452448ffd3a5a51fbb97, type: 3}
+    - {fileID: 21300000, guid: 507fd6b369ae46d4cb940809fbd7615d, type: 3}
+    - {fileID: 21300000, guid: 7cb393c0ca4690640a5cccf2f0ac7a65, type: 3}
+    - {fileID: 21300000, guid: 2fea469307177fd42a7eaf418aa2d151, type: 3}
+    - {fileID: 21300000, guid: 802d9692e307e7a44a570b40102620a7, type: 3}
+    - {fileID: 21300000, guid: 34229bcb1acdb3340b667031b7cf898f, type: 3}
+    - {fileID: 21300000, guid: 5a51f81b5050e134fb7dc4e474f5bd60, type: 3}
+  - allTerrainType: 5
+    terrainTypeSpriteList:
+    - {fileID: 21300000, guid: b948350769bc4aa448d171d999490d53, type: 3}
+    - {fileID: 21300000, guid: 6ca4a10eaa9f4c7498856eafad3ed730, type: 3}
+    - {fileID: 21300000, guid: 80d16a6adee76a94cbf4a25f2861d6b2, type: 3}
+    - {fileID: 21300000, guid: bc11cf7d4bd0f6944970411805492846, type: 3}
+    - {fileID: 21300000, guid: a16a51f2e4a3d9f4b8f9fdeb8c10f5f8, type: 3}
+    - {fileID: 21300000, guid: 0eb667447e2b52043950145df1fadf3b, type: 3}
+    - {fileID: 21300000, guid: 58550a219e9fea1459e13039187f9567, type: 3}
+    - {fileID: 21300000, guid: 06913196c3cb6b3488d60cf448a37d22, type: 3}
+    - {fileID: 21300000, guid: 6cd07448daccc4d42b390b42fde8b4ae, type: 3}
+    - {fileID: 21300000, guid: c0a321c99312f8c41a67fc288bcfd9ff, type: 3}
+    - {fileID: 21300000, guid: 6bfed4d2c55be094480a3875c959eb6b, type: 3}
+    - {fileID: 21300000, guid: fb90f5995601fb842b83455568e0f316, type: 3}
+    - {fileID: 21300000, guid: 80ec17a80d80a184ea9d7a3231728651, type: 3}
+    - {fileID: 21300000, guid: 7929c1f029622a04ab1807b9e2c0bd1c, type: 3}
+    - {fileID: 21300000, guid: f5b0d304f9a7f8d448adff87d38cf311, type: 3}
+    - {fileID: 21300000, guid: 10b262c48e87b3c40ac838040df7560c, type: 3}
+    - {fileID: 21300000, guid: b83ac552ecf0095478561905fbf4f199, type: 3}
+    - {fileID: 21300000, guid: d2d125181f715e54a8c63851025ab0b1, type: 3}
+    - {fileID: 21300000, guid: 7102e246822255a4aabdc26599d37f5c, type: 3}
+    - {fileID: 21300000, guid: 9d7df4bb78cc41f4d8acbdebb8156cf3, type: 3}
+    - {fileID: 21300000, guid: 06dcd1fb58cfc1841859f0488ceebc1d, type: 3}
+    - {fileID: 21300000, guid: 737d76170ce2aae43a3b5b589973164d, type: 3}
+    - {fileID: 21300000, guid: eb6ec622fc79b1a4faee69c0e0725594, type: 3}
+    - {fileID: 21300000, guid: fd156a52818deda48b2a009dfacbbdf1, type: 3}
+    - {fileID: 21300000, guid: 3a75fe61396acc942ba15fb0f29e175b, type: 3}
+    - {fileID: 21300000, guid: ecd3bc1627a8cbe48971ea94f631e378, type: 3}
+    - {fileID: 21300000, guid: b93f228e80baea94e926eaa1ccf0716f, type: 3}
+  - allTerrainType: 6
+    terrainTypeSpriteList: []
+  - allTerrainType: 7
+    terrainTypeSpriteList: []

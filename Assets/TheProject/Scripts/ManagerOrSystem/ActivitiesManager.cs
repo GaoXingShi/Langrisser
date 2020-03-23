@@ -369,5 +369,10 @@ namespace MainSpace
             int y = Mathf.Abs(_a.y - _b.y);
             return x + y;
         }
+
+        public static Vector3Int RemoveZValuie(this Vector3Int _pos,int _zValue)
+        {
+            return new Vector3Int(_pos.x,_pos.y, _zValue);
+        }
     }
 }

@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2702a06936c58d847a19c7106ef8eec9, type: 3}
   m_Name: SoliderConfig
   m_EditorClassIdentifier: 
-  "\u6211\u5728\u8FD9\u91CC\u7559\u767D\u4E86": 0
   soliderDataArray:
   - soliderType: 0
-    movingType: 0
     activityConfig: {fileID: 11400000, guid: 8b1f6576033d5d14780dc82ad59c8980, type: 2}
     attackValue: 20
     defenseValue: 18
@@ -23,7 +21,6 @@ MonoBehaviour:
     healthValue: 100
     magicValue: 0
   - soliderType: 1
-    movingType: 0
     activityConfig: {fileID: 11400000, guid: 127f30774fd47da4f95591c9d4ba9a41, type: 2}
     attackValue: 25
     defenseValue: 19
@@ -31,10 +28,16 @@ MonoBehaviour:
     healthValue: 100
     magicValue: 0
   - soliderType: 2
-    movingType: 1
     activityConfig: {fileID: 11400000, guid: 9fb9ab4a5be7f62448d5588d1816d4a4, type: 2}
     attackValue: 23
     defenseValue: 16
+    moveValue: 7
+    healthValue: 100
+    magicValue: 0
+  - soliderType: 4
+    activityConfig: {fileID: 11400000, guid: 8fa8bd3ddb477b44eb158856d03c4f64, type: 2}
+    attackValue: 19
+    defenseValue: 17
     moveValue: 7
     healthValue: 100
     magicValue: 0
