@@ -16,7 +16,7 @@ namespace MainSpace.Grid
         public Sprite sprite;                           // sprite信息
         public Vector3Int widthHeighValue;              // 瓦片坐标
         public AllowUnitInfo activitiesAllowUnit;      // 坐标位置的可移动方块
-        public int aSont;
+        public int aSont , bSont;
         public void InfoEntry(TileBase _tile, Sprite _sprite, Vector3Int _widthHeigh, AllowUnitInfo _activitiesAllowUnit)
         {
             tile = _tile;
@@ -26,9 +26,14 @@ namespace MainSpace.Grid
             aSont = -1;
         }
 
-        public void SetASount(int _aSont)
+        public void SetASont(int _aSont)
         {
             this.aSont = _aSont;
+        }
+
+        public void SetBSont(int _bSont)
+        {
+            bSont = _bSont;
         }
     }
 
@@ -90,24 +95,24 @@ namespace MainSpace.Grid
 
             foreach (var v in tileList.Where(x => x.aSont != -1))
             {
-                v.SetASount(-1);
+                v.SetASont(-1);
+                v.SetBSont(0);
             }
 
             for (int i = 0; i <= _unit.moveValue[0] + 1; i++)
             {
-                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i).ToArray())
+                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i).ToArray().Where(v => v.aSont == -1))
                 {
-                    if (v.aSont == -1)
-                    {
-                        v.SetASount(i);
-                    }
+                    v.SetASont(i);
+                    v.SetBSont(environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(v.widthHeighValue)));
                 }
             }
 
             List<TileSaveData> cacheData = tileList.Where(x => x.aSont != -1).ToList();
             List<Vector3Int> cacheDataVector3Int = cacheData.Select(x => x.widthHeighValue).ToList();
             List<Vector3Int> bywayArray = new List<Vector3Int>();
-            ActivityMoving(bywayArray, _unit, _unit.currentPos, _unit.moveValue[0], 0);
+
+            //ActivityMoving(bywayArray, _unit.currentPos, _unit.moveValue[0], -1);
 
             for (int i = 0; i < bywayArray.Count; i++)
             {
@@ -129,36 +134,34 @@ namespace MainSpace.Grid
             return cacheSaveData;
         }
 
+        private bool dfs(Vector3Int _currentPos,Vector3Int _targetPos)
+        {
+            // dfs是需要一个目地的，使用回溯法的深度搜索遍历
+            // 我们讲目的设置为当前与target。
 
-        private void ActivityMoving(List<Vector3Int> bywayList, ActivitiesUnit _unit, Vector3Int _currentPos, int _movingValue, int _valueCount)
+
+            return false;
+        }
+
+        // _valueCount -1none 0left 1right 2up 3down
+        private void ActivityMoving(List<Vector3Int> bywayList, Vector3Int _currentPos, int _movingValue, int _valueCount)
         {
             if (_movingValue <= 0)
             {
                 return;
             }
 
-            {
-                //if (bywayList.Any(x => x.Vector3IntRangeValue(_currentPos) == 0))
-                //{
-                //    if (_currentPos.z < bywayList.FirstOrDefault(x => x.Vector3IntRangeValue(_currentPos) == 0).z)
-                //    {
-                //        return;
-                //    }
-                //}
 
-            }
-
-            int differenceValue = environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(_currentPos));
-            //Debug.Log(differenceValue);
+            TileSaveData aaa = GetTileSaveData(_currentPos.RemoveZValuie(0));
             if (bywayList.Count == 0)
             {
                 bywayList.Add(_currentPos.RemoveZValuie(0) + (new Vector3Int(0, 0, _movingValue)));
             }
             else
             {
-                if (differenceValue <= _movingValue)
+                if (aaa.bSont <= _movingValue)
                 {
-                    _movingValue -= differenceValue;
+                    _movingValue -= aaa.bSont;
                     if (!bywayList.Any(x=>x.Vector3IntRangeValue(_currentPos) == 0))
                     {
                         bywayList.Add(_currentPos.RemoveZValuie(0) + (new Vector3Int(0,0,_movingValue)));
@@ -171,27 +174,27 @@ namespace MainSpace.Grid
             }
 
             var leftData = GetTileSaveData(_currentPos + Vector3Int.left);
-            if (leftData != null && leftData.aSont == _valueCount + 1)
+            if (leftData != null && _valueCount != 1)
             {
-                ActivityMoving(bywayList, _unit, _currentPos + Vector3Int.left, _movingValue, _valueCount + 1);
+                ActivityMoving(bywayList, _currentPos + Vector3Int.left, _movingValue, 0);
             }
 
             var rightData = GetTileSaveData(_currentPos + Vector3Int.right);
-            if (rightData != null && rightData.aSont == _valueCount + 1)
+            if (rightData != null && _valueCount != 0)
             {
-                ActivityMoving(bywayList, _unit, _currentPos + Vector3Int.right, _movingValue, _valueCount + 1);
+                ActivityMoving(bywayList, _currentPos + Vector3Int.right, _movingValue, 1);
             }
 
             var upData = GetTileSaveData(_currentPos + Vector3Int.up);
-            if (upData != null && upData.aSont == _valueCount + 1)
+            if (upData != null && _valueCount != 3)
             {
-                ActivityMoving(bywayList, _unit, _currentPos + Vector3Int.up, _movingValue, _valueCount + 1);
+                ActivityMoving(bywayList, _currentPos + Vector3Int.up, _movingValue, 2);
             }
 
             var downData = GetTileSaveData(_currentPos + Vector3Int.down);
-            if (downData != null && downData.aSont == _valueCount + 1)
+            if (downData != null && _valueCount != 2)
             {
-                ActivityMoving(bywayList, _unit, _currentPos + Vector3Int.down, _movingValue, _valueCount + 1);
+                ActivityMoving(bywayList, _currentPos + Vector3Int.down, _movingValue, 3);
             }
 
         }

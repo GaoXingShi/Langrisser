@@ -96,6 +96,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 06695732237fc7246b825143da80f784, type: 3}
     - {fileID: 21300000, guid: 1f26b72230bdae44d9075703e7c59cff, type: 3}
     - {fileID: 21300000, guid: dde33579f53c6ff4095383afbebe6b41, type: 3}
+    - {fileID: 21300000, guid: bf64b684ce8f4e94f812f4318b3148e5, type: 3}
   - allTerrainType: 4
     terrainTypeSpriteList:
     - {fileID: 21300000, guid: 5d37754e93968504f8c54b5a9c110e19, type: 3}

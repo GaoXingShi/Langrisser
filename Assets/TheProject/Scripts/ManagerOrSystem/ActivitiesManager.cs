@@ -374,5 +374,10 @@ namespace MainSpace
         {
             return new Vector3Int(_pos.x,_pos.y, _zValue);
         }
+
+        public static int DistanceValue(this Vector3Int _currentPos,Vector3Int _targetPos)
+        {
+            return Mathf.Abs(_currentPos.x - _targetPos.x) + Mathf.Abs(_currentPos.y - _targetPos.y);
+        }
     }
 }

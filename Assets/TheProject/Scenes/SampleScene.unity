@@ -4464,7 +4464,7 @@ MonoBehaviour:
   levelSliderUpgradeValue: 130
   attackValue: 28
   defenseValue: 17
-  moveValue: 15
+  moveValue: 10
   healthValue: 100
   magicValue: 0
   commandRangeValue: 3
@@ -16585,7 +16585,7 @@ MonoBehaviour:
   commandRangeValue: 2
   correctedAttackValue: 2
   correctedDefenseValue: 1
-  showPos: {x: 14, y: 13, z: -1}
+  showPos: {x: 14, y: 11, z: -1}
 --- !u!1 &1836513238
 GameObject:
   m_ObjectHideFlags: 0
