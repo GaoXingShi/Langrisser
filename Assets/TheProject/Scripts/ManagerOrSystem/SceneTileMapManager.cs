@@ -16,7 +16,9 @@ namespace MainSpace.Grid
         public Sprite sprite;                           // sprite信息
         public Vector3Int widthHeighValue;              // 瓦片坐标
         public AllowUnitInfo activitiesAllowUnit;      // 坐标位置的可移动方块
-        public int aSont , bSont;
+        public int aSont, bSont;
+        public int[] pixelValue;    // 0 是更改数 1是不变数
+        public bool isChange = false;
         public void InfoEntry(TileBase _tile, Sprite _sprite, Vector3Int _widthHeigh, AllowUnitInfo _activitiesAllowUnit)
         {
             tile = _tile;
@@ -34,6 +36,12 @@ namespace MainSpace.Grid
         public void SetBSont(int _bSont)
         {
             bSont = _bSont;
+        }
+
+        public void SetPixelValue(int _value)
+        {
+            pixelValue = new int[] { _value, _value };
+            isChange = false;
         }
     }
 
@@ -97,107 +105,138 @@ namespace MainSpace.Grid
             {
                 v.SetASont(-1);
                 v.SetBSont(0);
+                v.SetPixelValue(-1);
             }
 
-            for (int i = 0; i <= _unit.moveValue[0] + 1; i++)
+
+
+            for (int i = 1; i <= _unit.moveValue[0]; i++)
             {
                 foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i).ToArray().Where(v => v.aSont == -1))
                 {
                     v.SetASont(i);
                     v.SetBSont(environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(v.widthHeighValue)));
+                    v.SetPixelValue(environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(v.widthHeighValue)));
                 }
             }
+            var currentSaveData = tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0);
+            currentSaveData.SetPixelValue(0);
+            currentSaveData.SetASont(0);
+            currentSaveData.isChange = true;
+            sifang(currentSaveData.widthHeighValue, _unit.moveValue[0]);
 
             List<TileSaveData> cacheData = tileList.Where(x => x.aSont != -1).ToList();
             List<Vector3Int> cacheDataVector3Int = cacheData.Select(x => x.widthHeighValue).ToList();
             List<Vector3Int> bywayArray = new List<Vector3Int>();
-
-            //ActivityMoving(bywayArray, _unit.currentPos, _unit.moveValue[0], -1);
-
-            for (int i = 0; i < bywayArray.Count; i++)
+            for (int i = 1; i < _unit.moveValue[0]; i++)
             {
-                Vector3Int ababc = bywayArray[i];
-                ababc.z = 0;
-                bywayArray[i] = ababc;
-            }
-
-            List<TileSaveData> temp = new List<TileSaveData>();
-            foreach (var v in bywayArray.Intersect(cacheDataVector3Int).ToArray())
-            {
-                if (cacheData.Any(x => x.widthHeighValue.Vector3IntRangeValue(v) == 0))
+                foreach (var v in cacheData.Where(x => x.aSont == i))
                 {
-                    temp.Add(cacheData.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(v) == 0));
+                    sifang(v.widthHeighValue, _unit.moveValue[0]);
                 }
             }
-            cacheSaveData = temp.ToArray();
+
+            cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.moveValue[0] && x.isChange).ToArray();
 
             return cacheSaveData;
         }
 
-        private bool dfs(Vector3Int _currentPos,Vector3Int _targetPos)
+        private void sifang(Vector3Int _currentPos, int _maxMovingValue)
         {
-            // dfs是需要一个目地的，使用回溯法的深度搜索遍历
-            // 我们讲目的设置为当前与target。
+            var currentData = GetTileSaveData(_currentPos);
+            if (currentData.pixelValue[0] > _maxMovingValue || currentData.isChange == false)
+            {
+                Debug.LogError(currentData.widthHeighValue);
+                return;
+            }
 
+            aaaaa(currentData, GetTileSaveData(_currentPos + Vector3Int.left), _maxMovingValue);
+            aaaaa(currentData, GetTileSaveData(_currentPos + Vector3Int.right), _maxMovingValue);
+            aaaaa(currentData, GetTileSaveData(_currentPos + Vector3Int.up), _maxMovingValue);
+            aaaaa(currentData, GetTileSaveData(_currentPos + Vector3Int.down), _maxMovingValue);
 
-            return false;
+            currentData.pixelValue[0] = 0;
         }
 
-        // _valueCount -1none 0left 1right 2up 3down
-        private void ActivityMoving(List<Vector3Int> bywayList, Vector3Int _currentPos, int _movingValue, int _valueCount)
+        private void aaaaa(TileSaveData _currentData, TileSaveData _data, int _maxMovingValue)
         {
-            if (_movingValue <= 0)
+            if (_data == null)
             {
                 return;
             }
 
-
-            TileSaveData aaa = GetTileSaveData(_currentPos.RemoveZValuie(0));
-            if (bywayList.Count == 0)
+            int value = _data.pixelValue[1] + _currentData.pixelValue[0];
+            if (_data.pixelValue[0] != 0)
             {
-                bywayList.Add(_currentPos.RemoveZValuie(0) + (new Vector3Int(0, 0, _movingValue)));
-            }
-            else
-            {
-                if (aaa.bSont <= _movingValue)
+                if (_data.isChange)
                 {
-                    _movingValue -= aaa.bSont;
-                    if (!bywayList.Any(x=>x.Vector3IntRangeValue(_currentPos) == 0))
-                    {
-                        bywayList.Add(_currentPos.RemoveZValuie(0) + (new Vector3Int(0,0,_movingValue)));
-                    }
+                    if (value < _data.pixelValue[0])
+                        _data.pixelValue[0] = value;
                 }
                 else
                 {
-                    return;
+                    _data.isChange = true;
+                    _data.pixelValue[0] = value;
                 }
             }
 
-            var leftData = GetTileSaveData(_currentPos + Vector3Int.left);
-            if (leftData != null && _valueCount != 1)
-            {
-                ActivityMoving(bywayList, _currentPos + Vector3Int.left, _movingValue, 0);
-            }
-
-            var rightData = GetTileSaveData(_currentPos + Vector3Int.right);
-            if (rightData != null && _valueCount != 0)
-            {
-                ActivityMoving(bywayList, _currentPos + Vector3Int.right, _movingValue, 1);
-            }
-
-            var upData = GetTileSaveData(_currentPos + Vector3Int.up);
-            if (upData != null && _valueCount != 3)
-            {
-                ActivityMoving(bywayList, _currentPos + Vector3Int.up, _movingValue, 2);
-            }
-
-            var downData = GetTileSaveData(_currentPos + Vector3Int.down);
-            if (downData != null && _valueCount != 2)
-            {
-                ActivityMoving(bywayList, _currentPos + Vector3Int.down, _movingValue, 3);
-            }
-
         }
+
+        // _valueCount -1none 0left 1right 2up 3down
+        //private void ActivityMoving(List<Vector3Int> bywayList, Vector3Int _currentPos, int _movingValue, int _valueCount)
+        //{
+        //    if (_movingValue <= 0)
+        //    {
+        //        return;
+        //    }
+
+
+        //    TileSaveData aaa = GetTileSaveData(_currentPos.RemoveZValuie(0));
+        //    if (bywayList.Count == 0)
+        //    {
+        //        bywayList.Add(_currentPos.RemoveZValuie(0) + (new Vector3Int(0, 0, _movingValue)));
+        //    }
+        //    else
+        //    {
+        //        if (aaa.bSont <= _movingValue)
+        //        {
+        //            _movingValue -= aaa.bSont;
+        //            if (!bywayList.Any(x => x.Vector3IntRangeValue(_currentPos) == 0))
+        //            {
+        //                bywayList.Add(_currentPos.RemoveZValuie(0) + (new Vector3Int(0, 0, _movingValue)));
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return;
+        //        }
+        //    }
+
+        //    var leftData = GetTileSaveData(_currentPos + Vector3Int.left);
+        //    if (leftData != null && _valueCount != 1)
+        //    {
+        //        ActivityMoving(bywayList, _currentPos + Vector3Int.left, _movingValue, 0);
+        //    }
+
+        //    var rightData = GetTileSaveData(_currentPos + Vector3Int.right);
+        //    if (rightData != null && _valueCount != 0)
+        //    {
+        //        ActivityMoving(bywayList, _currentPos + Vector3Int.right, _movingValue, 1);
+        //    }
+
+        //    var upData = GetTileSaveData(_currentPos + Vector3Int.up);
+        //    if (upData != null && _valueCount != 3)
+        //    {
+        //        ActivityMoving(bywayList, _currentPos + Vector3Int.up, _movingValue, 2);
+        //    }
+
+        //    var downData = GetTileSaveData(_currentPos + Vector3Int.down);
+        //    if (downData != null && _valueCount != 2)
+        //    {
+        //        ActivityMoving(bywayList, _currentPos + Vector3Int.down, _movingValue, 3);
+        //    }
+
+        //}
 
 
         /// <summary>
@@ -406,7 +445,7 @@ namespace MainSpace.Grid
         private TileSaveData GetTileSaveData(Vector3Int _pos)
         {
             int x = _pos.x, y = _pos.y;
-            if (y < height && x < width && y >0 && x>0)
+            if (y < height && x < width && y > 0 && x > 0)
             {
                 return tileArray[y, x];
             }
