@@ -23,6 +23,7 @@ namespace MainSpace.ScriptableObject
         深山,
         水域,
         宫殿,
+        墙壁,
         桥梁,
 
     }
