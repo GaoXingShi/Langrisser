@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using MainSpace.Activities;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using System;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
 using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
-
 #endif
 
 namespace MainSpace.ScriptableObject
