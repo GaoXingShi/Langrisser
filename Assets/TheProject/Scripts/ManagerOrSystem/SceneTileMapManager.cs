@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MainSpace.Activities;
 using MainSpace.ScriptableObject;
 using UnityEngine;
@@ -215,17 +216,35 @@ namespace MainSpace.Grid
         /// <summary>
         /// 显示可移动相关区域
         /// </summary>
-        public void ShowCanMoveCorrelationGrid()
+        public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit)
         {
             foreach (var v in tileList)
             {
                 v.activitiesAllowUnit.SetMoveGrid(true);
             }
 
-            foreach (var v in cacheSaveData)
+            int ms = 30;
+            int moveValue = _unit.moveValue[0];
+            for (int i = 0; i <= moveValue; i ++)
             {
-                v.activitiesAllowUnit.SetMoveGrid(false);
+                if (cacheSaveData == null)
+                {
+                    return;
+                }
+
+                foreach (var v in cacheSaveData.Where(
+                    x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i  /*&& x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) >= i)*/))
+                {
+                    v.activitiesAllowUnit.SetMoveGrid(false);
+                }
+                await Task.Delay(ms);
+
             }
+
+            //foreach (var v in cacheSaveData)
+            //{
+            //    v.activitiesAllowUnit.SetMoveGrid(false);
+            //}
         }
 
         /// <summary>

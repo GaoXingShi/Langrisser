@@ -42,7 +42,7 @@ namespace MainSpace
                 tileMapManager.HideCanMoveCorrelationGrid();
 
                 tileMapManager.CalculateMovingRange(_unit);
-                tileMapManager.ShowCanMoveCorrelationGrid();
+                tileMapManager.ShowCanMoveCorrelationGrid(_unit);
                 currentSelectionUnit = _unit;
 
                 if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
