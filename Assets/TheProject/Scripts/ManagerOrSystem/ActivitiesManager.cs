@@ -72,7 +72,7 @@ namespace MainSpace
         {
             if (currentSelectionUnit != null)
             {
-                if (gameManager.IsLocalPlayerAround(currentSelectionUnit.managerKeyName) && tileMapManager.GetMoveToUnitAllow(_cellPos))
+                if (gameManager.GetIsLocalPlayerAround(currentSelectionUnit.managerKeyName) && tileMapManager.GetMoveToUnitAllow(_cellPos))
                 {
                     if (!currentSelectionUnit.isActionOver)
                     {
@@ -225,6 +225,7 @@ namespace MainSpace
         }
 
         #endregion
+ 
         /// <summary>
         /// 添加可行动单位
         /// </summary>
@@ -265,6 +266,19 @@ namespace MainSpace
         }
 
         /// <summary>
+        /// 输入位置与玩家自身Key，返回该位置是否是相同阵营士兵,相同阵营为true,不同阵营为false.
+        /// </summary>
+        /// <param name="_pos"></param>
+        /// <param name="_mineKeyName"></param>
+        /// <returns></returns>
+        public bool GetUnitPosContainsOtherTroop(Vector3Int _pos, string _mineKeyName)
+        {
+            var unit = UnitList.FirstOrDefault(x => x.currentPos.Vector3IntRangeValue(_pos) == 0);
+            var campData = gameManager.GetCampData(_mineKeyName);
+            return unit.troopsType == campData.troopType;
+        }
+
+        /// <summary>
         /// 设置所有士兵的颜色以及行动
         /// </summary>
         /// <param name="_isGray"></param>
@@ -289,6 +303,16 @@ namespace MainSpace
             }
         }
 
+        /// <summary>
+        /// 获取该_keyName 阵营中所有的指挥官(通过指挥官可以获得所有士兵)
+        /// </summary>
+        /// <param name="_keyName"></param>
+        /// <returns></returns>
+        public CommanderUnit[] GetCampCommanderArray(string _keyName)
+        {
+            return UnitList.Where(x => x.managerKeyName.Equals(_keyName)
+                                       && x.GetType() == typeof(CommanderUnit)).OfType<CommanderUnit>().ToArray();
+        }
 
         private void SetActivityAnim(CommanderUnit _unit, bool _enabled)
         {
@@ -343,22 +367,12 @@ namespace MainSpace
             SetAllActivityAnim(false);
             LoadInfo.Instance.gameCursor.isClickUnit = false;
         }
-        /// <summary>
-        /// 获取该_keyName 阵营中所有的指挥官(通过指挥官可以获得所有士兵)
-        /// </summary>
-        /// <param name="_keyName"></param>
-        /// <returns></returns>
-        public CommanderUnit[] GetCampCommanderArray(string _keyName)
-        {
-            return UnitList.Where(x => x.managerKeyName.Equals(_keyName)
-                                       && x.GetType() == typeof(CommanderUnit)).OfType<CommanderUnit>().ToArray();
-        }
     }
 
     public static class Vector3IntExtends
     {
         /// <summary>
-        /// 参数a到参数b之间的距离，int值。
+        /// 参数a到参数b之间的距离，返回int值。 只对xy值
         /// </summary>
         /// <param name="_a"></param>
         /// <param name="_b"></param>

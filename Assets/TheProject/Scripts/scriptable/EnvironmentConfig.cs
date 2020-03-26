@@ -137,6 +137,7 @@ namespace MainSpace.ScriptableObject
         public override void OnInspectorGUI()
         {
             serialized.Update();
+            EditorGUILayout.BeginVertical();
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space(10);
 
@@ -150,8 +151,6 @@ namespace MainSpace.ScriptableObject
 
             EditorGUILayout.EndHorizontal();
 
-
-            EditorGUILayout.BeginVertical();
 
             for (int i = 0; i < Enum.GetNames(typeof(TerrainActionType)).Length; i++)
             {
@@ -179,16 +178,6 @@ namespace MainSpace.ScriptableObject
                     count));
             }
 
-            //animBool.target = EditorGUILayout.Foldout(animBool.target, "BeginFadeGroup", true);
-            //// 系统使用tween渐变faded数值
-            //if (EditorGUILayout.BeginFadeGroup(animBool.faded))
-            //{
-            //    EditorGUILayout.BoundsField("BoundsField", new Bounds());
-            //    EditorGUILayout.BoundsIntField("BoundsIntField", new BoundsInt());
-            //}
-            //// begin - end 之间元素会进行动画
-            //EditorGUILayout.EndFadeGroup();
-
             {
                 int index = 0;
                 foreach (var v in envirconmentConfig.allTerrainType)
@@ -210,7 +199,7 @@ namespace MainSpace.ScriptableObject
 
                     if (EditorGUILayout.BeginFadeGroup(animBoolArray[index].faded))
                     {
-                        EditorGUILayout.BeginVertical();
+                        EditorGUILayout.BeginVertical(GUI.skin.box);
                         for (int i = 0; i < v.terrainTypeSpriteList.Count; i++)
                         {
                             EditorGUILayout.BeginHorizontal();
@@ -246,8 +235,8 @@ namespace MainSpace.ScriptableObject
 
             }
 
-            EditorGUILayout.EndVertical();
 
+            EditorGUILayout.EndVertical();
             serialized.ApplyModifiedProperties();
         }
     }

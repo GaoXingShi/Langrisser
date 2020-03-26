@@ -5,6 +5,7 @@ using UnityEditor;
 using System.Collections;
 using System.Linq;
 using DG.Tweening;
+using MainSpace.Activities;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -155,16 +156,20 @@ namespace MainSpace
         /// </summary>
         /// <param name="_keyName"></param>
         /// <returns></returns>
-        public bool IsLocalPlayerAround(string _keyName)
+        public bool GetIsLocalPlayerAround(string _keyName)
         {
             return campData[currentRoundCampDataIndex].identifyValue.Equals(_keyName);
         }
 
+        /// <summary>
+        /// 输入keyName,返回玩家游戏信息条目
+        /// </summary>
+        /// <param name="_keyName"></param>
+        /// <returns></returns>
         public CampData GetCampData(string _keyName)
         {
             return campData.FirstOrDefault(x => x.identifyValue.Equals(_keyName));
         }
-
 
         private void PlayMovie(int _turnIndex, CampType _campType, Color _textColor, Sprite _campSprite, bool _isNext)
         {

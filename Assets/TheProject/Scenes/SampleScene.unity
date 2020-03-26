@@ -4464,7 +4464,7 @@ MonoBehaviour:
   levelSliderUpgradeValue: 130
   attackValue: 28
   defenseValue: 17
-  moveValue: 30
+  moveValue: 35
   healthValue: 100
   magicValue: 0
   commandRangeValue: 3

@@ -16,7 +16,7 @@ namespace MainSpace.Grid
         public Sprite sprite;                           // sprite信息
         public Vector3Int widthHeighValue;              // 瓦片坐标
         public AllowUnitInfo activitiesAllowUnit;      // 坐标位置的可移动方块
-        public int aSont, bSont;                        // A值是 阶数 ，B值是  
+        //public int aSont;                             // A值是 阶数
         public int[] pixelValue;    // 0 是更改数 1是不变数
         public bool isChange = false;
         public void InfoEntry(TileBase _tile, Sprite _sprite, Vector3Int _widthHeigh, AllowUnitInfo _activitiesAllowUnit)
@@ -25,17 +25,7 @@ namespace MainSpace.Grid
             sprite = _sprite;
             widthHeighValue = _widthHeigh;
             activitiesAllowUnit = _activitiesAllowUnit;
-            aSont = -1;
-        }
-
-        public void SetASont(int _aSont)
-        {
-            this.aSont = _aSont;
-        }
-
-        public void SetBSont(int _bSont)
-        {
-            bSont = _bSont;
+            SetPixelValue(-1);
         }
 
         public void SetPixelValue(int _value)
@@ -94,43 +84,43 @@ namespace MainSpace.Grid
         /// <returns></returns>
         public TileSaveData[] CalculateMovingRange(ActivitiesUnit _unit)
         {
-            // 目前不计算障碍。
-            //cacheSaveData = tileList
-            //    .Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0] && (!activitiesManager.GetUnitPosContains(x.widthHeighValue) || x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0))
-            //    .ToArray();
-
-            foreach (var v in tileList.Where(x => x.aSont != -1))
+            foreach (var v in tileList.Where(x => x.pixelValue[0] != -1))
             {
-                v.SetASont(-1);
-                v.SetBSont(0);
                 v.SetPixelValue(-1);
             }
 
             for (int i = 1; i <= _unit.moveValue[0]; i++)
             {
-                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i).ToArray().Where(v => v.aSont == -1))
+                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i))
                 {
-                    v.SetASont(i);
-                    v.SetBSont(environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(v.widthHeighValue)));
-                    v.SetPixelValue(environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(v.widthHeighValue)));
+                    //v.SetASont(i);
+                    if (activitiesManager.GetUnitPosContains(v.widthHeighValue) && !activitiesManager.GetUnitPosContainsOtherTroop(v.widthHeighValue, _unit.managerKeyName))
+                    {
+                        v.SetPixelValue(99);
+                    }
+                    else
+                    {
+                        v.SetPixelValue(environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(v.widthHeighValue)));
+                    }
                 }
             }
             var currentSaveData = tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0);
             currentSaveData.SetPixelValue(0);
-            currentSaveData.SetASont(0);
             currentSaveData.isChange = true;
             PressureAlgorithm(currentSaveData.widthHeighValue, _unit.moveValue[0]);
 
-            List<TileSaveData> cacheData = tileList.Where(x => x.aSont != -1).ToList();
-            for (int i = 1; i < _unit.moveValue[0]; i++)
+            List<TileSaveData> cacheData = tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0]).ToList();
+
+            while (cacheData.Any(x => x.pixelValue[0] < _unit.moveValue[0] && x.pixelValue[0] > 0 && x.isChange))
             {
-                foreach (var v in cacheData.Where(x => x.aSont == i))
+                foreach (var v in cacheData.Where(x => x.pixelValue[0] < _unit.moveValue[0] && x.pixelValue[0] > 0 && x.isChange))
                 {
                     PressureAlgorithm(v.widthHeighValue, _unit.moveValue[0]);
                 }
+
             }
 
-            cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.moveValue[0] && x.isChange).ToArray();
+            cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.moveValue[0] && x.isChange && (!activitiesManager.GetUnitPosContains(x.widthHeighValue) || x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0)).ToArray();
 
             return cacheSaveData;
         }
@@ -143,15 +133,15 @@ namespace MainSpace.Grid
                 return;
             }
 
-            SeachAround(currentData, GetTileSaveData(_currentPos + Vector3Int.left), _maxMovingValue);
-            SeachAround(currentData, GetTileSaveData(_currentPos + Vector3Int.right), _maxMovingValue);
-            SeachAround(currentData, GetTileSaveData(_currentPos + Vector3Int.up), _maxMovingValue);
-            SeachAround(currentData, GetTileSaveData(_currentPos + Vector3Int.down), _maxMovingValue);
+            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.left));
+            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.right));
+            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.up));
+            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.down));
 
             currentData.pixelValue[0] = 0;
         }
 
-        private void SeachAround(TileSaveData _currentData, TileSaveData _data, int _maxMovingValue)
+        private void SearchAround(TileSaveData _currentData, TileSaveData _data)
         {
             if (_data == null)
             {

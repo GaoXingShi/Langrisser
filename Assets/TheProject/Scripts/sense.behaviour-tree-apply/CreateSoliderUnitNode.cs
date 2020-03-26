@@ -53,6 +53,7 @@ namespace Sense.BehaviourTree.Apply
             // enum
             temp.soliderType = soliderType;
             temp.movingType = data.activityConfig.movingType;
+            temp.troopsType = followCommander.GetCampData().troopType;
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(followCommander.showPos);
