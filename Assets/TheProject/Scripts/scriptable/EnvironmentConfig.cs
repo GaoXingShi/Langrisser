@@ -7,6 +7,7 @@ using UnityEngine;
 #if UNITY_EDITOR
 using System;
 using UnityEditor;
+using UnityEditor.AnimatedValues;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
@@ -49,7 +50,7 @@ namespace MainSpace.ScriptableObject
         public TerrainCalculateData[] data;
         public TerrainSpriteData[] allTerrainType;
 
-        public int GetConsumeValue(TerrainActionType _actionType,Sprite _sprite)
+        public int GetConsumeValue(TerrainActionType _actionType, Sprite _sprite)
         {
             int index = (int)(allTerrainType.FirstOrDefault(x => x.terrainTypeSpriteList.Contains(_sprite)).allTerrainType);
 
@@ -64,16 +65,28 @@ namespace MainSpace.ScriptableObject
     {
         private SerializedObject serialized;
         private EnvironmentConfig envirconmentConfig;
-        private static int terrainActionTypeCount, terrainTypeCount;
-        private static Dictionary<TerrainType, List<Sprite>> cacheDictionary;
+
+        private int scrollValue;
+        private AnimBool[] animBoolArray;
+
         void OnEnable()
         {
             serialized = new SerializedObject(target);
             envirconmentConfig = target as EnvironmentConfig;
             TerrainCalculateData[] temp = new TerrainCalculateData[] { };
 
-            if (terrainActionTypeCount != Enum.GetNames(typeof(TerrainActionType)).Length || terrainTypeCount != Enum.GetNames(typeof(TerrainType)).Length)
-            { 
+            // 动画初始化
+            animBoolArray = new AnimBool[Enum.GetNames(typeof(TerrainType)).Length];
+            for (int i = 0; i < animBoolArray.Length; i++)
+            {
+                animBoolArray[i] = new AnimBool(false);
+                // 注册动画监听
+                animBoolArray[i].valueChanged.AddListener(this.Repaint);
+            }
+
+
+            if (envirconmentConfig.data.Length != Enum.GetNames(typeof(TerrainActionType)).Length || envirconmentConfig.allTerrainType.Length != Enum.GetNames(typeof(TerrainType)).Length)
+            {
                 temp = (TerrainCalculateData[])envirconmentConfig.data.Clone();
                 envirconmentConfig.data = new TerrainCalculateData[Enum.GetNames(typeof(TerrainActionType)).Length];
 
@@ -107,45 +120,34 @@ namespace MainSpace.ScriptableObject
                 }
 
             }
-             
+
             if (envirconmentConfig.allTerrainType == null)
             {
                 envirconmentConfig.allTerrainType = new TerrainSpriteData[Enum.GetNames(typeof(TerrainType)).Length];
 
                 for (int i = 0; i < envirconmentConfig.allTerrainType.Length; i++)
                 {
-                    envirconmentConfig.allTerrainType[i].allTerrainType = (TerrainType) i;
+                    envirconmentConfig.allTerrainType[i].allTerrainType = (TerrainType)i;
                     envirconmentConfig.allTerrainType[i].terrainTypeSpriteList = new List<Sprite>();
                 }
             }
 
 
-            terrainActionTypeCount = Enum.GetNames(typeof(TerrainActionType)).Length;
-            terrainTypeCount = Enum.GetNames(typeof(TerrainType)).Length;
-
         }
+
 
         public override void OnInspectorGUI()
         {
             serialized.Update();
-
-            if (EditorUtility.IsDirty(envirconmentConfig))
-            {
-                if (GUILayout.Button("Save"))
-                {
-                    EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-                    AssetDatabase.Refresh();
-                    EditorUtility.ClearDirty(envirconmentConfig);
-                }
-
-            }
-
             EditorGUILayout.BeginHorizontal();
-
             EditorGUILayout.Space(10);
-            foreach (string v in Enum.GetNames(typeof(TerrainType)))
+
             {
-                GUILayout.Label(v);
+                int length = (scrollValue * 5 + 5) >= Enum.GetNames(typeof(TerrainType)).Length ? Enum.GetNames(typeof(TerrainType)).Length : (scrollValue * 5 + 5);
+                for (int i = scrollValue * 5; i < length; i++)
+                {
+                    GUILayout.Label(((TerrainType)i).ToString());
+                }
             }
 
             EditorGUILayout.EndHorizontal();
@@ -158,7 +160,8 @@ namespace MainSpace.ScriptableObject
                 EditorGUILayout.BeginHorizontal();
 
                 GUILayout.Label(((TerrainActionType)i).ToString());
-                for (int j = 0; j < Enum.GetNames(typeof(TerrainType)).Length; j++)
+                int length = (scrollValue * 5 + 5) >= Enum.GetNames(typeof(TerrainType)).Length ? Enum.GetNames(typeof(TerrainType)).Length : (scrollValue * 5 + 5);
+                for (int j = scrollValue * 5; j < length; j++)
                 {
                     int cacheValue = EditorGUILayout.IntField(envirconmentConfig.data[i].terrainMovingValue[j]);
                     if (envirconmentConfig.data[i].terrainMovingValue[j] != cacheValue)
@@ -171,41 +174,79 @@ namespace MainSpace.ScriptableObject
                 EditorGUILayout.EndHorizontal();
             }
 
-
-            foreach (var v in envirconmentConfig.allTerrainType)
             {
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Label(new GUIContent(v.allTerrainType.ToString()));
-                if (GUILayout.Button("+"))
-                {
-                    EditorUtility.SetDirty(envirconmentConfig);
-                    v.terrainTypeSpriteList.Add(null);
-                }
-                EditorGUILayout.EndHorizontal();
+                int count = Enum.GetNames(typeof(TerrainType)).Length / 5 +
+                            (Enum.GetNames(typeof(TerrainType)).Length % 5 != 0 ? 1 : 0);
+                scrollValue = Convert.ToInt32(GUILayout.HorizontalScrollbar(scrollValue, 1, 0,
+                    count));
+            }
 
-                EditorGUILayout.BeginVertical();
-                for (int i = 0; i < v.terrainTypeSpriteList.Count; i++)
+            //animBool.target = EditorGUILayout.Foldout(animBool.target, "BeginFadeGroup", true);
+            //// 系统使用tween渐变faded数值
+            //if (EditorGUILayout.BeginFadeGroup(animBool.faded))
+            //{
+            //    EditorGUILayout.BoundsField("BoundsField", new Bounds());
+            //    EditorGUILayout.BoundsIntField("BoundsIntField", new BoundsInt());
+            //}
+            //// begin - end 之间元素会进行动画
+            //EditorGUILayout.EndFadeGroup();
+
+            {
+                int index = 0;
+                foreach (var v in envirconmentConfig.allTerrainType)
                 {
                     EditorGUILayout.BeginHorizontal();
-                    v.terrainTypeSpriteList[i] = EditorGUILayout.ObjectField(v.terrainTypeSpriteList[i], typeof(Sprite), true) as Sprite;
 
-                    if (GUILayout.Button("-"))
+                    animBoolArray[index].target = EditorGUILayout.Foldout(animBoolArray[index].target, v.allTerrainType.ToString(), true);
+
+                    //GUILayout.Label(new GUIContent(v.allTerrainType.ToString()));
+
+                    if (GUILayout.Button("+"))
                     {
                         EditorUtility.SetDirty(envirconmentConfig);
-                        v.terrainTypeSpriteList.Remove(v.terrainTypeSpriteList[i]);
+                        v.terrainTypeSpriteList.Add(null);
+                        animBoolArray[index].target = true;
                     }
 
                     EditorGUILayout.EndHorizontal();
 
+                    if (EditorGUILayout.BeginFadeGroup(animBoolArray[index].faded))
+                    {
+                        EditorGUILayout.BeginVertical();
+                        for (int i = 0; i < v.terrainTypeSpriteList.Count; i++)
+                        {
+                            EditorGUILayout.BeginHorizontal();
+                            v.terrainTypeSpriteList[i] =
+                                EditorGUILayout.ObjectField(v.terrainTypeSpriteList[i], typeof(Sprite), true) as Sprite;
+
+                            if (GUILayout.Button("-"))
+                            {
+                                EditorUtility.SetDirty(envirconmentConfig);
+                                v.terrainTypeSpriteList.Remove(v.terrainTypeSpriteList[i]);
+                            }
+
+                            EditorGUILayout.EndHorizontal();
+
+                        }
+
+                        EditorGUILayout.EndVertical();
+                    }
+                    EditorGUILayout.EndFadeGroup();
+                    index++;
                 }
-
-                EditorGUILayout.EndVertical();
-
-
             }
 
 
+            if (EditorUtility.IsDirty(envirconmentConfig))
+            {
+                if (GUILayout.Button("Save"))
+                {
+                    EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+                    AssetDatabase.Refresh();
+                    EditorUtility.ClearDirty(envirconmentConfig);
+                }
 
+            }
 
             EditorGUILayout.EndVertical();
 
