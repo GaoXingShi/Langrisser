@@ -56,7 +56,7 @@ namespace MainSpace.Grid
         private int width, height;
 
         private TileSaveData[,] tileArray;
-        private /*readonly*/ List<TileSaveData> tileList = new List<TileSaveData>();
+        private List<TileSaveData> tileList = new List<TileSaveData>();
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
         private bool lerpStart;
@@ -85,85 +85,65 @@ namespace MainSpace.Grid
         /// <returns></returns>
         public TileSaveData[] CalculateMovingRange(ActivitiesUnit _unit)
         {
+            // 初始化
             foreach (var v in tileList.Where(x => x.pixelValue[0] != -1))
             {
                 v.SetPixelValue(-1);
             }
-
-            for (int i = 1; i <= _unit.moveValue[0]; i++)
-            {
-                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i))
-                {
-                    //v.SetASont(i);
-                    if (activitiesManager.GetUnitPosContains(v.widthHeighValue) && !activitiesManager.GetUnitPosContainsOtherTroop(v.widthHeighValue, _unit.managerKeyName))
-                    {
-                        v.SetPixelValue(99);
-                    }
-                    else
-                    {
-                        v.SetPixelValue(environmentConfig.GetConsumeValue(_unit.movingType, GetSprite(v.widthHeighValue)));
-                    }
-                }
-            }
-            var currentSaveData = tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0);
-            currentSaveData.SetPixelValue(0);
-            currentSaveData.isChange = true;
-            PressureAlgorithm(currentSaveData.widthHeighValue, _unit.moveValue[0]);
-
+            // 抓取部分数据
             List<TileSaveData> cacheData = tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0]).ToList();
-
-            while (cacheData.Any(x => x.pixelValue[0] < _unit.moveValue[0] && x.pixelValue[0] > 0 && x.isChange))
+            
+            // 地形移动力消耗值
+            foreach (var v in cacheData)
             {
-                foreach (var v in cacheData.Where(x => x.pixelValue[0] < _unit.moveValue[0] && x.pixelValue[0] > 0 && x.isChange))
+                if (activitiesManager.GetUnitPosContains(v.widthHeighValue) &&
+                    !activitiesManager.GetUnitPosContainsOtherTroop(v.widthHeighValue, _unit.managerKeyName))
                 {
-                    PressureAlgorithm(v.widthHeighValue, _unit.moveValue[0]);
-                }
-
-            }
-
-            cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.moveValue[0] && x.isChange && (!activitiesManager.GetUnitPosContains(x.widthHeighValue) || x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0)).ToArray();
-
-            return cacheSaveData;
-        }
-
-        private void PressureAlgorithm(Vector3Int _currentPos, int _maxMovingValue)
-        {
-            var currentData = GetTileSaveData(_currentPos);
-            if (currentData.pixelValue[0] > _maxMovingValue || currentData.isChange == false)
-            {
-                return;
-            }
-
-            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.left));
-            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.right));
-            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.up));
-            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.down));
-
-            currentData.pixelValue[0] = 0;
-        }
-
-        private void SearchAround(TileSaveData _currentData, TileSaveData _data)
-        {
-            if (_data == null)
-            {
-                return;
-            }
-
-            int value = _data.pixelValue[1] + _currentData.pixelValue[0];
-            if (_data.pixelValue[0] != 0)
-            {
-                if (_data.isChange)
-                {
-                    if (value < _data.pixelValue[0])
-                        _data.pixelValue[0] = value;
+                    v.SetPixelValue(99);
                 }
                 else
                 {
-                    _data.isChange = true;
-                    _data.pixelValue[0] = value;
+                    v.SetPixelValue(environmentConfig.GetConsumeValue(_unit.movingType,
+                        GetSprite(v.widthHeighValue)));
                 }
             }
+            // 单位当前位置
+            var currentSaveData =
+                tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0);
+            currentSaveData.SetPixelValue(0);
+            currentSaveData.isChange = true;
 
+            if (_unit.movingType != TerrainActionType.瞬行)
+            {
+                PressureAlgorithm(currentSaveData.widthHeighValue, _unit.moveValue[0]);
+
+                while (cacheData.Any(x => x.pixelValue[0] < _unit.moveValue[0] && x.pixelValue[0] > 0 && x.isChange))
+                {
+                    foreach (var v in cacheData.Where(x =>
+                        x.pixelValue[0] < _unit.moveValue[0] && x.pixelValue[0] > 0 && x.isChange))
+                    {
+                        PressureAlgorithm(v.widthHeighValue, _unit.moveValue[0]);
+                    }
+
+                }
+
+                // 去除所有数值低于移动力的方格 与没计算过的方格.
+                cacheSaveData = cacheData.Where(x =>
+                    x.pixelValue[0] <= _unit.moveValue[0] && x.isChange).ToArray();
+
+
+            }
+            else
+            {
+                cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.moveValue[0]).ToArray();
+            }
+
+            // 去除所有 已有单位的方格
+            cacheSaveData = cacheSaveData.Where(x =>
+                (!activitiesManager.GetUnitPosContains(x.widthHeighValue) ||
+                 x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0)).ToArray();
+
+            return cacheSaveData;
         }
 
         /// <summary>
@@ -225,7 +205,7 @@ namespace MainSpace.Grid
 
             int ms = 30;
             int moveValue = _unit.moveValue[0];
-            for (int i = 0; i <= moveValue; i ++)
+            for (int i = 0; i <= moveValue; i++)
             {
                 if (cacheSaveData == null)
                 {
@@ -308,6 +288,57 @@ namespace MainSpace.Grid
             lerpStart = _enabled;
             //isLerpUp = true;
             //colorAValue = MINAVALUE;
+        }
+
+
+        /// <summary>
+        /// 查看四周并改变四周的pixel值
+        /// </summary>
+        /// <param name="_currentPos"></param>
+        /// <param name="_maxMovingValue"></param>
+        private void PressureAlgorithm(Vector3Int _currentPos, int _maxMovingValue)
+        {
+            var currentData = GetTileSaveData(_currentPos);
+            if (currentData.pixelValue[0] > _maxMovingValue || currentData.isChange == false)
+            {
+                return;
+            }
+
+            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.left));
+            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.right));
+            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.up));
+            SearchAround(currentData, GetTileSaveData(_currentPos + Vector3Int.down));
+
+            currentData.pixelValue[0] = 0;
+        }
+
+        /// <summary>
+        /// 搜索该位置的可行性
+        /// </summary>
+        /// <param name="_currentData"></param>
+        /// <param name="_data"></param>
+        private void SearchAround(TileSaveData _currentData, TileSaveData _data)
+        {
+            if (_data == null)
+            {
+                return;
+            }
+
+            int value = _data.pixelValue[1] + _currentData.pixelValue[0];
+            if (_data.pixelValue[0] != 0)
+            {
+                if (_data.isChange)
+                {
+                    if (value < _data.pixelValue[0])
+                        _data.pixelValue[0] = value;
+                }
+                else
+                {
+                    _data.isChange = true;
+                    _data.pixelValue[0] = value;
+                }
+            }
+
         }
 
         private void InitCalculateValue()
