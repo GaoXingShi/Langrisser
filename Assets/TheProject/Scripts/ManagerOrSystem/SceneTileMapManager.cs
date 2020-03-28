@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 using MainSpace.Activities;
 using MainSpace.ScriptableObject;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace MainSpace.Grid
         public AllowUnitInfo activitiesAllowUnit;      // 坐标位置的可移动方块
         //public int aSont;                             // A值是 阶数
         public int[] pixelValue;    // 0 是更改数 1是不变数
+        public string aliasName, path;    // 别名
         public bool isChange = false;
         public void InfoEntry(TileBase _tile, Sprite _sprite, Vector3Int _widthHeigh, AllowUnitInfo _activitiesAllowUnit)
         {
@@ -27,12 +29,18 @@ namespace MainSpace.Grid
             widthHeighValue = _widthHeigh;
             activitiesAllowUnit = _activitiesAllowUnit;
             SetPixelValue(-1);
+            InitAliasName();
         }
 
         public void SetPixelValue(int _value)
         {
             pixelValue = new int[] { _value, _value };
             isChange = false;
+        }
+
+        public void InitAliasName()
+        {
+            aliasName = path = string.Empty;
         }
     }
 
@@ -53,7 +61,8 @@ namespace MainSpace.Grid
         [Header("Data")]
         public float colorAValue = 0;
         // 边界数目
-        private int width, height;
+        [HideInInspector]
+        public int width, height;
 
         private TileSaveData[,] tileArray;
         private List<TileSaveData> tileList = new List<TileSaveData>();
@@ -89,13 +98,17 @@ namespace MainSpace.Grid
             foreach (var v in tileList.Where(x => x.pixelValue[0] != -1))
             {
                 v.SetPixelValue(-1);
+                v.InitAliasName();
             }
             // 抓取部分数据
             List<TileSaveData> cacheData = tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0]).ToList();
-            
+
+            int tempIndex = 1;
             // 地形移动力消耗值
             foreach (var v in cacheData)
             {
+                if (v.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) != 0)
+                    v.aliasName = string.Concat("T", tempIndex++);
                 if (activitiesManager.GetUnitPosContains(v.widthHeighValue) &&
                     !activitiesManager.GetUnitPosContainsOtherTroop(v.widthHeighValue, _unit.managerKeyName))
                 {
@@ -111,6 +124,8 @@ namespace MainSpace.Grid
             var currentSaveData =
                 tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0);
             currentSaveData.SetPixelValue(0);
+            currentSaveData.aliasName = "T0";
+            currentSaveData.path = "T0";
             currentSaveData.isChange = true;
 
             if (_unit.movingType != TerrainActionType.瞬行)
@@ -174,31 +189,45 @@ namespace MainSpace.Grid
         }
 
         /// <summary>
-        /// 获取该Vector3 Pos 点是否允许移动
+        /// 输入_pos，获得从原点到_pos的移动路径
         /// </summary>
         /// <param name="_pos"></param>
         /// <returns></returns>
-        public bool GetMoveToUnitAllow(Vector3Int _pos)
+        public Vector3Int[] GetMoveToUnitAllow(Vector3Int _pos)
         {
-            if (cacheSaveData == null || cacheSaveData.Length == 0) return false;
+            if (cacheSaveData == null || cacheSaveData.Length == 0) return null;
 
-            foreach (var v in cacheSaveData)
+            var searchData = cacheSaveData.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_pos) == 0);
+            if (searchData != null)
             {
-                if (v.widthHeighValue.Vector3IntRangeValue(_pos) == 0)
-                {
-                    return true;
-                }
-            }
+                string[] pathArray = searchData.path.Split(',');
 
-            return false;
+                List<Vector3Int> cacheValue = new List<Vector3Int>();
+                for (int i = 0; i < pathArray.Length; i++)
+                {
+                    Vector3Int value = (cacheSaveData.FirstOrDefault(x => x.aliasName.Equals(pathArray[i])) != null
+                        ? cacheSaveData.FirstOrDefault(x => x.aliasName.Equals(pathArray[i]))
+                        : tileList.FirstOrDefault(x => x.aliasName.Equals(pathArray[i]))).widthHeighValue;
+                    value.z = -1;
+                    cacheValue.Add(value);
+
+                }
+                return cacheValue.ToArray();
+            }
+            else
+            {
+                return null;
+            }
         }
 
+        private bool asyncBoolValue = false;
         /// <summary>
         /// 显示可移动相关区域
         /// </summary>
         public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit)
         {
-            foreach (var v in tileList)
+            asyncBoolValue = true;
+            foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled == false))
             {
                 v.activitiesAllowUnit.SetMoveGrid(true);
             }
@@ -207,24 +236,38 @@ namespace MainSpace.Grid
             int moveValue = _unit.moveValue[0];
             for (int i = 0; i <= moveValue; i++)
             {
-                if (cacheSaveData == null)
+                if (cacheSaveData == null || !asyncBoolValue)
                 {
                     return;
                 }
 
                 foreach (var v in cacheSaveData.Where(
-                    x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i  /*&& x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) >= i)*/))
+                    x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == i))
                 {
                     v.activitiesAllowUnit.SetMoveGrid(false);
                 }
                 await Task.Delay(ms);
-
             }
 
-            //foreach (var v in cacheSaveData)
-            //{
-            //    v.activitiesAllowUnit.SetMoveGrid(false);
-            //}
+        }
+        /// <summary>
+        /// 显示移动轨迹
+        /// </summary>
+        /// <param name="_unit"></param>
+        /// <param name="_posArray"></param>
+        public void ShowCurrentMovingCorrelationGrid(ActivitiesUnit _unit, Vector3Int[] _posArray)
+        {
+            asyncBoolValue = false;
+            foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled == false))
+            {
+                v.activitiesAllowUnit.SetMoveGrid(true);
+            }
+
+            cacheSaveData.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
+            for (int i = 0; i < _posArray.Length; i++)
+            {
+                tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_posArray[i]) == 0).activitiesAllowUnit.SetMoveGrid(false);
+            }
         }
 
         /// <summary>
@@ -232,13 +275,21 @@ namespace MainSpace.Grid
         /// </summary>
         public void HideCanMoveCorrelationGrid()
         {
+            asyncBoolValue = false;
             if (cacheSaveData == null) return;
 
-            foreach (var v in tileList)
+            foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled))
             {
                 v.activitiesAllowUnit.SetMoveGrid(false);
             }
 
+        }
+
+        /// <summary>
+        /// 清空暂存的数据
+        /// </summary>
+        public void ClearCacheSaveData()
+        {
             cacheSaveData = null;
         }
 
@@ -280,14 +331,7 @@ namespace MainSpace.Grid
         /// <param name="_enabled"></param>
         public void SetColorValueState(bool _enabled)
         {
-            //if (_enabled.Equals(lerpStart))
-            //{
-            //    return;
-            //}
-
             lerpStart = _enabled;
-            //isLerpUp = true;
-            //colorAValue = MINAVALUE;
         }
 
 
@@ -330,13 +374,19 @@ namespace MainSpace.Grid
                 if (_data.isChange)
                 {
                     if (value < _data.pixelValue[0])
+                    {
                         _data.pixelValue[0] = value;
+                        _data.path = string.Concat(_currentData.path, ",", _data.aliasName);
+                    }
                 }
                 else
                 {
                     _data.isChange = true;
                     _data.pixelValue[0] = value;
+                    _data.path = string.Concat(_currentData.path, ",", _data.aliasName);
+
                 }
+
             }
 
         }
@@ -386,6 +436,12 @@ namespace MainSpace.Grid
             }
         }
 
+        /// <summary>
+        /// 中心点外空闲的位置
+        /// </summary>
+        /// <param name="_pos"></param>
+        /// <param name="_range"></param>
+        /// <returns></returns>
         private Vector3Int? GetUnitRangeSpacePos(Vector3Int _pos, int _range)
         {
             var array = tileList

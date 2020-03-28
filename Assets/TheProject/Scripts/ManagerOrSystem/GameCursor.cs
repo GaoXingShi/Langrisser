@@ -48,7 +48,6 @@ namespace MainSpace
                 {
                     bool gridPlayerLayer = hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer");
                     ActivitiesUnit unit = hit2D.transform.GetComponent<ActivitiesUnit>();
-
                     if (gridPlayerLayer)
                     {
                         if (Input.GetMouseButtonDown(0))
@@ -63,7 +62,6 @@ namespace MainSpace
                         else
                         {
                             // Touch Unit 
-
                             if (cacheHitRaycastUnit != null && cacheHitRaycastUnit != unit)
                             {
                                 CommanderRangeUnit(null);

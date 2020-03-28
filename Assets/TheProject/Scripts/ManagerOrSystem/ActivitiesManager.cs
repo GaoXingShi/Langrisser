@@ -72,12 +72,15 @@ namespace MainSpace
         {
             if (currentSelectionUnit != null)
             {
-                if (gameManager.GetIsLocalPlayerAround(currentSelectionUnit.managerKeyName) && tileMapManager.GetMoveToUnitAllow(_cellPos))
+                Vector3Int[] allPos = tileMapManager.GetMoveToUnitAllow(_cellPos);
+                if (gameManager.GetIsLocalPlayerAround(currentSelectionUnit.managerKeyName) && allPos != null && allPos.Length != 0)
                 {
                     if (!currentSelectionUnit.isActionOver)
                     {
-                        _cellPos.z = -1;
-                        UnitMoveTo(_cellPos, currentSelectionUnit);
+                        tileMapManager.HideCanMoveCorrelationGrid();
+                        tileMapManager.ShowCurrentMovingCorrelationGrid(currentSelectionUnit,allPos);
+                        UnitMoveTo(allPos.RemoveDuplicates(), currentSelectionUnit);
+                        
                     }
                     else
                     {
@@ -89,15 +92,11 @@ namespace MainSpace
                 {
                     // 不能允许移动到这里，并且取消本次移动。
                     OverCurrentMoving();
-
                 }
-
                 currentSelectionUnit = null;
             }
 
         }
-
-
 
         /// <summary>
         /// 控制单位移动
@@ -106,7 +105,7 @@ namespace MainSpace
         /// <param name="_unit"></param>
         public void UnitMoveTo(Vector3Int[] _posArray, ActivitiesUnit _unit)
         {
-            StopAllCoroutines();
+            //StopAllCoroutines();
             UnitMoveLerp(_posArray, _unit);
         }
 
@@ -132,6 +131,7 @@ namespace MainSpace
                 tileMapManager.HideCommanderCircleGrid();
                 currentSelectionUnit = null;
                 tileMapManager.HideCanMoveCorrelationGrid();
+                tileMapManager.ClearCacheSaveData();
                 SetAllActivityAnim(false);
                 return true;
             }
@@ -153,6 +153,7 @@ namespace MainSpace
                 sceneWindowsCanvas.ClearUIInfo();
 
             tileMapManager.HideCanMoveCorrelationGrid();
+            tileMapManager.ClearCacheSaveData();
 
             if (_unit.GetType() == typeof(CommanderUnit))
             {
@@ -332,10 +333,13 @@ namespace MainSpace
                 return;
             }
             dotweenSequence = DOTween.Sequence();
-            foreach (var forValue in _posArray)
+            Vector3Int cacheMoving = _unit.currentPos;
+            for (int i = 0; i < _posArray.Length; i++)
             {
+                var forValue = _posArray[i];
                 dotweenSequence.Append(DOTween.To(() => _unit.transform.position, x => _unit.transform.position = x,
-                    forValue, 0.4f));
+                    forValue, cacheMoving.Vector3IntRangeValue(forValue) * 0.1f));
+                cacheMoving = forValue;
             }
 
             dotweenSequence.AppendCallback(() =>
@@ -363,6 +367,7 @@ namespace MainSpace
         {
             sceneWindowsCanvas.ClearUIInfo();
             tileMapManager.HideCanMoveCorrelationGrid();
+            tileMapManager.ClearCacheSaveData();
             tileMapManager.HideCommanderCircleGrid();
             SetAllActivityAnim(false);
             LoadInfo.Instance.gameCursor.isClickUnit = false;
@@ -387,6 +392,49 @@ namespace MainSpace
         public static Vector3Int RemoveZValuie(this Vector3Int _pos,int _zValue)
         {
             return new Vector3Int(_pos.x,_pos.y, _zValue);
+        }
+
+        /// <summary>
+        /// 输入一个路径组，返回去重复的路径组。
+        /// </summary>
+        /// <param name="_posArray"></param>
+        /// <returns></returns>
+        public static Vector3Int[] RemoveDuplicates(this Vector3Int[] _posArray)
+        {
+
+            List<Vector3Int> returnValue = new List<Vector3Int>();
+            if (_posArray.Length > 1)
+            {
+                Vector3Int temp = _posArray[1] - _posArray[0];
+                returnValue.Add(_posArray[0]);
+                for (int i = 1; i < _posArray.Length; i++)
+                {
+                    if (temp == _posArray[i] - _posArray[i - 1])
+                    {
+                        if (i == _posArray.Length - 1)
+                        {
+                            returnValue.Add(_posArray[i]);
+                        }
+                        continue;
+                    }
+                    else
+                    {
+
+                        returnValue.Add(_posArray[i - 1]);
+                        temp = _posArray[i] - _posArray[i - 1];
+
+                        if (i == _posArray.Length - 1)
+                        {
+                            returnValue.Add(_posArray[i]);
+                        }
+                    }
+                }
+                // T0不要
+                returnValue.RemoveAt(0);
+                return returnValue.ToArray();
+            }
+
+            return _posArray;
         }
 
         public static int DistanceValue(this Vector3Int _currentPos,Vector3Int _targetPos)

@@ -38,7 +38,7 @@ namespace MainSpace
                 TileSaveData[] commanderMovingData = sceneTileMapManager.CalculateMovingRange(v);
                 activitiesManager.EnterCommanderOrSoliderUnit(v);
                 yield return new WaitForSeconds(2);
-                activitiesManager.UnitMoveTo(commanderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1),v);
+                activitiesManager.UnitMoveTo(sceneTileMapManager.GetMoveToUnitAllow(commanderMovingData[0].widthHeighValue), v);
                 activitiesManager.ExitCommanderOrSoliderUnit();
                 yield return WaitMoveOn(v);
                 activitiesManager.EnterCommanderOrSoliderUnit(v);
@@ -46,12 +46,15 @@ namespace MainSpace
                 foreach (var vv in v.GetSoliderUnitArray())
                 {
                     TileSaveData[] soliderMovingData = sceneTileMapManager.CalculateMovingRange(vv);
-                    activitiesManager.UnitMoveTo(soliderMovingData[0].widthHeighValue + new Vector3Int(0, 0, -1), vv);
+
+                    activitiesManager.UnitMoveTo(sceneTileMapManager.GetMoveToUnitAllow(soliderMovingData[0].widthHeighValue), vv);
 
                     yield return WaitMoveOn(vv);
                 }
                 activitiesManager.ExitCommanderOrSoliderUnit();
 
+                // 主要为了去掉cacheSaveData数据
+                sceneTileMapManager.ClearCacheSaveData();
             }
 
             gameManager.FinishCurrentRoundTurn();

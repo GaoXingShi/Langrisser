@@ -6,6 +6,7 @@ using System.Collections;
 using System.Linq;
 using DG.Tweening;
 using MainSpace.Activities;
+using MainSpace.Grid;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -62,18 +63,20 @@ namespace MainSpace
         private int currentRoundCampDataIndex;
         private AISystem aiSystem;
         private ActivitiesManager activitiesManager;
+        private SceneTileMapManager sceneTileMapManager;
 
         private RectTransform backageImage;
         private CanvasGroup group;
         private Text turnText, playerText;
         private Image turnImage;
-        private Sequence doTweenSequence, lerpSequence , lerpIndexSequence;
+        private Sequence doTweenSequence, lerpSequence, lerpIndexSequence;
 
         private void Start()
         {
             DOTween.Init(true, false, LogBehaviour.ErrorsOnly);
             aiSystem = LoadInfo.Instance.aiSystem;
             activitiesManager = LoadInfo.Instance.activitiesManager;
+            sceneTileMapManager = LoadInfo.Instance.sceneTileMapManager;
 
             backageImage = transform.Find("TurnCanvas/BackAgeImage").GetComponent<RectTransform>();
             group = transform.Find("TurnCanvas/group").GetComponent<CanvasGroup>();
@@ -97,6 +100,26 @@ namespace MainSpace
 
             Invoke(nameof(PlayGame), 0.3f);
         }
+
+        //private void OnDrawGizmosSelected()
+        //{
+        //    if (Application.isPlaying)
+        //    {
+        //        for (int i = 0; i < sceneTileMapManager.height; i++)
+        //        {
+        //            Color Icolor = i % 2 == 0 ? Color.white : Color.gray;
+        //            Color Jcolor = i % 2 == 1 ? Color.white : Color.gray;
+        //            for (int j = 0; j < sceneTileMapManager.width; j++)
+        //            {
+        //                Gizmos.color = j % 2 == 0 ? Icolor : Jcolor;
+        //                Gizmos.DrawCube(new Vector3Int(j, i, -1) + new Vector3(0.5f, 0.5f, 0), Vector3Int.one);
+        //                TextMesh t = new TextMesh();
+        //            }
+        //        }
+        //    }
+        //}
+
+
 
         public void PlayGame()
         {
@@ -132,24 +155,6 @@ namespace MainSpace
 
         }
 
-        private void StartNextRoundTurn()
-        {
-            if (campData[currentRoundCampDataIndex].ctrlType == CtrlType.Player)
-            {
-                // 手动操作
-                LoadInfo.Instance.sceneWindowsCanvas.SetCanNotClickPanelState(false);
-
-                LoadInfo.Instance.gameCursor.isExecute = true;
-            }
-            else if (campData[currentRoundCampDataIndex].ctrlType == CtrlType.AI)
-            {
-                // AI操作
-                LoadInfo.Instance.sceneWindowsCanvas.SetCanNotClickPanelState(true);
-
-                aiSystem.SetAIData(
-                    activitiesManager.GetCampCommanderArray(campData[currentRoundCampDataIndex].identifyValue));
-            }
-        }
 
         /// <summary>
         /// 如果是该回合允许单位，则返回真
@@ -169,6 +174,24 @@ namespace MainSpace
         public CampData GetCampData(string _keyName)
         {
             return campData.FirstOrDefault(x => x.identifyValue.Equals(_keyName));
+        }
+        private void StartNextRoundTurn()
+        {
+            if (campData[currentRoundCampDataIndex].ctrlType == CtrlType.Player)
+            {
+                // 手动操作
+                LoadInfo.Instance.sceneWindowsCanvas.SetCanNotClickPanelState(false);
+
+                LoadInfo.Instance.gameCursor.isExecute = true;
+            }
+            else if (campData[currentRoundCampDataIndex].ctrlType == CtrlType.AI)
+            {
+                // AI操作
+                LoadInfo.Instance.sceneWindowsCanvas.SetCanNotClickPanelState(true);
+
+                aiSystem.SetAIData(
+                    activitiesManager.GetCampCommanderArray(campData[currentRoundCampDataIndex].identifyValue));
+            }
         }
 
         private void PlayMovie(int _turnIndex, CampType _campType, Color _textColor, Sprite _campSprite, bool _isNext)
@@ -300,7 +323,46 @@ namespace MainSpace
 
         }
 
+        private Vector3[] cubePosArray, labelPosArray;
+        private int height, width;
+        private void OnSceneGUI()
+        {
+            // 绘制文本框
+            if (Application.isPlaying)
+            {
+                if (cubePosArray == null || labelPosArray == null)
+                {
+                    height = LoadInfo.Instance.sceneTileMapManager.height;
+                    width = LoadInfo.Instance.sceneTileMapManager.width;
+                    cubePosArray = new Vector3[height * width];
+                    labelPosArray = new Vector3[cubePosArray.Length];
 
+                    for (int i = 0; i < height; i++)
+                    {
+                        for (int j = 0; j < width; j++)
+                        {
+                            Vector3 pos = new Vector3(j + 0.5f, i + 0.5f, -1);
+                            cubePosArray[i * width + j] = pos;
+                            labelPosArray[i * width + j] =
+                                pos - new Vector3(0.5f, -0.1f);
+                        }
+                    }
+                }
+
+                for (int i = 0; i < height; i++)
+                {
+                    Color Icolor = i % 2 == 0 ? Color.blue : Color.red;
+                    Color Jcolor = i % 2 == 1 ? Color.blue : Color.red;
+                    for (int j = 0; j < width; j++)
+                    {
+                        Handles.color = j % 2 == 0 ? Icolor : Jcolor;
+                        Handles.DrawWireCube(cubePosArray[i * width + j], Vector3.one * 0.98f);
+                        Handles.color = Color.white;
+                        Handles.Label(labelPosArray[i * width + j], $"({i},{j})");
+                    }
+                }
+            }
+        }
     }
 #endif
 }

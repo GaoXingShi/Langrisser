@@ -4471,6 +4471,8 @@ MonoBehaviour:
   activitiesAllowUnitRoot: {fileID: 1627261326}
   environmentConfig: {fileID: 11400000, guid: d23fa8ed1ae8f8e4cb810c09719b283c, type: 2}
   colorAValue: 0
+  width: 0
+  height: 0
 --- !u!1 &1086363771
 GameObject:
   m_ObjectHideFlags: 0
