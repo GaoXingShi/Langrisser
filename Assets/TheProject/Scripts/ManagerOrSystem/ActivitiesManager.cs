@@ -21,7 +21,7 @@ namespace MainSpace
         private SceneWindowsCanvas sceneWindowsCanvas;
         private GameManager gameManager;
         private Sequence dotweenSequence;
-
+        private bool isStandByOrOtherMode = false;
         private void Start()
         {
             DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
@@ -42,8 +42,9 @@ namespace MainSpace
                 tileMapManager.HideCanMoveCorrelationGrid();
 
                 tileMapManager.CalculateMovingRange(_unit);
-                tileMapManager.ShowCanMoveCorrelationGrid(_unit);
+                tileMapManager.ShowCanMoveCorrelationGrid(_unit,true);
                 currentSelectionUnit = _unit;
+                initPos = currentSelectionUnit.currentPos;
 
                 if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
                 {
@@ -57,11 +58,20 @@ namespace MainSpace
             else if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
             {
                 // 点击了原点这个情况
-                var temp = currentSelectionUnit.currentPos;
-                temp.z = -1;
-                ClickTilePos(temp);
-
+                if (isStandByOrOtherMode)
+                {
+                    UnitOnFinish(_unit);
+                    currentSelectionUnit = null;
+                }
+                else
+                {
+                    var temp = currentSelectionUnit.currentPos;
+                    temp.z = -1;
+                    ClickTilePos(temp);
+                }
             }
+
+
         }
 
         /// <summary>
@@ -70,6 +80,11 @@ namespace MainSpace
         /// <param name="_cellPos"></param>
         public void ClickTilePos(Vector3Int _cellPos)
         {
+            if (isStandByOrOtherMode)
+            {
+                return;
+            }
+
             if (currentSelectionUnit != null)
             {
                 Vector3Int[] allPos = tileMapManager.GetMoveToUnitAllow(_cellPos);
@@ -78,9 +93,9 @@ namespace MainSpace
                     if (!currentSelectionUnit.isActionOver)
                     {
                         tileMapManager.HideCanMoveCorrelationGrid();
-                        tileMapManager.ShowCurrentMovingCorrelationGrid(currentSelectionUnit,allPos);
-                        UnitMoveTo(allPos.RemoveDuplicates(), currentSelectionUnit);
-                        
+                        tileMapManager.ShowCurrentMovingCorrelationGrid(currentSelectionUnit, allPos);
+                        UnitMoveTo(allPos.RemoveDuplicates(), currentSelectionUnit,CtrlType.Player);
+
                     }
                     else
                     {
@@ -93,7 +108,6 @@ namespace MainSpace
                     // 不能允许移动到这里，并且取消本次移动。
                     OverCurrentMoving();
                 }
-                currentSelectionUnit = null;
             }
 
         }
@@ -103,10 +117,10 @@ namespace MainSpace
         /// </summary>
         /// <param name="_posArray"></param>
         /// <param name="_unit"></param>
-        public void UnitMoveTo(Vector3Int[] _posArray, ActivitiesUnit _unit)
+        public void UnitMoveTo(Vector3Int[] _posArray, ActivitiesUnit _unit,CtrlType _ctrlType)
         {
             //StopAllCoroutines();
-            UnitMoveLerp(_posArray, _unit);
+            UnitMoveLerp(_posArray, _unit, _ctrlType);
         }
 
         /// <summary>
@@ -114,10 +128,10 @@ namespace MainSpace
         /// </summary>
         /// <param name="_pos"></param>
         /// <param name="_unit"></param>
-        public void UnitMoveTo(Vector3Int _pos, ActivitiesUnit _unit)
+        public void UnitMoveTo(Vector3Int _pos, ActivitiesUnit _unit, CtrlType _ctrlType)
         {
             Vector3Int[] temp = new Vector3Int[] { _pos };
-            UnitMoveTo(temp, _unit);
+            UnitMoveTo(temp, _unit, _ctrlType);
         }
 
         /// <summary>
@@ -125,6 +139,14 @@ namespace MainSpace
         /// </summary>
         public bool CancelTileSelection()
         {
+            if (isStandByOrOtherMode)
+            {
+                isStandByOrOtherMode = !isStandByOrOtherMode;
+                tileMapManager.ShowCanMoveCorrelationGrid(currentSelectionUnit,false);
+                currentSelectionUnit.currentPos = initPos;
+                currentSelectionUnit.transform.position = initPos;
+                return true;
+            }
             if (currentSelectionUnit)
             {
                 OnFinishedUnitMove(currentSelectionUnit);
@@ -154,6 +176,7 @@ namespace MainSpace
 
             tileMapManager.HideCanMoveCorrelationGrid();
             tileMapManager.ClearCacheSaveData();
+            isStandByOrOtherMode = false;
 
             if (_unit.GetType() == typeof(CommanderUnit))
             {
@@ -164,6 +187,8 @@ namespace MainSpace
             }
             LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
         }
+
+
         #endregion
 
         #region 指挥圈相关
@@ -225,7 +250,7 @@ namespace MainSpace
         }
 
         #endregion
- 
+
         /// <summary>
         /// 添加可行动单位
         /// </summary>
@@ -323,12 +348,21 @@ namespace MainSpace
             }
         }
 
-
-        private void UnitMoveLerp(Vector3Int[] _posArray, ActivitiesUnit _unit)
+        private Vector3Int initPos;
+        private void UnitMoveLerp(Vector3Int[] _posArray, ActivitiesUnit _unit, CtrlType _ctrlType)
         {
             if (_posArray.Length == 1 && _posArray[0].Vector3IntRangeValue(_unit.currentPos) == 0)
             {
-                UnitOnFinish(_unit);
+                _unit.currentPos = _posArray[0];
+                if (_ctrlType == CtrlType.Player)
+                {
+                    tileMapManager.ShowStandByOrOtherActionGrid(_unit);
+                    isStandByOrOtherMode = true;
+                }
+                else if (_ctrlType == CtrlType.AI)
+                {
+                    UnitOnFinish(_unit);
+                }
                 return;
             }
             dotweenSequence = DOTween.Sequence();
@@ -344,8 +378,15 @@ namespace MainSpace
             dotweenSequence.AppendCallback(() =>
             {
                 _unit.currentPos = _posArray[_posArray.Length - 1];
-
-                UnitOnFinish(_unit);
+                if (_ctrlType == CtrlType.Player)
+                {
+                    tileMapManager.ShowStandByOrOtherActionGrid(_unit);
+                    isStandByOrOtherMode = true;
+                }
+                else if (_ctrlType == CtrlType.AI)
+                {
+                    UnitOnFinish(_unit);
+                }
             });
 
         }
@@ -388,9 +429,9 @@ namespace MainSpace
             return x + y;
         }
 
-        public static Vector3Int RemoveZValuie(this Vector3Int _pos,int _zValue)
+        public static Vector3Int RemoveZValuie(this Vector3Int _pos, int _zValue)
         {
-            return new Vector3Int(_pos.x,_pos.y, _zValue);
+            return new Vector3Int(_pos.x, _pos.y, _zValue);
         }
 
         /// <summary>
@@ -436,7 +477,7 @@ namespace MainSpace
             return _posArray;
         }
 
-        public static int DistanceValue(this Vector3Int _currentPos,Vector3Int _targetPos)
+        public static int DistanceValue(this Vector3Int _currentPos, Vector3Int _targetPos)
         {
             return Mathf.Abs(_currentPos.x - _targetPos.x) + Mathf.Abs(_currentPos.y - _targetPos.y);
         }

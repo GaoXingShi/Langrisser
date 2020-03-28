@@ -4619,6 +4619,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 929747326, guid: 305897e3ced9e7b4694eca8fddfa4b27, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2405892836595763467, guid: 305897e3ced9e7b4694eca8fddfa4b27,
         type: 3}
       propertyPath: m_Name
@@ -6375,7 +6379,7 @@ MonoBehaviour:
   cinemachine: {fileID: 1052381756}
   grid: {fileID: 1070924769}
   isExecute: 1
-  isClickUnit: 0
+  clickActivitiesUnit: {fileID: 0}
 --- !u!4 &1594465679
 Transform:
   m_ObjectHideFlags: 0

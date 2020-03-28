@@ -221,7 +221,7 @@ namespace MainSpace.Grid
                 return null;
             }
         }
-       
+
         /// <summary>
         /// 清空暂存的数据
         /// </summary>
@@ -229,15 +229,15 @@ namespace MainSpace.Grid
         {
             cacheSaveData = null;
         }
-        
+
         #endregion
-  
+
         #region 移动区域显示相关
         private bool asyncBoolValue = false;
         /// <summary>
         /// 显示可移动相关区域
         /// </summary>
-        public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit)
+        public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit, bool _isAsync)
         {
             asyncBoolValue = true;
             foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled == false))
@@ -259,7 +259,8 @@ namespace MainSpace.Grid
                 {
                     v.activitiesAllowUnit.SetMoveGrid(false);
                 }
-                await Task.Delay(ms);
+                if (_isAsync)
+                    await Task.Delay(ms);
             }
 
         }
@@ -281,6 +282,16 @@ namespace MainSpace.Grid
             {
                 tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_posArray[i]) == 0).activitiesAllowUnit.SetMoveGrid(false);
             }
+        }
+
+        public void ShowStandByOrOtherActionGrid(ActivitiesUnit _unit)
+        {
+            foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled == false))
+            {
+                v.activitiesAllowUnit.SetMoveGrid(true);
+            }
+
+            tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
         }
 
         /// <summary>
