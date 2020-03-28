@@ -87,6 +87,8 @@ namespace MainSpace.Grid
 
         }
 
+        #region 移动区域计算相关
+
         /// <summary>
         /// 输入一个活动单位，返回该活动单位可以活动的区域。
         /// </summary>
@@ -219,7 +221,18 @@ namespace MainSpace.Grid
                 return null;
             }
         }
-
+       
+        /// <summary>
+        /// 清空暂存的数据
+        /// </summary>
+        public void ClearCacheSaveData()
+        {
+            cacheSaveData = null;
+        }
+        
+        #endregion
+  
+        #region 移动区域显示相关
         private bool asyncBoolValue = false;
         /// <summary>
         /// 显示可移动相关区域
@@ -285,14 +298,10 @@ namespace MainSpace.Grid
 
         }
 
-        /// <summary>
-        /// 清空暂存的数据
-        /// </summary>
-        public void ClearCacheSaveData()
-        {
-            cacheSaveData = null;
-        }
 
+        #endregion
+
+        #region 指挥圈相关
         /// <summary>
         /// 显示指挥圈相关区域
         /// </summary>
@@ -334,6 +343,7 @@ namespace MainSpace.Grid
             lerpStart = _enabled;
         }
 
+        #endregion
 
         /// <summary>
         /// 查看四周并改变四周的pixel值
@@ -473,7 +483,6 @@ namespace MainSpace.Grid
 
             return null;
         }
-
         private TileSaveData GetTileSaveData(Vector3Int _pos)
         {
             int x = _pos.x, y = _pos.y;

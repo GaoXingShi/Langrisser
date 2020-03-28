@@ -54,7 +54,7 @@ namespace MainSpace
                     sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as SoliderUnit);
                 }
             }
-            else if (_unit == currentSelectionUnit)
+            else if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
             {
                 // 点击了原点这个情况
                 var temp = currentSelectionUnit.currentPos;
@@ -162,8 +162,7 @@ namespace MainSpace
                 CommanderUnit temp = (CommanderUnit)_unit;
                 tileMapManager.ShowCommanderCircleGrid(temp.currentPos, temp.commandRangeValue[0], temp.campColor);
             }
-
-            LoadInfo.Instance.gameCursor.isClickUnit = false;
+            LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
         }
         #endregion
 
@@ -370,7 +369,7 @@ namespace MainSpace
             tileMapManager.ClearCacheSaveData();
             tileMapManager.HideCommanderCircleGrid();
             SetAllActivityAnim(false);
-            LoadInfo.Instance.gameCursor.isClickUnit = false;
+            LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
         }
     }
 

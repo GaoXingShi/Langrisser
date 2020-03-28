@@ -16,9 +16,9 @@ namespace MainSpace
         public CinemachineVirtualCamera cinemachine;
         public UnityEngine.Grid grid;
 
-        [HideInInspector]
-        public bool isExecute = true, isClickUnit = false;
-
+        [HideInInspector] public bool isExecute = true;
+        //[HideInInspector]
+        public ActivitiesUnit clickActivitiesUnit;
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
         private ActivitiesUnit cacheHitRaycastUnit;
@@ -53,10 +53,10 @@ namespace MainSpace
                         if (Input.GetMouseButtonDown(0))
                         {
                             // 告诉士兵管理系统
-                            if (!isClickUnit)
+                            if (clickActivitiesUnit == null || (clickActivitiesUnit != null && clickActivitiesUnit == unit))
                             {
+                                clickActivitiesUnit = unit;
                                 activitiesManager.SelectionUnit(unit);
-                                isClickUnit = !isClickUnit;
                             }
                         }
                         else
@@ -111,7 +111,7 @@ namespace MainSpace
                     }
                     else
                     {
-                        isClickUnit = false;
+                        clickActivitiesUnit = null;
                     }
                 }
             }
