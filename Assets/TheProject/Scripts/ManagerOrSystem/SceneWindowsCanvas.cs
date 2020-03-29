@@ -64,7 +64,7 @@ namespace MainSpace
 
             commanderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0]);
             commanderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0]);
-            commanderMoveText.text = string.Concat("移动:", _unit.moveValue[0]);
+            commanderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
             commanderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0]);
             commanderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0]);
             commandRangeText.text = string.Concat("指挥范围:", _unit.commandRangeValue[0]);
@@ -92,7 +92,7 @@ namespace MainSpace
                 _unit.mineCommanderUnit.correctedAttack[0]);
             soliderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0], " + ",
                 _unit.mineCommanderUnit.correctedDefense[0]);
-            soliderMoveText.text = string.Concat("移动:", _unit.moveValue[0]);
+            soliderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
             soliderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0]);
             soliderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0]);
         }

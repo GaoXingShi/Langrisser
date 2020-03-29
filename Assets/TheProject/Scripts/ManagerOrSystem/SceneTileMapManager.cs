@@ -68,11 +68,13 @@ namespace MainSpace.Grid
         private List<TileSaveData> tileList = new List<TileSaveData>();
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
+        private GameManager gameManager;
         private bool lerpStart;
         void Start()
         {
             InitCalculateValue();
             activitiesManager = LoadInfo.Instance.activitiesManager;
+            gameManager = LoadInfo.Instance.gameManager;
 
             HideCommanderCircleGrid();
         }
@@ -103,7 +105,7 @@ namespace MainSpace.Grid
                 v.InitAliasName();
             }
             // 抓取部分数据
-            List<TileSaveData> cacheData = tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveValue[0]).ToList();
+            List<TileSaveData> cacheData = tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveRangeValue[0]).ToList();
 
             int tempIndex = 1;
             // 地形移动力消耗值
@@ -132,27 +134,27 @@ namespace MainSpace.Grid
 
             if (_unit.movingType != TerrainActionType.瞬行)
             {
-                PressureAlgorithm(currentSaveData.widthHeighValue, _unit.moveValue[0]);
+                PressureAlgorithm(currentSaveData.widthHeighValue, _unit.moveRangeValue[0]);
 
-                while (cacheData.Any(x => x.pixelValue[0] < _unit.moveValue[0] && x.pixelValue[0] > 0 && x.isChange))
+                while (cacheData.Any(x => x.pixelValue[0] < _unit.moveRangeValue[0] && x.pixelValue[0] > 0 && x.isChange))
                 {
                     foreach (var v in cacheData.Where(x =>
-                        x.pixelValue[0] < _unit.moveValue[0] && x.pixelValue[0] > 0 && x.isChange))
+                        x.pixelValue[0] < _unit.moveRangeValue[0] && x.pixelValue[0] > 0 && x.isChange))
                     {
-                        PressureAlgorithm(v.widthHeighValue, _unit.moveValue[0]);
+                        PressureAlgorithm(v.widthHeighValue, _unit.moveRangeValue[0]);
                     }
 
                 }
 
                 // 去除所有数值低于移动力的方格 与没计算过的方格.
                 cacheSaveData = cacheData.Where(x =>
-                    x.pixelValue[0] <= _unit.moveValue[0] && x.isChange).ToArray();
+                    x.pixelValue[0] <= _unit.moveRangeValue[0] && x.isChange).ToArray();
 
 
             }
             else
             {
-                cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.moveValue[0]).ToArray();
+                cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.moveRangeValue[0]).ToArray();
             }
 
             // 去除所有 已有单位的方格
@@ -246,7 +248,7 @@ namespace MainSpace.Grid
             }
 
             int ms = 30;
-            int moveValue = _unit.moveValue[0];
+            int moveValue = _unit.moveRangeValue[0];
             for (int i = 0; i <= moveValue; i++)
             {
                 if (cacheSaveData == null || !asyncBoolValue)
@@ -284,6 +286,10 @@ namespace MainSpace.Grid
             }
         }
 
+        /// <summary>
+        /// 显示攻击相关区域与待机区域
+        /// </summary>
+        /// <param name="_unit"></param>
         public void ShowStandByOrOtherActionGrid(ActivitiesUnit _unit)
         {
             foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled == false))
@@ -291,7 +297,21 @@ namespace MainSpace.Grid
                 v.activitiesAllowUnit.SetMoveGrid(true);
             }
 
-            tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
+            ActivitiesUnit[] aroundUnitArray = activitiesManager.GetActivitiesUnit(_unit.currentPos, _unit.attackRangeValue[0]);
+
+            ActivitiesUnit[] enemyArray = aroundUnitArray.Where(x =>
+                gameManager.GetCampData(x.managerKeyName).troopType !=
+                gameManager.GetCampData(_unit.managerKeyName).troopType).ToArray();
+
+            Debug.Log(aroundUnitArray.Length + " "+ enemyArray.Length);
+            foreach (var v in enemyArray)
+            {
+                GetTileSaveData(v.currentPos).activitiesAllowUnit.SetMoveGrid(false);
+            }
+            GetTileSaveData(_unit.currentPos).activitiesAllowUnit.SetMoveGrid(false);
+
+
+            //tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
         }
 
         /// <summary>
@@ -345,6 +365,21 @@ namespace MainSpace.Grid
             }
         }
 
+        public void RefreshCommanderCircleGird(ActivitiesUnit _unit)
+        {
+            HideCommanderCircleGrid();
+            if (_unit.GetType() == typeof(CommanderUnit))
+            {
+                var commandUnit = ((CommanderUnit)_unit);
+                ShowCommanderCircleGrid(commandUnit.currentPos, commandUnit.commandRangeValue[0], commandUnit.campColor);
+            }
+            else if (_unit.GetType() == typeof(SoliderUnit))
+            {
+                var soliderUnit = ((SoliderUnit)_unit);
+                ShowCommanderCircleGrid(soliderUnit.mineCommanderUnit.currentPos, soliderUnit.mineCommanderUnit.commandRangeValue[0], soliderUnit.campColor);
+            }
+        }
+
         /// <summary>
         /// 控制指挥圈状态
         /// </summary>
@@ -353,7 +388,7 @@ namespace MainSpace.Grid
         {
             lerpStart = _enabled;
         }
-
+        
         #endregion
 
         /// <summary>

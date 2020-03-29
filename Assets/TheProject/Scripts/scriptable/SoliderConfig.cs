@@ -14,7 +14,7 @@ namespace MainSpace.ScriptableObject
         {
             public SoliderType soliderType;
             public ActivityConfig activityConfig;
-            public int attackValue, defenseValue, moveValue, healthValue, magicValue;
+            public int attackValue, attackRangeValue, defenseValue, moveRangeValue, healthValue, magicValue;
         }
 
         public SoliderData[] soliderDataArray;

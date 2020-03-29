@@ -16,7 +16,7 @@ namespace Sense.BehaviourTree.Apply
         public string unitName , managerKeyName;
         public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
-        public int levelSliderValue, levelSliderUpgradeValue, attackValue, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
+        public int levelSliderValue, levelSliderUpgradeValue, attackValue,attackRangeValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
         public Vector3Int showPos;
         private CommanderUnit cacheCommanderUnit = null;
         private CampData campData;
@@ -46,8 +46,9 @@ namespace Sense.BehaviourTree.Apply
             temp.SetIntArrayData(ref temp.correctedAttack, correctedAttackValue);
             temp.SetIntArrayData(ref temp.correctedDefense, correctedDefenseValue);
             temp.SetIntArrayData(ref temp.attackValue, attackValue);
+            temp.SetIntArrayData(ref temp.attackRangeValue, attackRangeValue);
             temp.SetIntArrayData(ref temp.defenseValue, defenseValue);
-            temp.SetIntArrayData(ref temp.moveValue, moveValue);
+            temp.SetIntArrayData(ref temp.moveRangeValue, moveValue);
 
             // int
             temp.levelValue = levelValue;

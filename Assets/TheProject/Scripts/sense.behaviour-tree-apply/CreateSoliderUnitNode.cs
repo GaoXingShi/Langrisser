@@ -34,8 +34,9 @@ namespace Sense.BehaviourTree.Apply
             temp.SetIntArrayData(ref temp.healthValue, data.healthValue);
             temp.SetIntArrayData(ref temp.magicValue, data.magicValue);
             temp.SetIntArrayData(ref temp.attackValue, data.attackValue);
+            temp.SetIntArrayData(ref temp.attackRangeValue, data.attackRangeValue);
             temp.SetIntArrayData(ref temp.defenseValue, data.defenseValue);
-            temp.SetIntArrayData(ref temp.moveValue, data.moveValue);
+            temp.SetIntArrayData(ref temp.moveRangeValue, data.moveRangeValue);
 
             temp.affiliationName = followCommander.GetCampData().campType.ToString();
             temp.managerKeyName = followCommander.managerKeyName;

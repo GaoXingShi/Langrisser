@@ -89,8 +89,9 @@ namespace MainSpace
 
             lerpValue = 0;
             lerpSequence = DOTween.Sequence();
-            lerpSequence.AppendInterval(.4f);
+            lerpSequence.AppendInterval(.25f);
             lerpSequence.Append(DOTween.To(() => lerpValue, x => lerpValue = x, 1, 1));
+            lerpSequence.AppendInterval(.25f);
             lerpSequence.SetLoops(-1, LoopType.Yoyo);
 
             lerpIndexSequence = DOTween.Sequence();
@@ -100,27 +101,7 @@ namespace MainSpace
 
             Invoke(nameof(PlayGame), 0.3f);
         }
-
-        //private void OnDrawGizmosSelected()
-        //{
-        //    if (Application.isPlaying)
-        //    {
-        //        for (int i = 0; i < sceneTileMapManager.height; i++)
-        //        {
-        //            Color Icolor = i % 2 == 0 ? Color.white : Color.gray;
-        //            Color Jcolor = i % 2 == 1 ? Color.white : Color.gray;
-        //            for (int j = 0; j < sceneTileMapManager.width; j++)
-        //            {
-        //                Gizmos.color = j % 2 == 0 ? Icolor : Jcolor;
-        //                Gizmos.DrawCube(new Vector3Int(j, i, -1) + new Vector3(0.5f, 0.5f, 0), Vector3Int.one);
-        //                TextMesh t = new TextMesh();
-        //            }
-        //        }
-        //    }
-        //}
-
-
-
+        
         public void PlayGame()
         {
             LoadInfo.Instance.gameCursor.isExecute = false;

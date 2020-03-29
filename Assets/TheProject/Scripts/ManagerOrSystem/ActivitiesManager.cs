@@ -145,6 +145,8 @@ namespace MainSpace
                 tileMapManager.ShowCanMoveCorrelationGrid(currentSelectionUnit,false);
                 currentSelectionUnit.currentPos = initPos;
                 currentSelectionUnit.transform.position = initPos;
+                // 刷新指挥圈
+                tileMapManager.RefreshCommanderCircleGird(currentSelectionUnit);
                 return true;
             }
             if (currentSelectionUnit)
@@ -180,10 +182,11 @@ namespace MainSpace
 
             if (_unit.GetType() == typeof(CommanderUnit))
             {
-                tileMapManager.HideCommanderCircleGrid();
+                //tileMapManager.HideCommanderCircleGrid();
 
-                CommanderUnit temp = (CommanderUnit)_unit;
-                tileMapManager.ShowCommanderCircleGrid(temp.currentPos, temp.commandRangeValue[0], temp.campColor);
+                //CommanderUnit temp = (CommanderUnit)_unit;
+                tileMapManager.RefreshCommanderCircleGird(_unit);
+                //tileMapManager.ShowCommanderCircleGrid(temp.currentPos, temp.commandRangeValue[0], temp.campColor);
             }
             LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
         }
@@ -198,7 +201,24 @@ namespace MainSpace
         /// <param name="_unit"></param>
         public void EnterCommanderOrSoliderUnit(CommanderUnit _unit)
         {
-            if (_unit != cacheRangeUnit && cacheRangeUnit != null)
+            //if (cacheRangeUnit != null)
+            //{
+            //    if (_unit != cacheRangeUnit)
+            //    {
+            //        tileMapManager.RefreshCommanderCircleGird(_unit);
+            //        SetActivityAnim(cacheRangeUnit, false);
+            //    }
+            //}
+            //else
+            //{
+            //    tileMapManager.SetColorValueState(true);
+            //    tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
+            //    SetActivityAnim(_unit, true);
+            //}
+
+
+            // 当两次触发非同一个指挥阵营时
+            if (cacheRangeUnit != null && _unit != cacheRangeUnit)
             {
                 tileMapManager.HideCommanderCircleGrid();
                 SetActivityAnim(cacheRangeUnit, false);
@@ -378,6 +398,7 @@ namespace MainSpace
             dotweenSequence.AppendCallback(() =>
             {
                 _unit.currentPos = _posArray[_posArray.Length - 1];
+                tileMapManager.RefreshCommanderCircleGird(_unit);
                 if (_ctrlType == CtrlType.Player)
                 {
                     tileMapManager.ShowStandByOrOtherActionGrid(_unit);
@@ -411,6 +432,7 @@ namespace MainSpace
             tileMapManager.HideCommanderCircleGrid();
             SetAllActivityAnim(false);
             LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
+            currentSelectionUnit = null;
         }
     }
 

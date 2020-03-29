@@ -16,28 +16,32 @@ MonoBehaviour:
   - soliderType: 0
     activityConfig: {fileID: 11400000, guid: 8b1f6576033d5d14780dc82ad59c8980, type: 2}
     attackValue: 20
+    attackRangeValue: 1
     defenseValue: 18
-    moveValue: 5
+    moveRangeValue: 5
     healthValue: 100
     magicValue: 0
   - soliderType: 1
     activityConfig: {fileID: 11400000, guid: 127f30774fd47da4f95591c9d4ba9a41, type: 2}
     attackValue: 25
+    attackRangeValue: 1
     defenseValue: 19
-    moveValue: 5
+    moveRangeValue: 5
     healthValue: 100
     magicValue: 0
   - soliderType: 2
     activityConfig: {fileID: 11400000, guid: 9fb9ab4a5be7f62448d5588d1816d4a4, type: 2}
     attackValue: 23
+    attackRangeValue: 1
     defenseValue: 16
-    moveValue: 7
+    moveRangeValue: 8
     healthValue: 100
     magicValue: 0
   - soliderType: 4
     activityConfig: {fileID: 11400000, guid: 8fa8bd3ddb477b44eb158856d03c4f64, type: 2}
     attackValue: 19
+    attackRangeValue: 1
     defenseValue: 17
-    moveValue: 7
+    moveRangeValue: 5
     healthValue: 100
     magicValue: 0

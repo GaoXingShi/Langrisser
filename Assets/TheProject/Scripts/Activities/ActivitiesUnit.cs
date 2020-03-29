@@ -33,7 +33,7 @@ namespace MainSpace.Activities
     public class ActivitiesUnit : MonoBehaviour
     {
         public Vector3Int currentPos;
-        public int[] healthValue, magicValue, moveValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
+        public int[] healthValue, magicValue, moveRangeValue,attackRangeValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
         public ActivityConfig activityConfig;
         public TerrainActionType movingType;
         public Sprite affiliationSprite;
@@ -59,7 +59,7 @@ namespace MainSpace.Activities
 
         public virtual void NodeInitData()
         {
-            healthValue = magicValue = moveValue = attackValue =
+            healthValue = magicValue = moveRangeValue = attackRangeValue = attackValue =
                 defenseValue = new int[2];
         }
 

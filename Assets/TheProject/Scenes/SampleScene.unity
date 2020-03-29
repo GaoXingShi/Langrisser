@@ -1094,6 +1094,7 @@ MonoBehaviour:
   levelSliderValue: 0
   levelSliderUpgradeValue: 130
   attackValue: 25
+  attackRangeValue: 1
   defenseValue: 24
   moveValue: 5
   healthValue: 100
@@ -3572,6 +3573,7 @@ MonoBehaviour:
   levelSliderValue: 0
   levelSliderUpgradeValue: 130
   attackValue: 25
+  attackRangeValue: 1
   defenseValue: 21
   moveValue: 8
   healthValue: 100
@@ -4069,6 +4071,7 @@ MonoBehaviour:
   levelSliderValue: 0
   levelSliderUpgradeValue: 130
   attackValue: 30
+  attackRangeValue: 1
   defenseValue: 27
   moveValue: 5
   healthValue: 100
@@ -4527,6 +4530,7 @@ MonoBehaviour:
   levelSliderValue: 40
   levelSliderUpgradeValue: 130
   attackValue: 28
+  attackRangeValue: 1
   defenseValue: 17
   moveValue: 35
   healthValue: 100
@@ -16646,6 +16650,7 @@ MonoBehaviour:
   levelSliderValue: 0
   levelSliderUpgradeValue: 130
   attackValue: 25
+  attackRangeValue: 1
   defenseValue: 21
   moveValue: 5
   healthValue: 100
