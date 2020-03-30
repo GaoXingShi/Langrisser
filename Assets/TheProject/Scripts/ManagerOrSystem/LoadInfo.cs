@@ -14,7 +14,7 @@ namespace MainSpace
         public AISystem aiSystem;
         public GameCursor gameCursor;
         public SceneWindowsCanvas sceneWindowsCanvas;
-
+        public NumericalAndSettlementSystem numericalAndSettlementSystem;
         public SequenceNode sequenceNode;
 
 

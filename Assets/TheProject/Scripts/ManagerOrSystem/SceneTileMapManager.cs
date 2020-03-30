@@ -364,7 +364,11 @@ namespace MainSpace.Grid
                 v.activitiesAllowUnit.SetCommanderCircleGrid(false, Color.clear);
             }
         }
-
+      
+        /// <summary>
+        /// 刷新指挥圈
+        /// </summary>
+        /// <param name="_unit"></param>
         public void RefreshCommanderCircleGird(ActivitiesUnit _unit)
         {
             HideCommanderCircleGrid();
