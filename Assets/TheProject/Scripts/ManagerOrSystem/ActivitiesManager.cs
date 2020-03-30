@@ -37,12 +37,29 @@ namespace MainSpace
         /// <param name="_unit"></param>
         public void SelectionUnit(ActivitiesUnit _unit)
         {
+            if (isStandByOrOtherMode)
+            {
+                // 点击原点
+                if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
+                {
+                    UnitOnFinish(_unit);
+                    currentSelectionUnit = null;
+                }
+                else
+                {
+                    // 如果单位身上标有可攻击标志，则触发攻击。
+                }
+
+
+                return;
+            }
+
             if (currentSelectionUnit == null || _unit != currentSelectionUnit)
             {
                 tileMapManager.HideCanMoveCorrelationGrid();
 
                 tileMapManager.CalculateMovingRange(_unit);
-                tileMapManager.ShowCanMoveCorrelationGrid(_unit,true);
+                tileMapManager.ShowCanMoveCorrelationGrid(_unit, true);
                 currentSelectionUnit = _unit;
                 initPos = currentSelectionUnit.currentPos;
 
@@ -58,17 +75,10 @@ namespace MainSpace
             else if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
             {
                 // 点击了原点这个情况
-                if (isStandByOrOtherMode)
-                {
-                    UnitOnFinish(_unit);
-                    currentSelectionUnit = null;
-                }
-                else
-                {
-                    var temp = currentSelectionUnit.currentPos;
-                    temp.z = -1;
-                    ClickTilePos(temp);
-                }
+                var temp = currentSelectionUnit.currentPos;
+                temp.z = -1;
+                ClickTilePos(temp);
+
             }
 
 
@@ -94,7 +104,7 @@ namespace MainSpace
                     {
                         tileMapManager.HideCanMoveCorrelationGrid();
                         tileMapManager.ShowCurrentMovingCorrelationGrid(currentSelectionUnit, allPos);
-                        UnitMoveTo(allPos.RemoveDuplicates(), currentSelectionUnit,CtrlType.Player);
+                        UnitMoveTo(allPos.RemoveDuplicates(), currentSelectionUnit, CtrlType.Player);
 
                     }
                     else
@@ -106,7 +116,8 @@ namespace MainSpace
                 else
                 {
                     // 不能允许移动到这里，并且取消本次移动。
-                    OverCurrentMoving();
+                    // 播放禁止移动音频
+                    //OverCurrentMoving();
                 }
             }
 
@@ -117,7 +128,7 @@ namespace MainSpace
         /// </summary>
         /// <param name="_posArray"></param>
         /// <param name="_unit"></param>
-        public void UnitMoveTo(Vector3Int[] _posArray, ActivitiesUnit _unit,CtrlType _ctrlType)
+        public void UnitMoveTo(Vector3Int[] _posArray, ActivitiesUnit _unit, CtrlType _ctrlType)
         {
             //StopAllCoroutines();
             UnitMoveLerp(_posArray, _unit, _ctrlType);
@@ -142,7 +153,7 @@ namespace MainSpace
             if (isStandByOrOtherMode)
             {
                 isStandByOrOtherMode = !isStandByOrOtherMode;
-                tileMapManager.ShowCanMoveCorrelationGrid(currentSelectionUnit,false);
+                tileMapManager.ShowCanMoveCorrelationGrid(currentSelectionUnit, false);
                 currentSelectionUnit.currentPos = initPos;
                 currentSelectionUnit.transform.position = initPos;
                 // 刷新指挥圈
