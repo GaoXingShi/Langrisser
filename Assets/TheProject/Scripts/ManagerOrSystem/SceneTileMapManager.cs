@@ -307,12 +307,26 @@ namespace MainSpace.Grid
             {
                 GetTileSaveData(v.currentPos).activitiesAllowUnit.SetMoveGrid(false);
                 // 设置单位icon
-                activitiesManager.SetActivitiesUnitIconState(v,"sword");
+                activitiesManager.SetActivitiesUnitIconState(v, "sword");
             }
             GetTileSaveData(_unit.currentPos).activitiesAllowUnit.SetMoveGrid(false);
 
 
             //tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
+        }
+
+        // 更改框架部分
+        /// <summary>
+        /// 根据技能类型显示不同效果
+        /// </summary>
+        /// <param name="_unit"></param>
+        /// <param name="_range"></param>
+        /// <param name="_actionScopeType"></param>
+        /// <param name="_skillType"></param>
+        public void ShowCustomActionGrid(ActivitiesUnit _unit, int _range, ActionScopeType _actionScopeType,
+            SkillType _skillType)
+        {
+
         }
 
 
@@ -366,7 +380,7 @@ namespace MainSpace.Grid
                 v.activitiesAllowUnit.SetCommanderCircleGrid(false, Color.clear);
             }
         }
-      
+
         /// <summary>
         /// 刷新指挥圈
         /// </summary>
@@ -394,7 +408,7 @@ namespace MainSpace.Grid
         {
             lerpStart = _enabled;
         }
-        
+
         #endregion
 
         /// <summary>

@@ -59,7 +59,7 @@ namespace MainSpace
                         Debug.Log("attack");
                         UnitOnFinish(currentSelectionUnit);
                         HideAllActivitiesUnitIcon();
-                        SetAllActivityAnim(false);
+                        //SetAllActivityAnim(false);
                         currentSelectionUnit = null;
                         LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
                     }

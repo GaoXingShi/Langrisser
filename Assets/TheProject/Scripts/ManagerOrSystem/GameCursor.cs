@@ -118,6 +118,11 @@ namespace MainSpace
             }
         }
 
+        public void AddEvent()
+        {
+
+        }
+
         /// <summary>
         /// 指挥圈变更通知
         /// </summary>
