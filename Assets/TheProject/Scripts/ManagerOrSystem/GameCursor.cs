@@ -17,7 +17,7 @@ namespace MainSpace
         public UnityEngine.Grid grid;
 
         [HideInInspector] public bool isExecute = true;
-        //[HideInInspector]
+        [HideInInspector]
         public ActivitiesUnit clickActivitiesUnit;
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
@@ -53,10 +53,11 @@ namespace MainSpace
                         if (Input.GetMouseButtonDown(0))
                         {
                             // 告诉士兵管理系统
-                            if (clickActivitiesUnit == null || (clickActivitiesUnit != null && clickActivitiesUnit == unit))
+                            activitiesManager.SelectionUnit(unit);
+
+                            if (clickActivitiesUnit == null /*|| (clickActivitiesUnit != null && clickActivitiesUnit == unit)*/)
                             {
                                 clickActivitiesUnit = unit;
-                                activitiesManager.SelectionUnit(unit);
                             }
                         }
                         else

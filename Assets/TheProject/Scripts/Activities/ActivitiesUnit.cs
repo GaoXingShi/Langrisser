@@ -1,4 +1,5 @@
-﻿using MainSpace.ScriptableObject;
+﻿using System.Linq;
+using MainSpace.ScriptableObject;
 using UnityEngine;
 
 
@@ -32,7 +33,8 @@ namespace MainSpace.Activities
 
     public class ActivitiesUnit : MonoBehaviour
     {
-        public Vector3Int currentPos;
+        [Header("Wait Init Base Data")]
+        public Vector3Int currentPos ;
         public int[] healthValue, magicValue, moveRangeValue,attackRangeValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
         public ActivityConfig activityConfig;
         public TerrainActionType movingType;
@@ -41,12 +43,14 @@ namespace MainSpace.Activities
 
         public bool isActionOver = false,isPlayingAnim = false;                       // 是否结束行动 , 是否播放动画
         public ActivitiesManager manager;
+        public Color campColor;
+        public TroopsType troopsType;
 
+        [Header("Local Link")]
         public SpriteRenderer mRendererComponent;
         public TextMesh hpText;
         public SpriteRenderer professionSprite , playerColorSprite;
-        public Color campColor;
-        public TroopsType troopsType;
+        public GameObject[] iconArray;
 
         private Material mMaterial;
         private GameManager gameManager;
@@ -98,6 +102,41 @@ namespace MainSpace.Activities
         public void PlayActivityAnim(bool _enabled)
         {
             isPlayingAnim = _enabled;
+        }
+
+        /// <summary>
+        /// 获取iCon是否激活
+        /// </summary>
+        /// <param name="_iconName"></param>
+        /// <returns></returns>
+        public bool GetActivitiesUnitIcon(string _iconName)
+        {
+            foreach (var v in iconArray)
+            {
+                if (v.name.Equals(_iconName) && v.activeInHierarchy)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 设置Icon , 输入null 使单位所有Icon未激活
+        /// </summary>
+        /// <param name="_iconName"></param>
+        public void SetActivitiesUnitIcon(string _iconName)
+        {
+            foreach (var v in iconArray)
+            {
+                v.SetActive(false);
+            }
+
+            foreach (var v in iconArray.Where(v => v.name.Equals(_iconName)))
+            {
+                v.SetActive(true);
+                break;
+            }
         }
 
     }

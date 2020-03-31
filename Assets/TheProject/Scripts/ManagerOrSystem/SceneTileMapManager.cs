@@ -303,16 +303,18 @@ namespace MainSpace.Grid
                 gameManager.GetCampData(x.managerKeyName).troopType !=
                 gameManager.GetCampData(_unit.managerKeyName).troopType).ToArray();
 
-            Debug.Log(aroundUnitArray.Length + " "+ enemyArray.Length);
             foreach (var v in enemyArray)
             {
                 GetTileSaveData(v.currentPos).activitiesAllowUnit.SetMoveGrid(false);
+                // 设置单位icon
+                activitiesManager.SetActivitiesUnitIconState(v,"sword");
             }
             GetTileSaveData(_unit.currentPos).activitiesAllowUnit.SetMoveGrid(false);
 
 
             //tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
         }
+
 
         /// <summary>
         /// 隐藏可移动相关区域

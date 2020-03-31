@@ -8,13 +8,13 @@ namespace MainSpace.Activities
 {
     public class CommanderUnit : ActivitiesUnit
     {
+        [Header("Wait Init Command Data")] public bool commandData;
         public int[] commandRangeValue, correctedAttack, correctedDefense;
         public int levelValue, levelSliderValue, levelSliderUpgradeValue;
         public Sprite unitFaceSprite;
         public string unitName;
         public RoleType roleTpe;
         private List<SoliderUnit> mSoliderUnits = new List<SoliderUnit>();
-
 
         public override void NodeInitData()
         {

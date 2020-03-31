@@ -15,7 +15,7 @@ namespace MainSpace
     {
         private readonly List<ActivitiesUnit> UnitList = new List<ActivitiesUnit>();
 
-        private ActivitiesUnit currentSelectionUnit;
+        private ActivitiesUnit currentSelectionUnit { get; set; }
         private CommanderUnit cacheRangeUnit;
         private SceneTileMapManager tileMapManager;
         private SceneWindowsCanvas sceneWindowsCanvas;
@@ -39,22 +39,35 @@ namespace MainSpace
         {
             if (isStandByOrOtherMode)
             {
+                Debug.Log("ha?");
                 // 点击原点
                 if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
                 {
                     UnitOnFinish(_unit);
                     currentSelectionUnit = null;
+                    LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
                 }
-                else
+                else if(currentSelectionUnit != null)
                 {
+                    Debug.Log("click");
                     // 如果单位身上标有可攻击标志，则触发攻击。
+                    if (_unit.GetActivitiesUnitIcon("sword"))
+                    {
+                        // attack
+
+                        // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
+                        Debug.Log("attack");
+                        UnitOnFinish(currentSelectionUnit);
+                        HideAllActivitiesUnitIcon();
+                        SetAllActivityAnim(false);
+                        currentSelectionUnit = null;
+                        LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
+                    }
                 }
-
-
                 return;
             }
 
-            if (currentSelectionUnit == null || _unit != currentSelectionUnit)
+            if (currentSelectionUnit == null /*|| _unit.GetInstanceID() != currentSelectionUnit.GetInstanceID()*/)
             {
                 tileMapManager.HideCanMoveCorrelationGrid();
 
@@ -115,7 +128,7 @@ namespace MainSpace
                 }
                 else
                 {
-                    // 不能允许移动到这里，并且取消本次移动。
+                    // 不能允许移动到这里，并且取消本次移动。 (原)
                     // 播放禁止移动音频
                     //OverCurrentMoving();
                 }
@@ -158,8 +171,12 @@ namespace MainSpace
                 currentSelectionUnit.transform.position = initPos;
                 // 刷新指挥圈
                 tileMapManager.RefreshCommanderCircleGird(currentSelectionUnit);
+                HideAllActivitiesUnitIcon();
+
+                //LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
                 return true;
             }
+
             if (currentSelectionUnit)
             {
                 OnFinishedUnitMove(currentSelectionUnit);
@@ -368,6 +385,19 @@ namespace MainSpace
         {
             return UnitList.Where(x => x.managerKeyName.Equals(_keyName)
                                        && x.GetType() == typeof(CommanderUnit)).OfType<CommanderUnit>().ToArray();
+        }
+
+        public void SetActivitiesUnitIconState(ActivitiesUnit _unit,string _iconName)
+        {
+            _unit.SetActivitiesUnitIcon(_iconName);
+        }
+
+        private void HideAllActivitiesUnitIcon()
+        {
+            foreach (var v in UnitList)
+            {
+                v.SetActivitiesUnitIcon(null);
+            }
         }
 
         private void SetActivityAnim(CommanderUnit _unit, bool _enabled)
