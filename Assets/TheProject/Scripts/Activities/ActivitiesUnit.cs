@@ -50,7 +50,6 @@ namespace MainSpace.Activities
         public SpriteRenderer mRendererComponent;
         public TextMesh hpText;
         public SpriteRenderer professionSprite , playerColorSprite;
-        public GameObject[] iconArray;
 
         private Material mMaterial;
         private GameManager gameManager;
@@ -104,40 +103,40 @@ namespace MainSpace.Activities
             isPlayingAnim = _enabled;
         }
 
-        /// <summary>
-        /// 获取iCon是否激活
-        /// </summary>
-        /// <param name="_iconName"></param>
-        /// <returns></returns>
-        public bool GetActivitiesUnitIcon(string _iconName)
-        {
-            foreach (var v in iconArray)
-            {
-                if (v.name.Equals(_iconName) && v.activeInHierarchy)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        ///// <summary>
+        ///// 获取iCon是否激活
+        ///// </summary>
+        ///// <param name="_iconName"></param>
+        ///// <returns></returns>
+        //public bool GetActivitiesUnitIcon(string _iconName)
+        //{
+        //    foreach (var v in iconArray)
+        //    {
+        //        if (v.name.Equals(_iconName) && v.activeInHierarchy)
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
-        /// <summary>
-        /// 设置Icon , 输入null 使单位所有Icon未激活
-        /// </summary>
-        /// <param name="_iconName"></param>
-        public void SetActivitiesUnitIcon(string _iconName)
-        {
-            foreach (var v in iconArray)
-            {
-                v.SetActive(false);
-            }
+        ///// <summary>
+        ///// 设置Icon , 输入null 使单位所有Icon未激活
+        ///// </summary>
+        ///// <param name="_iconName"></param>
+        //public void SetActivitiesUnitIcon(string _iconName)
+        //{
+        //    foreach (var v in iconArray)
+        //    {
+        //        v.SetActive(false);
+        //    }
 
-            foreach (var v in iconArray.Where(v => v.name.Equals(_iconName)))
-            {
-                v.SetActive(true);
-                break;
-            }
-        }
+        //    foreach (var v in iconArray.Where(v => v.name.Equals(_iconName)))
+        //    {
+        //        v.SetActive(true);
+        //        break;
+        //    }
+        //}
 
     }
 

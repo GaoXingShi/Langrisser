@@ -20,6 +20,7 @@ namespace MainSpace
         private SceneTileMapManager tileMapManager;
         private SceneWindowsCanvas sceneWindowsCanvas;
         private GameManager gameManager;
+        private GameCursor gameCursor;
         private Sequence dotweenSequence;
         private bool isStandByOrOtherMode = false;
         private void Start()
@@ -28,7 +29,7 @@ namespace MainSpace
             tileMapManager = LoadInfo.Instance.sceneTileMapManager;
             sceneWindowsCanvas = LoadInfo.Instance.sceneWindowsCanvas;
             gameManager = LoadInfo.Instance.gameManager;
-
+            gameCursor = LoadInfo.Instance.gameCursor;
         }
         #region 移动相关
         /// <summary>
@@ -51,14 +52,15 @@ namespace MainSpace
                 {
                     Debug.Log("click");
                     // 如果单位身上标有可攻击标志，则触发攻击。
-                    if (_unit.GetActivitiesUnitIcon("sword"))
+                    //if (_unit.GetActivitiesUnitIcon("sword"))
+                    if(true)
                     {
                         // attack
 
                         // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
                         Debug.Log("attack");
                         UnitOnFinish(currentSelectionUnit);
-                        HideAllActivitiesUnitIcon();
+                        //HideAllActivitiesUnitIcon();
                         //SetAllActivityAnim(false);
                         currentSelectionUnit = null;
                         LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
@@ -171,7 +173,7 @@ namespace MainSpace
                 currentSelectionUnit.transform.position = initPos;
                 // 刷新指挥圈
                 tileMapManager.RefreshCommanderCircleGird(currentSelectionUnit);
-                HideAllActivitiesUnitIcon();
+                //HideAllActivitiesUnitIcon();
 
                 //LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
                 return true;
@@ -387,19 +389,20 @@ namespace MainSpace
                                        && x.GetType() == typeof(CommanderUnit)).OfType<CommanderUnit>().ToArray();
         }
 
-        public void SetActivitiesUnitIconState(ActivitiesUnit _unit,string _iconName)
-        {
-            _unit.SetActivitiesUnitIcon(_iconName);
-        }
+        //public void SetActivitiesUnitIconState(ActivitiesUnit _unit,string _iconName)
+        //{
+        //    _unit.SetActivitiesUnitIcon(_iconName);
+        //}
 
-        private void HideAllActivitiesUnitIcon()
-        {
-            foreach (var v in UnitList)
-            {
-                v.SetActivitiesUnitIcon(null);
-            }
-        }
+        //private void HideAllActivitiesUnitIcon()
+        //{
+        //    foreach (var v in UnitList)
+        //    {
+        //        v.SetActivitiesUnitIcon(null);
+        //    }
+        //}
 
+    
         private void SetActivityAnim(CommanderUnit _unit, bool _enabled)
         {
             _unit.PlayActivityAnim(_enabled);
@@ -426,6 +429,12 @@ namespace MainSpace
                 }
                 return;
             }
+
+            gameCursor.AddEvent(null,Vector3Int.one,null,ActionScopeType.none,null, null,() =>
+            {
+                dotweenSequence.Kill(true);
+            });
+
             dotweenSequence = DOTween.Sequence();
             Vector3Int cacheMoving = _unit.currentPos;
             for (int i = 0; i < _posArray.Length; i++)

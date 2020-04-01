@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using MainSpace.Activities;
@@ -16,10 +17,9 @@ namespace MainSpace
     {
         public CinemachineVirtualCamera cinemachine;
         public UnityEngine.Grid grid;
-
+        public Texture2D cursorTexture , attackTexture;
         [HideInInspector] public bool isExecute = true;
-        [HideInInspector]
-        public ActivitiesUnit clickActivitiesUnit;
+        [HideInInspector] public ActivitiesUnit clickActivitiesUnit;
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
         private ActivitiesUnit cacheHitRaycastUnit;
@@ -28,6 +28,8 @@ namespace MainSpace
             cine = ((CinemachineFramingTransposer)cinemachine.GetComponentPipeline()[0]);
             activitiesManager = LoadInfo.Instance.activitiesManager;
             isExecute = true;
+
+            Cursor.SetCursor(cursorTexture,Vector2.one * 8,CursorMode.Auto);
         }
 
         void Update()
@@ -119,9 +121,20 @@ namespace MainSpace
             }
         }
 
-        public void AddEvent(ActivitiesUnit _unit,TileSaveData[] _tile)
+        private Stack a;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_unit"></param>
+        /// <param name="_unitCurrentPos"></param>
+        /// <param name="_tile"></param>
+        /// <param name="_actionScopeType"></param>
+        /// <param name="_activitiesAction"> 鼠标左键触发的事件 </param>
+        /// <param name="_clickTilePosAction"> 鼠标左键触发的事件 </param>
+        /// <param name="_cancelAction"> 鼠标右键触发的事件 </param>
+        public void AddEvent(ActivitiesUnit _unit,Vector3Int _unitCurrentPos, TileSaveData[] _tile, ActionScopeType _actionScopeType,Action<ActivitiesUnit> _activitiesAction,Action<Vector3Int> _clickTilePosAction,Action _cancelAction)
         {
-
+            // none 类型在弹出时直接跳过 因为none是角色移动过程
         }
 
         /// <summary>

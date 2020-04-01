@@ -69,12 +69,14 @@ namespace MainSpace.Grid
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
         private GameManager gameManager;
+        private GameCursor cursor;
         private bool lerpStart;
         void Start()
         {
             InitCalculateValue();
             activitiesManager = LoadInfo.Instance.activitiesManager;
             gameManager = LoadInfo.Instance.gameManager;
+            cursor = LoadInfo.Instance.gameCursor;
 
             HideCommanderCircleGrid();
         }
@@ -241,6 +243,12 @@ namespace MainSpace.Grid
         /// </summary>
         public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit, bool _isAsync)
         {
+            cursor.AddEvent(_unit, _unit.currentPos, cacheSaveData.Where(
+                x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveRangeValue[0]).ToArray(),ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
+                () =>
+                {
+                });
+
             asyncBoolValue = true;
             foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled == false))
             {
@@ -303,19 +311,34 @@ namespace MainSpace.Grid
                 gameManager.GetCampData(x.managerKeyName).troopType !=
                 gameManager.GetCampData(_unit.managerKeyName).troopType).ToArray();
 
+            var stackValue = new List<TileSaveData>();
             if (enemyArray.Length != 0)
             {
                 foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.attackRangeValue[0]))
                 {
                     v.activitiesAllowUnit.SetMoveGrid(false);
                 }
+
+                stackValue = tileList.Where(x =>
+                    x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.attackRangeValue[0]).ToList();
+            }
+            else
+            {
+                tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
+                stackValue =
+                    tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).ToList();
             }
 
             foreach (var v in enemyArray)
             {
                 // 设置单位icon
-                activitiesManager.SetActivitiesUnitIconState(v, "sword");
+                //activitiesManager.SetActivitiesUnitIconState(v, "sword");
             }
+
+            cursor.AddEvent(_unit, _unit.currentPos, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.SelectionUnit,null,
+                () =>
+                {
+                });
 
 
             //tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);

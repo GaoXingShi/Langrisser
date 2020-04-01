@@ -6,6 +6,7 @@ namespace MainSpace
 {
     public enum ActionScopeType
     {
+        none,                           // 哪都不能点
         OnlyOurSoldiers,                // 仅我方士兵
         OnlyOurCommanders,              // 仅我方指挥官
         OnlyOur,                        // 仅我方
@@ -18,6 +19,7 @@ namespace MainSpace
         OnlyEnemySoldiers,              // 仅敌方士兵
         OnlyEnemyCommanders,            // 仅敌方指挥官
         OnlyEnemy,                      // 仅敌方
+        MeAndEnemy,                     // 仅我和敌方(待机与攻击)
         AllActivities,                  // 所有单位
         NoActivitiesUnit,               // 无单位方格
         AllUnit,                        // 所有方格
