@@ -303,13 +303,19 @@ namespace MainSpace.Grid
                 gameManager.GetCampData(x.managerKeyName).troopType !=
                 gameManager.GetCampData(_unit.managerKeyName).troopType).ToArray();
 
+            if (enemyArray.Length != 0)
+            {
+                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.attackRangeValue[0]))
+                {
+                    v.activitiesAllowUnit.SetMoveGrid(false);
+                }
+            }
+
             foreach (var v in enemyArray)
             {
-                GetTileSaveData(v.currentPos).activitiesAllowUnit.SetMoveGrid(false);
                 // 设置单位icon
                 activitiesManager.SetActivitiesUnitIconState(v, "sword");
             }
-            GetTileSaveData(_unit.currentPos).activitiesAllowUnit.SetMoveGrid(false);
 
 
             //tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
@@ -354,14 +360,14 @@ namespace MainSpace.Grid
         /// </summary>
         /// <param name="_pos"></param>
         /// <param name="_range"></param>
-        /// <param name="_commanderCirclecolor"></param>
-        public void ShowCommanderCircleGrid(Vector3Int _pos, int _range, Color _commanderCirclecolor)
+        /// <param name="_commanderCircleColor"></param>
+        public void ShowCommanderCircleGrid(Vector3Int _pos, int _range, Color _commanderCircleColor)
         {
             TileSaveData[] array = tileList.Where(x =>
                 x.widthHeighValue.Vector3IntRangeValue(_pos) <= _range).ToArray();
             foreach (var v in array)
             {
-                v.activitiesAllowUnit.SetCommanderCircleGrid(true, _commanderCirclecolor);
+                v.activitiesAllowUnit.SetCommanderCircleGrid(true, _commanderCircleColor);
             }
         }
 

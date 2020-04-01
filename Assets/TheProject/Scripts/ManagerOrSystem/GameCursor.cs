@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Cinemachine;
 using MainSpace.Activities;
+using MainSpace.Grid;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
@@ -118,7 +119,7 @@ namespace MainSpace
             }
         }
 
-        public void AddEvent()
+        public void AddEvent(ActivitiesUnit _unit,TileSaveData[] _tile)
         {
 
         }
