@@ -15,12 +15,18 @@ namespace MainSpace
     {
         public ActivitiesUnit unit;
         public Vector3Int unitCurrentPos;
-        public TileSaveData[] tile;
+        public TileSaveDataCommand[] tileCommand;
         public ActionScopeType actionScopeType;
         public Action<ActivitiesUnit> activitiesAction;
         public Action<Vector3Int> clickTilePosAction;
         public Action cancelAction;
-        public bool[] moveComponentEnable;
+    }
+
+    public struct TileSaveDataCommand
+    {
+        public string aliasName, path;    // 别名
+        public bool isChange, moveEnable;
+        public Vector3Int pos;
     }
 
 
@@ -204,23 +210,19 @@ namespace MainSpace
         /// <param name="_cancelAction"> 鼠标右键触发的事件 </param>
         public void AddStepEvent(ActivitiesUnit _unit, Vector3Int _unitCurrentPos, TileSaveData[] _tile, ActionScopeType _actionScopeType, Action<ActivitiesUnit> _activitiesAction, Action<Vector3Int> _clickTilePosAction, Action _cancelAction)
         {
+            bool valueNull = _tile == null;
 
-            TileSaveData[] tmpTile = null;
-            bool[] moveComponentValue = null;
+            TileSaveDataCommand[] addStepValue = new TileSaveDataCommand[valueNull ? 1 : _tile.Length];
             if (_tile != null)
             {
-                tmpTile = new TileSaveData[_tile.Length];
-
-                moveComponentValue = new bool[_tile.Length];
-
-                Debug.Log(_tile.Any(x=>x.activitiesAllowUnit.moveSpriteRenderer.enabled));
-                for (int i = 0; i < tmpTile.Length; i++)
+                for (int i = 0; i < _tile.Length; i++)
                 {
-                    tmpTile[i] = new TileSaveData();
-                    tmpTile[i].aliasName = _tile[i].aliasName;
-                    tmpTile[i].isChange = _tile[i].isChange;
-                    tmpTile[i].path = _tile[i].path;
-                    moveComponentValue[i] = _tile[i].activitiesAllowUnit.moveSpriteRenderer.enabled;
+                    addStepValue[i] = new TileSaveDataCommand();
+                    addStepValue[i].aliasName = _tile[i].aliasName;
+                    addStepValue[i].path = _tile[i].path;
+                    addStepValue[i].isChange = _tile[i].isChange;
+                    addStepValue[i].moveEnable = false;
+                    addStepValue[i].pos = _tile[i].widthHeighValue;
                 }
             }
 
@@ -229,12 +231,11 @@ namespace MainSpace
             {
                 unit = _unit,
                 unitCurrentPos = _unitCurrentPos,
-                tile = _tile == null ? null : tmpTile,
+                tileCommand = valueNull ? null : addStepValue,
                 actionScopeType = _actionScopeType,
                 activitiesAction = _activitiesAction,
                 clickTilePosAction = _clickTilePosAction,
                 cancelAction = _cancelAction,
-                moveComponentEnable = _tile == null ? null : moveComponentValue
             };
             stepInfoStack.Push(temp);
         }
@@ -298,16 +299,9 @@ namespace MainSpace
         {
             if (stepInfoStack.Count == 0)
             {
-                if (!activitiesManager.CancelTileSelection())
-                {
-                    // 则ui进入初始化界面
-                    LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
-                    //CommanderRangeUnit(null);
-                }
-                else
-                {
-                    clickActivitiesUnit = null;
-                }
+                // 则ui进入初始化界面
+                LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
+                //CommanderRangeUnit(null);
             }
             else
             {
@@ -315,17 +309,10 @@ namespace MainSpace
                 Debug.Log("CancelStepEvent:" + stepInfoStack.Peek().actionScopeType);
                 StepInfo temp = stepInfoStack.Pop();
                 temp.cancelAction();
-                while (stepInfoStack.Count != 0)
+                while (stepInfoStack.Count != 0 && stepInfoStack.Peek().actionScopeType == ActionScopeType.none)
                 {
-                    if (stepInfoStack.Peek().actionScopeType == ActionScopeType.none)
-                    {
-                        var whileValue = stepInfoStack.Pop();
-                        whileValue.cancelAction();
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    var whileValue = stepInfoStack.Pop();
+                    whileValue.cancelAction();
                 }
                 ResetStepEvent();
             }
@@ -337,9 +324,18 @@ namespace MainSpace
             {
                 Debug.Log("ResetStepEvent:" + stepInfoStack.Peek().actionScopeType);
                 StepInfo temp = stepInfoStack.Peek();
-                //LoadInfo.Instance.sceneTileMapManager.HideCanMoveCorrelationGrid();
                 LoadInfo.Instance.sceneTileMapManager.LoadCorrelationGrid(temp);
             }
+            else
+            {
+                // 回到初始状态
+                activitiesManager.OverSelection();
+                clickActivitiesUnit = null;
+                stepInfoStack.Clear();
+            }
+
+            Debug.Log(stepInfoStack.Count);
+
         }
 
 

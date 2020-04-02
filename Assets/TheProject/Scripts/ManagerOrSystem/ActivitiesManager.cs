@@ -214,7 +214,7 @@ namespace MainSpace
                 tileMapManager.HideCommanderCircleGrid();
                 currentSelectionUnit = null;
                 tileMapManager.HideCanMoveCorrelationGrid();
-                tileMapManager.ClearCacheSaveData();
+                //tileMapManager.ClearCacheSaveData();
                 SetAllActivityAnim(false);
                 return true;
             }
@@ -223,6 +223,15 @@ namespace MainSpace
                 return false;
             }
 
+        }
+
+        public void OverSelection()
+        {
+            OnFinishedUnitMove(currentSelectionUnit);
+            tileMapManager.HideCommanderCircleGrid();
+            currentSelectionUnit = null;
+            tileMapManager.HideCanMoveCorrelationGrid();
+            SetAllActivityAnim(false);
         }
 
         /// <summary>

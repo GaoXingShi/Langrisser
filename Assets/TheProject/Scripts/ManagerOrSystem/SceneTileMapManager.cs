@@ -244,10 +244,10 @@ namespace MainSpace.Grid
         public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit, bool _isAsync)
         {
             // 问题出在这了，底下的方格还没显示完就注册了。
-            cursor.AddStepEvent(_unit, _unit.currentPos, cacheSaveData.Where(
-                x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveRangeValue[0]).ToArray(),ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
+            cursor.AddStepEvent(_unit, _unit.currentPos, cacheSaveData,ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
                 () =>
                 {
+                    asyncBoolValue = false;
                 });
 
             asyncBoolValue = true;
@@ -274,6 +274,7 @@ namespace MainSpace.Grid
                     await Task.Delay(ms);
             }
 
+            asyncBoolValue = false;
         }
         /// <summary>
         /// 显示移动轨迹
@@ -363,22 +364,27 @@ namespace MainSpace.Grid
         {
             if (_stepInfo.unit != null)
             {
+                foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled == false))
+                {
+                    v.activitiesAllowUnit.SetMoveGrid(true);
+                }
+
                 _stepInfo.unit.currentPos = _stepInfo.unitCurrentPos;
                 _stepInfo.unit.transform.position = _stepInfo.unitCurrentPos;
-                for (int i = 0; i < _stepInfo.tile.Length; i++)
+                Debug.Log(_stepInfo.tileCommand.Length);
+                for (int i = 0; i < _stepInfo.tileCommand.Length; i++)
                 {
                     TileSaveData temp = tileList.FirstOrDefault(x =>
-                        x.widthHeighValue.Vector3IntRangeValue(_stepInfo.tile[i].widthHeighValue) == 0);
+                        x.widthHeighValue.Vector3IntRangeValue(_stepInfo.tileCommand[i].pos) == 0);
                     if (temp != null)
                     {
-                        Debug.Log(_stepInfo.moveComponentEnable.Any(x=>x == true));
-                        //temp.widthHeighValue = _loadSaveData[i].widthHeighValue;
-                        temp.aliasName = _stepInfo.tile[i].aliasName;
-                        temp.isChange = _stepInfo.tile[i].isChange;
-                        temp.path = _stepInfo.tile[i].path;
-                        temp.activitiesAllowUnit.SetMoveGrid(_stepInfo.moveComponentEnable[i]);
+                        temp.aliasName = _stepInfo.tileCommand[i].aliasName;
+                        temp.isChange = _stepInfo.tileCommand[i].isChange;
+                        temp.path = _stepInfo.tileCommand[i].path;
+                        temp.activitiesAllowUnit.SetMoveGrid(_stepInfo.tileCommand[i].moveEnable);
                     }
                 }
+                RefreshCommanderCircleGird(_stepInfo.unit);
             }
         }
 
