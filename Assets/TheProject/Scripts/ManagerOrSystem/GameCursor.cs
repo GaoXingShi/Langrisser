@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Cinemachine;
 using MainSpace.Activities;
 using MainSpace.Grid;
@@ -10,6 +11,19 @@ using UnityEngine.Tilemaps;
 
 namespace MainSpace
 {
+    public class StepInfo
+    {
+        public ActivitiesUnit unit;
+        public Vector3Int unitCurrentPos;
+        public TileSaveData[] tile;
+        public ActionScopeType actionScopeType;
+        public Action<ActivitiesUnit> activitiesAction;
+        public Action<Vector3Int> clickTilePosAction;
+        public Action cancelAction;
+        public bool[] moveComponentEnable;
+    }
+
+
     /// <summary>
     /// 游戏光标类 只负责光标产生的信息传递，不处理逻辑
     /// </summary>
@@ -17,7 +31,7 @@ namespace MainSpace
     {
         public CinemachineVirtualCamera cinemachine;
         public UnityEngine.Grid grid;
-        public Texture2D cursorTexture , attackTexture;
+        public Texture2D cursorTexture, attackTexture;
         [HideInInspector] public bool isExecute = true;
         [HideInInspector] public ActivitiesUnit clickActivitiesUnit;
         private CinemachineFramingTransposer cine;
@@ -29,7 +43,7 @@ namespace MainSpace
             activitiesManager = LoadInfo.Instance.activitiesManager;
             isExecute = true;
 
-            Cursor.SetCursor(cursorTexture,Vector2.one * 8,CursorMode.Auto);
+            Cursor.SetCursor(cursorTexture, Vector2.one * 8, CursorMode.Auto);
         }
 
         void Update()
@@ -53,45 +67,30 @@ namespace MainSpace
                     ActivitiesUnit unit = hit2D.transform.GetComponent<ActivitiesUnit>();
                     if (gridPlayerLayer)
                     {
-                        if (Input.GetMouseButtonDown(0))
+                        // Touch Unit 
+                        if (cacheHitRaycastUnit != null && cacheHitRaycastUnit != unit)
                         {
-                            // 告诉士兵管理系统
-                            activitiesManager.SelectionUnit(unit);
-
-                            if (clickActivitiesUnit == null /*|| (clickActivitiesUnit != null && clickActivitiesUnit == unit)*/)
-                            {
-                                clickActivitiesUnit = unit;
-                            }
+                            CommanderRangeUnit(null);
                         }
-                        else
-                        {
-                            // Touch Unit 
-                            if (cacheHitRaycastUnit != null && cacheHitRaycastUnit != unit)
-                            {
-                                CommanderRangeUnit(null);
-                            }
 
-                            if (cacheHitRaycastUnit == null || cacheHitRaycastUnit != unit)
-                            {
-                                CommanderRangeUnit(unit);
-                            }
+                        if (cacheHitRaycastUnit == null || cacheHitRaycastUnit != unit)
+                        {
+                            CommanderRangeUnit(unit);
                         }
                     }
                     else
                     {
-                        if (Input.GetMouseButtonDown(0))
+                        // Exit Unit
+                        if (cacheHitRaycastUnit != null)
                         {
-                            // todo 如果通知的脚本过多不如弄成事件。
-                            activitiesManager.ClickTilePos(cellPos);
+                            CommanderRangeUnit(null);
                         }
-                        else
-                        {
-                            // Exit Unit
-                            if (cacheHitRaycastUnit != null)
-                            {
-                                CommanderRangeUnit(null);
-                            }
-                        }
+
+                    }
+
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        ExecuteClickStepEvent(unit, cellPos, gridPlayerLayer);
                     }
 
                 }
@@ -103,25 +102,96 @@ namespace MainSpace
                         CommanderRangeUnit(null);
                     }
                 }
-
-
-                if (Input.GetMouseButtonDown(1))
-                {
-                    if (!activitiesManager.CancelTileSelection())
-                    {
-                        // 则ui进入初始化界面
-                        LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
-                        //CommanderRangeUnit(null);
-                    }
-                    else
-                    {
-                        clickActivitiesUnit = null;
-                    }
-                }
             }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                CancelStepEvent();
+            }
+
+
+
+
+
+            //// 非UI层。
+            //if (!EventSystem.current.IsPointerOverGameObject())
+            //{
+            //    var hit2D = Physics2D.Raycast(worldPointV3, Vector2.zero, 10);
+            //    if (hit2D.transform != null)
+            //    {
+            //        bool gridPlayerLayer = hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer");
+            //        ActivitiesUnit unit = hit2D.transform.GetComponent<ActivitiesUnit>();
+            //        if (gridPlayerLayer)
+            //        {
+            //            if (Input.GetMouseButtonDown(0))
+            //            {
+            //                // 告诉士兵管理系统
+            //                activitiesManager.SelectionUnit(unit);
+
+            //                if (clickActivitiesUnit == null /*|| (clickActivitiesUnit != null && clickActivitiesUnit == unit)*/)
+            //                {
+            //                    clickActivitiesUnit = unit;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                // Touch Unit 
+            //                if (cacheHitRaycastUnit != null && cacheHitRaycastUnit != unit)
+            //                {
+            //                    CommanderRangeUnit(null);
+            //                }
+
+            //                if (cacheHitRaycastUnit == null || cacheHitRaycastUnit != unit)
+            //                {
+            //                    CommanderRangeUnit(unit);
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (Input.GetMouseButtonDown(0))
+            //            {
+            //                // todo 如果通知的脚本过多不如弄成事件。
+            //                activitiesManager.ClickTilePos(cellPos);
+            //            }
+            //            else
+            //            {
+            //                // Exit Unit
+            //                if (cacheHitRaycastUnit != null)
+            //                {
+            //                    CommanderRangeUnit(null);
+            //                }
+            //            }
+            //        }
+
+            //    }
+            //    else
+            //    {
+            //        // 通知现在没点到士兵
+            //        if (cacheHitRaycastUnit != null)
+            //        {
+            //            CommanderRangeUnit(null);
+            //        }
+            //    }
+
+
+            //    if (Input.GetMouseButtonDown(1))
+            //    {
+            //        if (!activitiesManager.CancelTileSelection())
+            //        {
+            //            // 则ui进入初始化界面
+            //            LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
+            //            //CommanderRangeUnit(null);
+            //        }
+            //        else
+            //        {
+            //            clickActivitiesUnit = null;
+            //        }
+            //    }
+            //}
         }
 
-        private Stack a;
+        private Stack<StepInfo> stepInfoStack = new Stack<StepInfo>();
         /// <summary>
         /// 
         /// </summary>
@@ -132,10 +202,146 @@ namespace MainSpace
         /// <param name="_activitiesAction"> 鼠标左键触发的事件 </param>
         /// <param name="_clickTilePosAction"> 鼠标左键触发的事件 </param>
         /// <param name="_cancelAction"> 鼠标右键触发的事件 </param>
-        public void AddEvent(ActivitiesUnit _unit,Vector3Int _unitCurrentPos, TileSaveData[] _tile, ActionScopeType _actionScopeType,Action<ActivitiesUnit> _activitiesAction,Action<Vector3Int> _clickTilePosAction,Action _cancelAction)
+        public void AddStepEvent(ActivitiesUnit _unit, Vector3Int _unitCurrentPos, TileSaveData[] _tile, ActionScopeType _actionScopeType, Action<ActivitiesUnit> _activitiesAction, Action<Vector3Int> _clickTilePosAction, Action _cancelAction)
         {
+
+            TileSaveData[] tmpTile = null;
+            bool[] moveComponentValue = null;
+            if (_tile != null)
+            {
+                tmpTile = new TileSaveData[_tile.Length];
+
+                moveComponentValue = new bool[_tile.Length];
+
+                Debug.Log(_tile.Any(x=>x.activitiesAllowUnit.moveSpriteRenderer.enabled));
+                for (int i = 0; i < tmpTile.Length; i++)
+                {
+                    tmpTile[i] = new TileSaveData();
+                    tmpTile[i].aliasName = _tile[i].aliasName;
+                    tmpTile[i].isChange = _tile[i].isChange;
+                    tmpTile[i].path = _tile[i].path;
+                    moveComponentValue[i] = _tile[i].activitiesAllowUnit.moveSpriteRenderer.enabled;
+                }
+            }
+
             // none 类型在弹出时直接跳过 因为none是角色移动过程
+            StepInfo temp = new StepInfo()
+            {
+                unit = _unit,
+                unitCurrentPos = _unitCurrentPos,
+                tile = _tile == null ? null : tmpTile,
+                actionScopeType = _actionScopeType,
+                activitiesAction = _activitiesAction,
+                clickTilePosAction = _clickTilePosAction,
+                cancelAction = _cancelAction,
+                moveComponentEnable = _tile == null ? null : moveComponentValue
+            };
+            stepInfoStack.Push(temp);
         }
+
+        private void ExecuteClickStepEvent(ActivitiesUnit _unit, Vector3Int _cellPos, bool _gridPlayerLayer)
+        {
+            if (stepInfoStack.Count == 0)
+            {
+                if (_unit)
+                {
+                    // 告诉士兵管理系统
+                    activitiesManager.SelectionUnit(_unit);
+
+                    if (clickActivitiesUnit == null /*|| (clickActivitiesUnit != null && clickActivitiesUnit == unit)*/)
+                    {
+                        clickActivitiesUnit = _unit;
+                    }
+                }
+                else
+                {
+                    // todo 如果通知的脚本过多不如弄成事件。
+                    activitiesManager.ClickTilePos(_cellPos);
+                }
+            }
+            else
+            {
+                StepInfo temp = stepInfoStack.Peek();
+                switch (temp.actionScopeType)
+                {
+                    case ActionScopeType.OnlyOurSoldiers:
+                    case ActionScopeType.OnlyOurCommanders:
+                    case ActionScopeType.OnlyOur:
+                    case ActionScopeType.OnlyFriendSoldiers:
+                    case ActionScopeType.OnlyFriendCommanders:
+                    case ActionScopeType.OnlyFriend:
+                    case ActionScopeType.OnlyOurAndFriendSoldiers:
+                    case ActionScopeType.OnlyOurAndFriendCommanders:
+                    case ActionScopeType.OnlyOurAndFriend:
+                    case ActionScopeType.OnlyEnemySoldiers:
+                    case ActionScopeType.OnlyEnemyCommanders:
+                    case ActionScopeType.OnlyEnemy:
+                    case ActionScopeType.MeAndEnemy:
+                    case ActionScopeType.AllActivities:
+                        if (_unit != null)
+                            temp.activitiesAction(_unit);
+                        break;
+
+                    case ActionScopeType.NoActivitiesUnit:
+                        temp.clickTilePosAction(_cellPos);
+                        break;
+                    case ActionScopeType.AllUnit:
+                        if (_unit != null)
+                            temp.activitiesAction(_unit);
+                        temp.clickTilePosAction(_cellPos);
+                        break;
+                }
+            }
+        }
+
+        private void CancelStepEvent()
+        {
+            if (stepInfoStack.Count == 0)
+            {
+                if (!activitiesManager.CancelTileSelection())
+                {
+                    // 则ui进入初始化界面
+                    LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
+                    //CommanderRangeUnit(null);
+                }
+                else
+                {
+                    clickActivitiesUnit = null;
+                }
+            }
+            else
+            {
+                Debug.Log(stepInfoStack.Count);
+                Debug.Log("CancelStepEvent:" + stepInfoStack.Peek().actionScopeType);
+                StepInfo temp = stepInfoStack.Pop();
+                temp.cancelAction();
+                while (stepInfoStack.Count != 0)
+                {
+                    if (stepInfoStack.Peek().actionScopeType == ActionScopeType.none)
+                    {
+                        var whileValue = stepInfoStack.Pop();
+                        whileValue.cancelAction();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                ResetStepEvent();
+            }
+        }
+
+        private void ResetStepEvent()
+        {
+            if (stepInfoStack.Count != 0)
+            {
+                Debug.Log("ResetStepEvent:" + stepInfoStack.Peek().actionScopeType);
+                StepInfo temp = stepInfoStack.Peek();
+                //LoadInfo.Instance.sceneTileMapManager.HideCanMoveCorrelationGrid();
+                LoadInfo.Instance.sceneTileMapManager.LoadCorrelationGrid(temp);
+            }
+        }
+
 
         /// <summary>
         /// 指挥圈变更通知

@@ -39,5 +39,6 @@ namespace MainSpace.Grid
             commandSpriteRenderer.enabled = _enabled;
             commandSpriteRenderer.color = _color;
         }
+
     }
 }

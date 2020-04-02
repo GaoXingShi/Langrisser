@@ -136,7 +136,6 @@ namespace MainSpace
 
         }
 
-
         /// <summary>
         /// 如果是该回合允许单位，则返回真
         /// </summary>
@@ -145,6 +144,11 @@ namespace MainSpace
         public bool GetIsLocalPlayerAround(string _keyName)
         {
             return campData[currentRoundCampDataIndex].identifyValue.Equals(_keyName);
+        }
+
+        public bool VerifySameTroop(ActivitiesUnit _unit1, ActivitiesUnit _unit2)
+        {
+            return _unit1.troopsType == _unit2.troopsType;
         }
 
         /// <summary>

@@ -32,42 +32,71 @@ namespace MainSpace
             gameCursor = LoadInfo.Instance.gameCursor;
         }
         #region 移动相关
+
+        public void StandByOrOtherActionGridCallBack(ActivitiesUnit _unit)
+        {
+            // 点击原点
+            if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
+            {
+                UnitOnFinish(_unit);
+                currentSelectionUnit = null;
+                LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
+            }
+            else if (currentSelectionUnit != null)
+            {
+                Debug.Log("click");
+                // 如果单位身上标有可攻击标志，则触发攻击。
+                //if (_unit.GetActivitiesUnitIcon("sword"))
+                if (!gameManager.VerifySameTroop(currentSelectionUnit, _unit))
+                {
+                    // attack
+                    // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
+                    Debug.Log("attack");
+                    UnitOnFinish(currentSelectionUnit);
+                    //HideAllActivitiesUnitIcon();
+                    //SetAllActivityAnim(false);
+                    currentSelectionUnit = null;
+                    LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
+                }
+            }
+        }
+
+
         /// <summary>
         /// 选中了可行动单位.
         /// </summary>
         /// <param name="_unit"></param>
         public void SelectionUnit(ActivitiesUnit _unit)
         {
-            if (isStandByOrOtherMode)
-            {
-                Debug.Log("ha?");
-                // 点击原点
-                if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
-                {
-                    UnitOnFinish(_unit);
-                    currentSelectionUnit = null;
-                    LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
-                }
-                else if(currentSelectionUnit != null)
-                {
-                    Debug.Log("click");
-                    // 如果单位身上标有可攻击标志，则触发攻击。
-                    //if (_unit.GetActivitiesUnitIcon("sword"))
-                    if(true)
-                    {
-                        // attack
-
-                        // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
-                        Debug.Log("attack");
-                        UnitOnFinish(currentSelectionUnit);
-                        //HideAllActivitiesUnitIcon();
-                        //SetAllActivityAnim(false);
-                        currentSelectionUnit = null;
-                        LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
-                    }
-                }
-                return;
-            }
+            //if (isStandByOrOtherMode)
+            //{
+            //    Debug.Log("ha?");
+            //    // 点击原点
+            //    if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
+            //    {
+            //        UnitOnFinish(_unit);
+            //        currentSelectionUnit = null;
+            //        LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
+            //    }
+            //    else if(currentSelectionUnit != null)
+            //    {
+            //        Debug.Log("click");
+            //        // 如果单位身上标有可攻击标志，则触发攻击。
+            //        //if (_unit.GetActivitiesUnitIcon("sword"))
+            //        if(!gameManager.VerifySameTroop(currentSelectionUnit,_unit))
+            //        {
+            //            // attack
+            //            // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
+            //            Debug.Log("attack");
+            //            UnitOnFinish(currentSelectionUnit);
+            //            //HideAllActivitiesUnitIcon();
+            //            //SetAllActivityAnim(false);
+            //            currentSelectionUnit = null;
+            //            LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
+            //        }
+            //    }
+            //    return;
+            //}
 
             if (currentSelectionUnit == null /*|| _unit.GetInstanceID() != currentSelectionUnit.GetInstanceID()*/)
             {
@@ -105,10 +134,10 @@ namespace MainSpace
         /// <param name="_cellPos"></param>
         public void ClickTilePos(Vector3Int _cellPos)
         {
-            if (isStandByOrOtherMode)
-            {
-                return;
-            }
+            //if (isStandByOrOtherMode)
+            //{
+            //    return;
+            //}
 
             if (currentSelectionUnit != null)
             {
@@ -430,7 +459,7 @@ namespace MainSpace
                 return;
             }
 
-            gameCursor.AddEvent(null,Vector3Int.one,null,ActionScopeType.none,null, null,() =>
+            gameCursor.AddStepEvent(null,Vector3Int.one,null,ActionScopeType.none,null, null,() =>
             {
                 dotweenSequence.Kill(true);
             });

@@ -243,7 +243,8 @@ namespace MainSpace.Grid
         /// </summary>
         public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit, bool _isAsync)
         {
-            cursor.AddEvent(_unit, _unit.currentPos, cacheSaveData.Where(
+            // 问题出在这了，底下的方格还没显示完就注册了。
+            cursor.AddStepEvent(_unit, _unit.currentPos, cacheSaveData.Where(
                 x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveRangeValue[0]).ToArray(),ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
                 () =>
                 {
@@ -335,7 +336,7 @@ namespace MainSpace.Grid
                 //activitiesManager.SetActivitiesUnitIconState(v, "sword");
             }
 
-            cursor.AddEvent(_unit, _unit.currentPos, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.SelectionUnit,null,
+            cursor.AddStepEvent(_unit, _unit.currentPos, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.StandByOrOtherActionGridCallBack, null,
                 () =>
                 {
                 });
@@ -356,6 +357,29 @@ namespace MainSpace.Grid
             SkillType _skillType)
         {
 
+        }
+
+        public void LoadCorrelationGrid(StepInfo _stepInfo)
+        {
+            if (_stepInfo.unit != null)
+            {
+                _stepInfo.unit.currentPos = _stepInfo.unitCurrentPos;
+                _stepInfo.unit.transform.position = _stepInfo.unitCurrentPos;
+                for (int i = 0; i < _stepInfo.tile.Length; i++)
+                {
+                    TileSaveData temp = tileList.FirstOrDefault(x =>
+                        x.widthHeighValue.Vector3IntRangeValue(_stepInfo.tile[i].widthHeighValue) == 0);
+                    if (temp != null)
+                    {
+                        Debug.Log(_stepInfo.moveComponentEnable.Any(x=>x == true));
+                        //temp.widthHeighValue = _loadSaveData[i].widthHeighValue;
+                        temp.aliasName = _stepInfo.tile[i].aliasName;
+                        temp.isChange = _stepInfo.tile[i].isChange;
+                        temp.path = _stepInfo.tile[i].path;
+                        temp.activitiesAllowUnit.SetMoveGrid(_stepInfo.moveComponentEnable[i]);
+                    }
+                }
+            }
         }
 
 
