@@ -16,7 +16,8 @@ namespace Sense.BehaviourTree.Apply
         public string unitName , managerKeyName;
         public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
-        public int levelSliderValue, levelSliderUpgradeValue, attackValue,attackRangeValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
+        public int levelSliderValue, levelSliderUpgradeValue, attackValue,attackRangeValue = 1,skillRangeValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
+        public SkillFlag skillMastery;
         public Vector3Int showPos;
         private CommanderUnit cacheCommanderUnit = null;
         private CampData campData;
@@ -49,6 +50,7 @@ namespace Sense.BehaviourTree.Apply
             temp.SetIntArrayData(ref temp.attackRangeValue, attackRangeValue);
             temp.SetIntArrayData(ref temp.defenseValue, defenseValue);
             temp.SetIntArrayData(ref temp.moveRangeValue, moveValue);
+            temp.SetIntArrayData(ref temp.skillRangeValue, skillRangeValue);
 
             // int
             temp.levelValue = levelValue;
@@ -77,6 +79,7 @@ namespace Sense.BehaviourTree.Apply
             temp.roleTpe = roleType;
             temp.troopsType = campData.troopType;
             temp.movingType = activityConfig.movingType;
+            temp.skillMastery = skillMastery;
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);

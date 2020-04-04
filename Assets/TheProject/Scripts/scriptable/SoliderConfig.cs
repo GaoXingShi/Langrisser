@@ -12,9 +12,12 @@ namespace MainSpace.ScriptableObject
         [System.Serializable]
         public struct SoliderData
         {
+            public string elementName;
             public SoliderType soliderType;
             public ActivityConfig activityConfig;
             public int attackValue, attackRangeValue, defenseValue, moveRangeValue, healthValue, magicValue;
+            public SkillFlag skillMastery;
+            public int skillRangeValue;
         }
 
         public SoliderData[] soliderDataArray;

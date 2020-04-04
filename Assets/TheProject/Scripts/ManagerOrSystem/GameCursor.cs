@@ -39,7 +39,8 @@ namespace MainSpace
         public UnityEngine.Grid grid;
         public Texture2D cursorTexture, attackTexture;
         [HideInInspector] public bool isExecute = true;
-        [HideInInspector] public ActivitiesUnit clickActivitiesUnit;
+
+        public bool isHaveCacheHitRayCastUnit => cacheHitRaycastUnit != null;
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
         private ActivitiesUnit cacheHitRaycastUnit;
@@ -115,86 +116,6 @@ namespace MainSpace
                 CancelStepEvent();
             }
 
-
-
-
-
-            //// 非UI层。
-            //if (!EventSystem.current.IsPointerOverGameObject())
-            //{
-            //    var hit2D = Physics2D.Raycast(worldPointV3, Vector2.zero, 10);
-            //    if (hit2D.transform != null)
-            //    {
-            //        bool gridPlayerLayer = hit2D.transform.gameObject.layer == LayerMask.NameToLayer("GridPlayer");
-            //        ActivitiesUnit unit = hit2D.transform.GetComponent<ActivitiesUnit>();
-            //        if (gridPlayerLayer)
-            //        {
-            //            if (Input.GetMouseButtonDown(0))
-            //            {
-            //                // 告诉士兵管理系统
-            //                activitiesManager.SelectionUnit(unit);
-
-            //                if (clickActivitiesUnit == null /*|| (clickActivitiesUnit != null && clickActivitiesUnit == unit)*/)
-            //                {
-            //                    clickActivitiesUnit = unit;
-            //                }
-            //            }
-            //            else
-            //            {
-            //                // Touch Unit 
-            //                if (cacheHitRaycastUnit != null && cacheHitRaycastUnit != unit)
-            //                {
-            //                    CommanderRangeUnit(null);
-            //                }
-
-            //                if (cacheHitRaycastUnit == null || cacheHitRaycastUnit != unit)
-            //                {
-            //                    CommanderRangeUnit(unit);
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            if (Input.GetMouseButtonDown(0))
-            //            {
-            //                // todo 如果通知的脚本过多不如弄成事件。
-            //                activitiesManager.ClickTilePos(cellPos);
-            //            }
-            //            else
-            //            {
-            //                // Exit Unit
-            //                if (cacheHitRaycastUnit != null)
-            //                {
-            //                    CommanderRangeUnit(null);
-            //                }
-            //            }
-            //        }
-
-            //    }
-            //    else
-            //    {
-            //        // 通知现在没点到士兵
-            //        if (cacheHitRaycastUnit != null)
-            //        {
-            //            CommanderRangeUnit(null);
-            //        }
-            //    }
-
-
-            //    if (Input.GetMouseButtonDown(1))
-            //    {
-            //        if (!activitiesManager.CancelTileSelection())
-            //        {
-            //            // 则ui进入初始化界面
-            //            LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
-            //            //CommanderRangeUnit(null);
-            //        }
-            //        else
-            //        {
-            //            clickActivitiesUnit = null;
-            //        }
-            //    }
-            //}
         }
 
         private Stack<StepInfo> stepInfoStack = new Stack<StepInfo>();
@@ -208,7 +129,7 @@ namespace MainSpace
         /// <param name="_activitiesAction"> 鼠标左键触发的事件 </param>
         /// <param name="_clickTilePosAction"> 鼠标左键触发的事件 </param>
         /// <param name="_cancelAction"> 鼠标右键触发的事件 </param>
-        public void AddStepEvent(ActivitiesUnit _unit, Vector3Int _unitCurrentPos, TileSaveData[] _tile, ActionScopeType _actionScopeType, Action<ActivitiesUnit> _activitiesAction, Action<Vector3Int> _clickTilePosAction, Action _cancelAction)
+        public void AddStepEvent(ActivitiesUnit _unit, TileSaveData[] _tile, ActionScopeType _actionScopeType, Action<ActivitiesUnit> _activitiesAction, Action<Vector3Int> _clickTilePosAction, Action _cancelAction)
         {
             bool valueNull = _tile == null;
 
@@ -230,7 +151,7 @@ namespace MainSpace
             StepInfo temp = new StepInfo()
             {
                 unit = _unit,
-                unitCurrentPos = _unitCurrentPos,
+                unitCurrentPos = _unit == null ? Vector3Int.one :_unit.currentPos,
                 tileCommand = valueNull ? null : addStepValue,
                 actionScopeType = _actionScopeType,
                 activitiesAction = _activitiesAction,
@@ -238,6 +159,17 @@ namespace MainSpace
                 cancelAction = _cancelAction,
             };
             stepInfoStack.Push(temp);
+        }
+
+        /// <summary>
+        /// 完成该步骤，清理状态
+        /// </summary>
+        public void FinishStepEvent(bool _isCancel)
+        {
+            // 回到初始状态
+            activitiesManager.OverSelection(_isCancel);
+            //clickActivitiesUnit = null;
+            stepInfoStack.Clear();
         }
 
         private void ExecuteClickStepEvent(ActivitiesUnit _unit, Vector3Int _cellPos, bool _gridPlayerLayer)
@@ -248,11 +180,6 @@ namespace MainSpace
                 {
                     // 告诉士兵管理系统
                     activitiesManager.SelectionUnit(_unit);
-
-                    if (clickActivitiesUnit == null /*|| (clickActivitiesUnit != null && clickActivitiesUnit == unit)*/)
-                    {
-                        clickActivitiesUnit = _unit;
-                    }
                 }
                 else
                 {
@@ -295,18 +222,18 @@ namespace MainSpace
             }
         }
 
+        /// <summary>
+        /// 鼠标调用取消时的回调
+        /// </summary>
         private void CancelStepEvent()
         {
             if (stepInfoStack.Count == 0)
             {
                 // 则ui进入初始化界面
                 LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
-                //CommanderRangeUnit(null);
             }
             else
             {
-                Debug.Log(stepInfoStack.Count);
-                Debug.Log("CancelStepEvent:" + stepInfoStack.Peek().actionScopeType);
                 StepInfo temp = stepInfoStack.Pop();
                 temp.cancelAction();
                 while (stepInfoStack.Count != 0 && stepInfoStack.Peek().actionScopeType == ActionScopeType.none)
@@ -322,22 +249,17 @@ namespace MainSpace
         {
             if (stepInfoStack.Count != 0)
             {
-                Debug.Log("ResetStepEvent:" + stepInfoStack.Peek().actionScopeType);
                 StepInfo temp = stepInfoStack.Peek();
                 LoadInfo.Instance.sceneTileMapManager.LoadCorrelationGrid(temp);
             }
             else
             {
                 // 回到初始状态
-                activitiesManager.OverSelection();
-                clickActivitiesUnit = null;
-                stepInfoStack.Clear();
+                FinishStepEvent(true);
             }
 
-            Debug.Log(stepInfoStack.Count);
 
         }
-
 
         /// <summary>
         /// 指挥圈变更通知

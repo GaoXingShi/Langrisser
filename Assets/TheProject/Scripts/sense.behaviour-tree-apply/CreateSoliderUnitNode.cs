@@ -37,6 +37,7 @@ namespace Sense.BehaviourTree.Apply
             temp.SetIntArrayData(ref temp.attackRangeValue, data.attackRangeValue);
             temp.SetIntArrayData(ref temp.defenseValue, data.defenseValue);
             temp.SetIntArrayData(ref temp.moveRangeValue, data.moveRangeValue);
+            temp.SetIntArrayData(ref temp.skillRangeValue,data.skillRangeValue);
 
             temp.affiliationName = followCommander.GetCampData().campType.ToString();
             temp.managerKeyName = followCommander.managerKeyName;
@@ -55,6 +56,7 @@ namespace Sense.BehaviourTree.Apply
             temp.soliderType = soliderType;
             temp.movingType = data.activityConfig.movingType;
             temp.troopsType = followCommander.GetCampData().troopType;
+            temp.skillMastery = data.skillMastery;
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(followCommander.showPos);

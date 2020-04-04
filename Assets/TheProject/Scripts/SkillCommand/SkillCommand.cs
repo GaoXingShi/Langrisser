@@ -1,43 +1,76 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using MainSpace.Activities;
+using MainSpace.Grid;
 using UnityEngine;
 
 namespace MainSpace.SkillCommandSpace
 {
-    public interface SkillCommand
+    public class SkillBaseCommand
     {
-        void SetBackSkillCommand(SkillCommand _skillCommand);
-        SkillCommand BackSkillCommand();
-        void Execute();
-        void Cancel();
-        void Affirm();
+        public virtual void StartCommand(ActivitiesUnit _unit, GameCursor _cursor, SceneTileMapManager _tileMapManager)
+        { }
+
     }
 
-    public class AttackSkillCommand : SkillCommand
+    public class SkillRangeCommand : SkillBaseCommand
     {
-        private SkillCommand backSkillCommand;
-        public void SetBackSkillCommand(SkillCommand _skillCommand)
-        {
-            backSkillCommand = _skillCommand;
-        }
+        protected int skillIncrement;
 
-        public SkillCommand BackSkillCommand()
-        {
-            return backSkillCommand;
-        }
+        protected ActivitiesUnit cacheUnit;
+        protected GameCursor cursor;
+        protected SceneTileMapManager tileMapManager;
+        protected Vector3Int skillPos;
 
-        public void Execute()
+        protected virtual void InitValue()
         {
+            skillIncrement = 0;
 
         }
 
-        public void Cancel()
+        // 第一步 技能施法范围显示
+        public override void StartCommand(ActivitiesUnit _unit, GameCursor _cursor, SceneTileMapManager _tileMapManager)
         {
-            
+            cacheUnit = _unit;
+            cursor = _cursor;
+            tileMapManager = _tileMapManager;
+
+            TileSaveData[] tileData = _tileMapManager.GetRoundTileSaveData(_unit.currentPos, _unit.skillRangeValue[0] + skillIncrement);
+            _tileMapManager.ShowCustomActionGrid(tileData);
+            _cursor.AddStepEvent(_unit, tileData, ActionScopeType.AllUnit, null, SkillTriggerClick, () =>
+               {
+
+               });
         }
 
-        public void Affirm()
+        // 第二步 技能计算范围显示
+        protected void SkillTriggerClick(Vector3Int _cellPos)
         {
+            if (cacheUnit.currentPos.Vector3IntRangeValue(_cellPos) <= cacheUnit.moveRangeValue[0])
+            {
+                skillPos = _cellPos;
+                TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(_cellPos, cacheUnit.skillRangeValue[0]);
+                tileMapManager.ShowCustomActionGrid(tileData);
+                cursor.AddStepEvent(cacheUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerSureClick, () =>
+                {
+
+                });
+            }
         }
+
+        // 第三步 确认该范围，只要点击该范围就直接开始播放动画并计算
+        protected void SkillTriggerSureClick(Vector3Int _cellPos)
+        {
+            if (skillPos.Vector3IntRangeValue(_cellPos) <= cacheUnit.skillRangeValue[0])
+            {
+                // 成功了
+                cursor.FinishStepEvent(false);
+            }
+        }
+    }
+
+    public class FireSkillCommand : SkillRangeCommand
+    {
     }
 }

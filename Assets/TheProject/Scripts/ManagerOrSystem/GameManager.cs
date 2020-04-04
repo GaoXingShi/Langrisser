@@ -146,6 +146,12 @@ namespace MainSpace
             return campData[currentRoundCampDataIndex].identifyValue.Equals(_keyName);
         }
 
+        /// <summary>
+        /// 两个Unit是否是相同队伍
+        /// </summary>
+        /// <param name="_unit1"></param>
+        /// <param name="_unit2"></param>
+        /// <returns></returns>
         public bool VerifySameTroop(ActivitiesUnit _unit1, ActivitiesUnit _unit2)
         {
             return _unit1.troopsType == _unit2.troopsType;

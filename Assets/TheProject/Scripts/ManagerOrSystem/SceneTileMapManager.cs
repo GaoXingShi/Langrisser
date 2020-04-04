@@ -244,7 +244,7 @@ namespace MainSpace.Grid
         public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit, bool _isAsync)
         {
             // 问题出在这了，底下的方格还没显示完就注册了。
-            cursor.AddStepEvent(_unit, _unit.currentPos, cacheSaveData,ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
+            cursor.AddStepEvent(_unit, cacheSaveData,ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
                 () =>
                 {
                     asyncBoolValue = false;
@@ -295,7 +295,6 @@ namespace MainSpace.Grid
                 tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_posArray[i]) == 0).activitiesAllowUnit.SetMoveGrid(false);
             }
         }
-
         /// <summary>
         /// 显示攻击相关区域与待机区域
         /// </summary>
@@ -337,29 +336,15 @@ namespace MainSpace.Grid
                 //activitiesManager.SetActivitiesUnitIconState(v, "sword");
             }
 
-            cursor.AddStepEvent(_unit, _unit.currentPos, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.StandByOrOtherActionGridCallBack, null,
+            cursor.AddStepEvent(_unit, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.StandByOrOtherActionGridCallBack, null,
                 () =>
                 {
                 });
-
-
-            //tileList.FirstOrDefault(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) == 0).activitiesAllowUnit.SetMoveGrid(false);
         }
-
-        // 更改框架部分
         /// <summary>
-        /// 根据技能类型显示不同效果
+        /// 根据数据加载相关方格
         /// </summary>
-        /// <param name="_unit"></param>
-        /// <param name="_range"></param>
-        /// <param name="_actionScopeType"></param>
-        /// <param name="_skillType"></param>
-        public void ShowCustomActionGrid(ActivitiesUnit _unit, int _range, ActionScopeType _actionScopeType,
-            SkillType _skillType)
-        {
-
-        }
-
+        /// <param name="_stepInfo"></param>
         public void LoadCorrelationGrid(StepInfo _stepInfo)
         {
             if (_stepInfo.unit != null)
@@ -371,7 +356,6 @@ namespace MainSpace.Grid
 
                 _stepInfo.unit.currentPos = _stepInfo.unitCurrentPos;
                 _stepInfo.unit.transform.position = _stepInfo.unitCurrentPos;
-                Debug.Log(_stepInfo.tileCommand.Length);
                 for (int i = 0; i < _stepInfo.tileCommand.Length; i++)
                 {
                     TileSaveData temp = tileList.FirstOrDefault(x =>
@@ -387,10 +371,8 @@ namespace MainSpace.Grid
                 RefreshCommanderCircleGird(_stepInfo.unit);
             }
         }
-
-
         /// <summary>
-        /// 隐藏可移动相关区域
+        /// 不可移动的区域消失
         /// </summary>
         public void HideCanMoveCorrelationGrid()
         {
@@ -404,6 +386,33 @@ namespace MainSpace.Grid
 
         }
 
+        // 更改框架部分
+        /// <summary>
+        /// 显示自定义范围方格
+        /// </summary>
+        /// <param name="_showTileSaveData"></param>
+        public void ShowCustomActionGrid(TileSaveData[] _showTileSaveData)
+        {
+            foreach (var v in tileList.Where(x => x.activitiesAllowUnit.moveSpriteRenderer.enabled == false))
+            {
+                v.activitiesAllowUnit.SetMoveGrid(true);
+            }
+
+            foreach (var v in _showTileSaveData)
+            {
+                v.activitiesAllowUnit.SetMoveGrid(false);
+            }
+        }
+        public void ShowCustomActionGrid(Vector3Int _centerPos,int _range)
+        {
+            ShowCustomActionGrid(GetRoundTileSaveData(_centerPos, _range));
+        }
+
+        public TileSaveData[] GetRoundTileSaveData(Vector3Int _centerPos, int _range)
+        {
+            return tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_centerPos) <= _range)
+                .ToArray();
+        }
 
         #endregion
 

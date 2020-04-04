@@ -35,7 +35,7 @@ namespace MainSpace.Activities
     {
         [Header("Wait Init Base Data")]
         public Vector3Int currentPos ;
-        public int[] healthValue, magicValue, moveRangeValue,attackRangeValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
+        public int[] healthValue, magicValue, moveRangeValue,attackRangeValue,skillRangeValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
         public ActivityConfig activityConfig;
         public TerrainActionType movingType;
         public Sprite affiliationSprite;
@@ -45,6 +45,7 @@ namespace MainSpace.Activities
         public ActivitiesManager manager;
         public Color campColor;
         public TroopsType troopsType;
+        public SkillFlag skillMastery;
 
         [Header("Local Link")]
         public SpriteRenderer mRendererComponent;

@@ -1258,6 +1258,7 @@ MonoBehaviour:
   levelSliderUpgradeValue: 130
   attackValue: 25
   attackRangeValue: 1
+  skillRangeValue: 1
   defenseValue: 24
   moveValue: 5
   healthValue: 100
@@ -1265,6 +1266,7 @@ MonoBehaviour:
   commandRangeValue: 3
   correctedAttackValue: 4
   correctedDefenseValue: 2
+  skillMastery: 0
   showPos: {x: 24, y: 13, z: -1}
 --- !u!1 &354000389
 GameObject:
@@ -3780,6 +3782,7 @@ MonoBehaviour:
   levelSliderUpgradeValue: 130
   attackValue: 25
   attackRangeValue: 1
+  skillRangeValue: 1
   defenseValue: 21
   moveValue: 8
   healthValue: 100
@@ -3787,6 +3790,7 @@ MonoBehaviour:
   commandRangeValue: 2
   correctedAttackValue: 2
   correctedDefenseValue: 1
+  skillMastery: 0
   showPos: {x: 12, y: 13, z: -1}
 --- !u!1 &903738072
 GameObject:
@@ -4308,6 +4312,7 @@ MonoBehaviour:
   levelSliderUpgradeValue: 130
   attackValue: 30
   attackRangeValue: 1
+  skillRangeValue: 1
   defenseValue: 27
   moveValue: 5
   healthValue: 100
@@ -4315,6 +4320,7 @@ MonoBehaviour:
   commandRangeValue: 3
   correctedAttackValue: 4
   correctedDefenseValue: 2
+  skillMastery: 0
   showPos: {x: 20, y: 13, z: -1}
 --- !u!1 &998587113
 GameObject:
@@ -4767,6 +4773,7 @@ MonoBehaviour:
   levelSliderUpgradeValue: 130
   attackValue: 28
   attackRangeValue: 1
+  skillRangeValue: 1
   defenseValue: 17
   moveValue: 35
   healthValue: 100
@@ -4774,6 +4781,7 @@ MonoBehaviour:
   commandRangeValue: 3
   correctedAttackValue: 4
   correctedDefenseValue: 0
+  skillMastery: 0
   showPos: {x: 17, y: 13, z: -1}
 --- !u!1 &1151580369
 GameObject:
@@ -6620,7 +6628,6 @@ MonoBehaviour:
   cursorTexture: {fileID: 2800000, guid: 2e71a8202d3b4a3448ec85ced5a40265, type: 3}
   attackTexture: {fileID: 0}
   isExecute: 1
-  clickActivitiesUnit: {fileID: 0}
 --- !u!4 &1594465679
 Transform:
   m_ObjectHideFlags: 0
@@ -16838,6 +16845,7 @@ MonoBehaviour:
   levelSliderUpgradeValue: 130
   attackValue: 25
   attackRangeValue: 1
+  skillRangeValue: 1
   defenseValue: 21
   moveValue: 5
   healthValue: 100
@@ -16845,6 +16853,7 @@ MonoBehaviour:
   commandRangeValue: 2
   correctedAttackValue: 2
   correctedDefenseValue: 1
+  skillMastery: 3
   showPos: {x: 14, y: 11, z: -1}
 --- !u!1 &1836513238
 GameObject:
@@ -17523,6 +17532,7 @@ Transform:
   - {fileID: 2073526662}
   - {fileID: 74675626}
   - {fileID: 831428800}
+  - {fileID: 2091889332}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -17995,6 +18005,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2087368410}
   m_CullTransparentMesh: 0
+--- !u!1 &2091889331
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2091889332}
+  - component: {fileID: 2091889333}
+  m_Layer: 0
+  m_Name: SkillSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2091889332
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091889331}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1969820334}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2091889333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2091889331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba9039887f08f24598240f284ea9365, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillFlag: 3
 --- !u!1 &2093561786
 GameObject:
   m_ObjectHideFlags: 0

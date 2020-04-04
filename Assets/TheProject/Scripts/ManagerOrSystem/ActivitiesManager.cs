@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using DG.Tweening;
+﻿using DG.Tweening;
 using MainSpace.Activities;
 using MainSpace.Grid;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MainSpace
@@ -13,16 +12,17 @@ namespace MainSpace
     /// </summary>
     public class ActivitiesManager : MonoBehaviour
     {
-        private readonly List<ActivitiesUnit> UnitList = new List<ActivitiesUnit>();
+        private readonly List<ActivitiesUnit> activitiesUnitList = new List<ActivitiesUnit>();
 
         private ActivitiesUnit currentSelectionUnit { get; set; }
-        private CommanderUnit cacheRangeUnit;
+        private CommanderUnit cacheRangeUnit { get; set; }
+
         private SceneTileMapManager tileMapManager;
         private SceneWindowsCanvas sceneWindowsCanvas;
         private GameManager gameManager;
         private GameCursor gameCursor;
         private Sequence dotweenSequence;
-        private bool isStandByOrOtherMode = false;
+
         private void Start()
         {
             DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
@@ -38,29 +38,26 @@ namespace MainSpace
             // 点击原点
             if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
             {
-                UnitOnFinish(_unit);
-                currentSelectionUnit = null;
-                LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
+                //PlayerFinishCallBack(_unit);
+                gameCursor.FinishStepEvent(false);
             }
             else if (currentSelectionUnit != null)
             {
-                Debug.Log("click");
-                // 如果单位身上标有可攻击标志，则触发攻击。
-                //if (_unit.GetActivitiesUnitIcon("sword"))
-                if (!gameManager.VerifySameTroop(currentSelectionUnit, _unit))
+                // attack
+                if (!gameManager.VerifySameTroop(currentSelectionUnit, _unit) && currentSelectionUnit.currentPos.Vector3IntRangeValue(_unit.currentPos) <= currentSelectionUnit.attackRangeValue[0])
                 {
-                    // attack
                     // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
-                    Debug.Log("attack");
-                    UnitOnFinish(currentSelectionUnit);
-                    //HideAllActivitiesUnitIcon();
-                    //SetAllActivityAnim(false);
-                    currentSelectionUnit = null;
-                    LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
+                    // NumericalAndSettlementSystem.Attack
+                    //PlayerFinishCallBack(currentSelectionUnit);
+                    gameCursor.FinishStepEvent(false);
+                }
+                else
+                {
+                    // 播放禁止移动音频
+                    Debug.Log("禁止声效");
                 }
             }
         }
-
 
         /// <summary>
         /// 选中了可行动单位.
@@ -68,44 +65,13 @@ namespace MainSpace
         /// <param name="_unit"></param>
         public void SelectionUnit(ActivitiesUnit _unit)
         {
-            //if (isStandByOrOtherMode)
-            //{
-            //    Debug.Log("ha?");
-            //    // 点击原点
-            //    if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
-            //    {
-            //        UnitOnFinish(_unit);
-            //        currentSelectionUnit = null;
-            //        LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
-            //    }
-            //    else if(currentSelectionUnit != null)
-            //    {
-            //        Debug.Log("click");
-            //        // 如果单位身上标有可攻击标志，则触发攻击。
-            //        //if (_unit.GetActivitiesUnitIcon("sword"))
-            //        if(!gameManager.VerifySameTroop(currentSelectionUnit,_unit))
-            //        {
-            //            // attack
-            //            // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
-            //            Debug.Log("attack");
-            //            UnitOnFinish(currentSelectionUnit);
-            //            //HideAllActivitiesUnitIcon();
-            //            //SetAllActivityAnim(false);
-            //            currentSelectionUnit = null;
-            //            LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
-            //        }
-            //    }
-            //    return;
-            //}
-
-            if (currentSelectionUnit == null /*|| _unit.GetInstanceID() != currentSelectionUnit.GetInstanceID()*/)
+            if (currentSelectionUnit == null)
             {
                 tileMapManager.HideCanMoveCorrelationGrid();
 
                 tileMapManager.CalculateMovingRange(_unit);
                 tileMapManager.ShowCanMoveCorrelationGrid(_unit, true);
                 currentSelectionUnit = _unit;
-                initPos = currentSelectionUnit.currentPos;
 
                 if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
                 {
@@ -134,11 +100,6 @@ namespace MainSpace
         /// <param name="_cellPos"></param>
         public void ClickTilePos(Vector3Int _cellPos)
         {
-            //if (isStandByOrOtherMode)
-            //{
-            //    return;
-            //}
-
             if (currentSelectionUnit != null)
             {
                 Vector3Int[] allPos = tileMapManager.GetMoveToUnitAllow(_cellPos);
@@ -154,7 +115,8 @@ namespace MainSpace
                     else
                     {
                         // 相当于移动完了的情况。
-                        OverCurrentMoving();
+                        //gameCursor.FinishStepEvent(true);
+                        Debug.Log("禁止声效");
                     }
                 }
                 else
@@ -162,6 +124,7 @@ namespace MainSpace
                     // 不能允许移动到这里，并且取消本次移动。 (原)
                     // 播放禁止移动音频
                     //OverCurrentMoving();
+                    Debug.Log("禁止声效");
                 }
             }
 
@@ -188,77 +151,34 @@ namespace MainSpace
             Vector3Int[] temp = new Vector3Int[] { _pos };
             UnitMoveTo(temp, _unit, _ctrlType);
         }
-
+        
         /// <summary>
-        /// 取消可移动单位的移动操作。
+        /// 结束单位的选择
         /// </summary>
-        public bool CancelTileSelection()
+        /// <param name="_isCancel"> 是否,是取消进入的该函数 </param>
+        public void OverSelection(bool _isCancel)
         {
-            if (isStandByOrOtherMode)
+            if (_isCancel && !gameCursor.isHaveCacheHitRayCastUnit)
             {
-                isStandByOrOtherMode = !isStandByOrOtherMode;
-                tileMapManager.ShowCanMoveCorrelationGrid(currentSelectionUnit, false);
-                currentSelectionUnit.currentPos = initPos;
-                currentSelectionUnit.transform.position = initPos;
-                // 刷新指挥圈
-                tileMapManager.RefreshCommanderCircleGird(currentSelectionUnit);
-                //HideAllActivitiesUnitIcon();
-
-                //LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
-                return true;
-            }
-
-            if (currentSelectionUnit)
-            {
-                OnFinishedUnitMove(currentSelectionUnit);
                 tileMapManager.HideCommanderCircleGrid();
-                currentSelectionUnit = null;
-                tileMapManager.HideCanMoveCorrelationGrid();
-                //tileMapManager.ClearCacheSaveData();
-                SetAllActivityAnim(false);
-                return true;
             }
-            else
+            else if (currentSelectionUnit != null && currentSelectionUnit.GetType() == typeof(CommanderUnit))
             {
-                return false;
+                tileMapManager.RefreshCommanderCircleGird(currentSelectionUnit);
             }
 
-        }
+            if (!_isCancel)
+            {
+                PlayerFinishCallBack(currentSelectionUnit);
+            }
 
-        public void OverSelection()
-        {
-            OnFinishedUnitMove(currentSelectionUnit);
-            tileMapManager.HideCommanderCircleGrid();
+
+            sceneWindowsCanvas.ClearUIInfo();
             currentSelectionUnit = null;
             tileMapManager.HideCanMoveCorrelationGrid();
+            tileMapManager.ClearCacheSaveData();
             SetAllActivityAnim(false);
         }
-
-        /// <summary>
-        /// ActivitiesUnit完成移动时的回调
-        /// </summary>
-        /// <param name="_unit"></param>
-        public void OnFinishedUnitMove(ActivitiesUnit _unit)
-        {
-            // ui 变化
-            if (currentSelectionUnit == null || currentSelectionUnit == _unit)
-                sceneWindowsCanvas.ClearUIInfo();
-
-            tileMapManager.HideCanMoveCorrelationGrid();
-            tileMapManager.ClearCacheSaveData();
-            isStandByOrOtherMode = false;
-
-            if (_unit.GetType() == typeof(CommanderUnit))
-            {
-                //tileMapManager.HideCommanderCircleGrid();
-
-                //CommanderUnit temp = (CommanderUnit)_unit;
-                tileMapManager.RefreshCommanderCircleGird(_unit);
-                //tileMapManager.ShowCommanderCircleGrid(temp.currentPos, temp.commandRangeValue[0], temp.campColor);
-            }
-            LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
-        }
-
 
         #endregion
 
@@ -269,22 +189,6 @@ namespace MainSpace
         /// <param name="_unit"></param>
         public void EnterCommanderOrSoliderUnit(CommanderUnit _unit)
         {
-            //if (cacheRangeUnit != null)
-            //{
-            //    if (_unit != cacheRangeUnit)
-            //    {
-            //        tileMapManager.RefreshCommanderCircleGird(_unit);
-            //        SetActivityAnim(cacheRangeUnit, false);
-            //    }
-            //}
-            //else
-            //{
-            //    tileMapManager.SetColorValueState(true);
-            //    tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
-            //    SetActivityAnim(_unit, true);
-            //}
-
-
             // 当两次触发非同一个指挥阵营时
             if (cacheRangeUnit != null && _unit != cacheRangeUnit)
             {
@@ -339,24 +243,7 @@ namespace MainSpace
 
         #endregion
 
-        /// <summary>
-        /// 添加可行动单位
-        /// </summary>
-        /// <param name="_unit"></param>
-        public void AddActivitiesUnit(ActivitiesUnit _unit)
-        {
-            if (!UnitList.Contains(_unit))
-            {
-                UnitList.Add(_unit);
-                _unit.transform.SetParent(transform);
-                _unit.ManagerInitData();
-            }
-            else
-            {
-                UnitList[UnitList.IndexOf(_unit)] = _unit;
-            }
-        }
-
+        // 获取：
         /// <summary>
         /// 输入中心点以及范围，返回方格内，活动单元的信息。
         /// </summary>
@@ -365,7 +252,7 @@ namespace MainSpace
         /// <returns></returns>
         public ActivitiesUnit[] GetActivitiesUnit(Vector3Int _centerPos, int _range)
         {
-            return UnitList.Where(x => _centerPos.Vector3IntRangeValue(x.currentPos) <= _range).ToArray();
+            return activitiesUnitList.Where(x => _centerPos.Vector3IntRangeValue(x.currentPos) <= _range).ToArray();
         }
 
         /// <summary>
@@ -375,7 +262,7 @@ namespace MainSpace
         /// <returns></returns>
         public bool GetUnitPosContains(Vector3Int _pos)
         {
-            return UnitList.Any(x => x.currentPos.Vector3IntRangeValue(_pos) == 0);
+            return activitiesUnitList.Any(x => x.currentPos.Vector3IntRangeValue(_pos) == 0);
         }
 
         /// <summary>
@@ -386,9 +273,28 @@ namespace MainSpace
         /// <returns></returns>
         public bool GetUnitPosContainsOtherTroop(Vector3Int _pos, string _mineKeyName)
         {
-            var unit = UnitList.FirstOrDefault(x => x.currentPos.Vector3IntRangeValue(_pos) == 0);
+            var unit = activitiesUnitList.FirstOrDefault(x => x.currentPos.Vector3IntRangeValue(_pos) == 0);
             var campData = gameManager.GetCampData(_mineKeyName);
             return unit.troopsType == campData.troopType;
+        }
+       
+        // 设置:
+        /// <summary>
+        /// 添加可行动单位
+        /// </summary>
+        /// <param name="_unit"></param>
+        public void AddActivitiesUnit(ActivitiesUnit _unit)
+        {
+            if (!activitiesUnitList.Contains(_unit))
+            {
+                activitiesUnitList.Add(_unit);
+                _unit.transform.SetParent(transform);
+                _unit.ManagerInitData();
+            }
+            else
+            {
+                activitiesUnitList[activitiesUnitList.IndexOf(_unit)] = _unit;
+            }
         }
 
         /// <summary>
@@ -397,7 +303,7 @@ namespace MainSpace
         /// <param name="_isGray"></param>
         public void AllUnitColorChange(bool _isGray)
         {
-            foreach (var v in UnitList)
+            foreach (var v in activitiesUnitList)
             {
                 v.UnitColorChange(false);
                 v.isActionOver = false;
@@ -410,7 +316,7 @@ namespace MainSpace
         /// <param name="_enabled"></param>
         public void SetAllActivityAnim(bool _enabled)
         {
-            foreach (var v in UnitList.Where(x => x.isPlayingAnim))
+            foreach (var v in activitiesUnitList.Where(x => x.isPlayingAnim))
             {
                 v.PlayActivityAnim(_enabled);
             }
@@ -423,24 +329,10 @@ namespace MainSpace
         /// <returns></returns>
         public CommanderUnit[] GetCampCommanderArray(string _keyName)
         {
-            return UnitList.Where(x => x.managerKeyName.Equals(_keyName)
+            return activitiesUnitList.Where(x => x.managerKeyName.Equals(_keyName)
                                        && x.GetType() == typeof(CommanderUnit)).OfType<CommanderUnit>().ToArray();
         }
 
-        //public void SetActivitiesUnitIconState(ActivitiesUnit _unit,string _iconName)
-        //{
-        //    _unit.SetActivitiesUnitIcon(_iconName);
-        //}
-
-        //private void HideAllActivitiesUnitIcon()
-        //{
-        //    foreach (var v in UnitList)
-        //    {
-        //        v.SetActivitiesUnitIcon(null);
-        //    }
-        //}
-
-    
         private void SetActivityAnim(CommanderUnit _unit, bool _enabled)
         {
             _unit.PlayActivityAnim(_enabled);
@@ -450,7 +342,6 @@ namespace MainSpace
             }
         }
 
-        private Vector3Int initPos;
         private void UnitMoveLerp(Vector3Int[] _posArray, ActivitiesUnit _unit, CtrlType _ctrlType)
         {
             if (_posArray.Length == 1 && _posArray[0].Vector3IntRangeValue(_unit.currentPos) == 0)
@@ -459,21 +350,21 @@ namespace MainSpace
                 if (_ctrlType == CtrlType.Player)
                 {
                     tileMapManager.ShowStandByOrOtherActionGrid(_unit);
-                    isStandByOrOtherMode = true;
                 }
                 else if (_ctrlType == CtrlType.AI)
                 {
-                    UnitOnFinish(_unit);
+                    _unit.isActionOver = true;
                 }
                 return;
             }
 
-            gameCursor.AddStepEvent(null,Vector3Int.one,null,ActionScopeType.none,null, null,() =>
-            {
-                dotweenSequence.Kill(true);
-            });
+            gameCursor.AddStepEvent(null, null, ActionScopeType.none, null, null, () =>
+                 {
+                     dotweenSequence.Kill(true);
+                 });
 
             dotweenSequence = DOTween.Sequence();
+            dotweenSequence.SetEase(Ease.Linear);
             Vector3Int cacheMoving = _unit.currentPos;
             for (int i = 0; i < _posArray.Length; i++)
             {
@@ -483,24 +374,25 @@ namespace MainSpace
                 cacheMoving = forValue;
             }
 
+            dotweenSequence.AppendInterval(0.1f);
             dotweenSequence.AppendCallback(() =>
             {
                 _unit.currentPos = _posArray[_posArray.Length - 1];
                 tileMapManager.RefreshCommanderCircleGird(_unit);
                 if (_ctrlType == CtrlType.Player)
                 {
+                    // Player在移动后还需要选择攻击对象或待机 
                     tileMapManager.ShowStandByOrOtherActionGrid(_unit);
-                    isStandByOrOtherMode = true;
                 }
                 else if (_ctrlType == CtrlType.AI)
                 {
-                    UnitOnFinish(_unit);
+                    _unit.isActionOver = true;
                 }
             });
 
         }
 
-        private void UnitOnFinish(ActivitiesUnit _unit)
+        private void PlayerFinishCallBack(ActivitiesUnit _unit)
         {
             // 玩家才会变灰.
             _unit.UnitColorChange(LoadInfo.Instance.gameManager.GetCampData(_unit.managerKeyName).ctrlType == CtrlType.Player);
@@ -509,19 +401,11 @@ namespace MainSpace
             // 单位完成了移动。
             if (LoadInfo.Instance.gameManager.GetCampData(_unit.managerKeyName).ctrlType == CtrlType.Player)
             {
-                OnFinishedUnitMove(_unit);
+                tileMapManager.RefreshCommanderCircleGird(_unit);
+                //OverSelection(false);
             }
         }
-        private void OverCurrentMoving()
-        {
-            sceneWindowsCanvas.ClearUIInfo();
-            tileMapManager.HideCanMoveCorrelationGrid();
-            tileMapManager.ClearCacheSaveData();
-            tileMapManager.HideCommanderCircleGrid();
-            SetAllActivityAnim(false);
-            LoadInfo.Instance.gameCursor.clickActivitiesUnit = null;
-            currentSelectionUnit = null;
-        }
+
     }
 
     public static class Vector3IntExtends
