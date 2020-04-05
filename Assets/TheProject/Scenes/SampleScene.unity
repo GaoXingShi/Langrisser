@@ -16853,7 +16853,7 @@ MonoBehaviour:
   commandRangeValue: 2
   correctedAttackValue: 2
   correctedDefenseValue: 1
-  skillMastery: 3
+  skillMastery: 18
   showPos: {x: 14, y: 11, z: -1}
 --- !u!1 &1836513238
 GameObject:

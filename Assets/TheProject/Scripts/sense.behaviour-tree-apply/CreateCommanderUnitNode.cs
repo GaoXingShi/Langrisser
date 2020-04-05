@@ -107,4 +107,25 @@ namespace Sense.BehaviourTree.Apply
             base.Abort(_state);
         }
     }
+
+#if UNITY_EDITOR
+    [UnityEditor.CustomEditor(typeof(CreateCommanderUnitNode), true)]
+    public class CreateCommanderUnitNodeInspectorEditor : UnityEditor.Editor
+    {
+        public CreateCommanderUnitNode editorTarget;
+        private void OnEnable()
+        {
+            editorTarget = target as CreateCommanderUnitNode;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            if (GUILayout.Button("编辑技能"))
+            {
+                SkillSelectionEditorWindows.OpenWindow(this);
+            }
+        }
+    }
+#endif
 }
