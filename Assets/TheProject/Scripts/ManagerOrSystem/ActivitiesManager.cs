@@ -358,10 +358,11 @@ namespace MainSpace
                 return;
             }
 
-            gameCursor.AddStepEvent(null, null, ActionScopeType.none, null, null, () =>
-                 {
-                     dotweenSequence.Kill(true);
-                 });
+            if (_ctrlType == CtrlType.Player)
+            {
+                gameCursor.AddStepEvent(null, null, ActionScopeType.none, null, null,
+                    () => { dotweenSequence.Kill(true); });
+            }
 
             dotweenSequence = DOTween.Sequence();
             dotweenSequence.SetEase(Ease.Linear);

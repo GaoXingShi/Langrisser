@@ -42,8 +42,9 @@ namespace MainSpace
         private static SkillSelectionEditorWindows windows;
 
         private static Sense.BehaviourTree.Apply.CreateCommanderUnitNodeInspectorEditor createCommanderEditor;
-
-        private static bool[] toggleInitArray , toggleRuntimeArray;
+        private static MainSpace.ScriptableObject.SoliderConfigInspectorEditor soliderConfig;
+        private static int soliderConfigIndex;
+        private static bool[] toggleInitArray, toggleRuntimeArray;
 
         public static void OpenWindow(Sense.BehaviourTree.Apply.CreateCommanderUnitNodeInspectorEditor _createCommanderEditor)
         {
@@ -77,15 +78,61 @@ namespace MainSpace
                                                                   (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i)) != 0;
                 }
             }
+            windows.Show();
+        }
 
+        public static void OpenWindow(ScriptableObject.SoliderConfigInspectorEditor _soliderConfig, int _index)
+        {
+            if (windows == null)
+            {
+                Rect rect = new Rect(Screen.width / 2, Screen.height / 2, 600, 420);
+                windows = EditorWindow.GetWindowWithRect<SkillSelectionEditorWindows>(rect, true, "技能编辑面板");
+            }
 
+            soliderConfig = _soliderConfig;
+            soliderConfigIndex = _index;
+            toggleInitArray = new bool[Enum.GetValues(typeof(SkillFlag)).Length];
+            toggleRuntimeArray = new bool[Enum.GetValues(typeof(SkillFlag)).Length];
+            //createCommanderEditor.editorTarget.skillMastery
+
+            if ((int)_soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery == -1)
+            {
+                for (int i = 1; i < toggleInitArray.Length; i++)
+                {
+                    toggleInitArray[i] = toggleRuntimeArray[i] = true;
+                }
+            }
+            else if ((int)_soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery == 0)
+            {
+                toggleInitArray[0] = toggleRuntimeArray[0] = true;
+            }
+            else
+            {
+                for (int i = 1; i < toggleInitArray.Length; i++)
+                {
+                    toggleInitArray[i] = toggleRuntimeArray[i] = (_soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery &
+                                                                  (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i)) != 0;
+                }
+            }
             windows.Show();
         }
 
         private void OnGUI()
         {
-
             EditorGUILayout.BeginVertical();
+
+            if (createCommanderEditor != null)
+            {
+                GUILayout.Label(createCommanderEditor.editorTarget.unitName);
+                GUILayout.Label(new GUIContent(createCommanderEditor.editorTarget.activityConfig.normalSprite.texture));
+            }
+            else if (soliderConfig != null)
+            {
+                GUILayout.Label(soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].soliderType.ToString());
+                GUILayout.Label(new GUIContent(soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].activityConfig.normalSprite.texture));
+            }
+
+
 
             int index = 0;
 
@@ -124,19 +171,45 @@ namespace MainSpace
                         {
                             toggleInitArray[0] = toggleRuntimeArray[0] = false;
 
-                            createCommanderEditor.editorTarget.skillMastery =
-                                createCommanderEditor.editorTarget.skillMastery |
-                                (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                            if (createCommanderEditor != null)
+                            {
+                                createCommanderEditor.editorTarget.skillMastery =
+                                    createCommanderEditor.editorTarget.skillMastery |
+                                    (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                            }
+                            else if (soliderConfig != null)
+                            {
+                                soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery =
+                                    soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery |
+                                    (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                            }
                         }
                         else
                         {
-                            createCommanderEditor.editorTarget.skillMastery =
-                                createCommanderEditor.editorTarget.skillMastery &
-                                ~(SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                            if (createCommanderEditor != null)
+                            {
+                                createCommanderEditor.editorTarget.skillMastery =
+                                    createCommanderEditor.editorTarget.skillMastery &
+                                    ~(SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                            }
+                            else if (soliderConfig != null)
+                            {
+                                soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery =
+                                    soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery &
+                                    ~(SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                            }
 
                             if (!toggleRuntimeArray.Any(x => x))
                             {
-                                createCommanderEditor.editorTarget.skillMastery = 0;
+                                if (createCommanderEditor != null)
+                                {
+                                    createCommanderEditor.editorTarget.skillMastery = 0;
+                                }
+                                else if (soliderConfig != null)
+                                {
+                                    soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery = 0;
+                                }
+
                                 toggleRuntimeArray[0] = toggleInitArray[0] = true;
                             }
                         }
@@ -148,7 +221,15 @@ namespace MainSpace
                 toggleInitArray[0] = toggleRuntimeArray[0];
                 if (toggleRuntimeArray[0])
                 {
-                    createCommanderEditor.editorTarget.skillMastery = 0;
+                    if (createCommanderEditor != null)
+                    {
+                        createCommanderEditor.editorTarget.skillMastery = 0;
+                    }
+                    else if (soliderConfig != null)
+                    {
+                        soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery = 0;
+                    }
+
                     for (int i = 1; i < toggleInitArray.Length; i++)
                     {
                         toggleInitArray[i] = toggleRuntimeArray[i] = false;
@@ -167,6 +248,8 @@ namespace MainSpace
         {
             windows = null;
             createCommanderEditor = null;
+            soliderConfig = null;
+            soliderConfigIndex = 0;
             toggleInitArray = null;
         }
     }

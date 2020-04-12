@@ -23,5 +23,37 @@ namespace MainSpace.ScriptableObject
         public SoliderData[] soliderDataArray;
     }
 
+
+#if UNITY_EDITOR
+    [UnityEditor.CustomEditor(typeof(SoliderConfig), true)]
+    public class SoliderConfigInspectorEditor : UnityEditor.Editor
+    {
+        public SoliderConfig editorTarget;
+        private int selectionIndex = 0;
+        private void OnEnable()
+        {
+            editorTarget = target as SoliderConfig;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+
+            
+            if (editorTarget.soliderDataArray.Length >= 1)
+            {
+                selectionIndex = UnityEditor.EditorGUILayout.IntSlider(selectionIndex, 0, editorTarget.soliderDataArray.Length - 1);
+
+                if (GUILayout.Button("编辑技能"))
+                {
+                    SkillSelectionEditorWindows.OpenWindow(this, selectionIndex);
+                }
+            }
+
+
+        }
+    }
+#endif
+
 }
 

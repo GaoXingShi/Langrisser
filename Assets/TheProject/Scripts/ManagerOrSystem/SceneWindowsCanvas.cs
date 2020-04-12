@@ -31,6 +31,7 @@ namespace MainSpace
 
         public Text soliderText,
             soliderAffiliationText,
+            soliderCommanderText,
             soliderAttackText,
             soliderDefenseText,
             soliderMoveText,
@@ -65,8 +66,8 @@ namespace MainSpace
             commanderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0]);
             commanderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0]);
             commanderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
-            commanderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0]);
-            commanderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0]);
+            commanderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0], " / ", _unit.healthValue[1]);
+            commanderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.magicValue[1]);
             commandRangeText.text = string.Concat("指挥范围:", _unit.commandRangeValue[0]);
             correctedText.text = string.Concat("修正值:", _unit.correctedAttack[0], " / " + _unit.correctedDefense[0]);
         }
@@ -88,13 +89,14 @@ namespace MainSpace
             soliderText.text = _unit.soliderType.ToString();
             soliderAffiliationText.text = _unit.affiliationName;
             // todo 修正有问题,离开范围
+            soliderCommanderText.text = string.Concat("指挥官:",_unit.mineCommanderUnit.unitName);
             soliderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0], " + ",
                 _unit.mineCommanderUnit.correctedAttack[0]);
             soliderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0], " + ",
                 _unit.mineCommanderUnit.correctedDefense[0]);
             soliderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
-            soliderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0]);
-            soliderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0]);
+            soliderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0], " / ", _unit.healthValue[1]);
+            soliderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.healthValue[1]);
         }
 
         /// <summary>

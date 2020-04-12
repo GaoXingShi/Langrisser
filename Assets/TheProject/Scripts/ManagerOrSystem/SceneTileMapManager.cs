@@ -7,7 +7,6 @@ using MainSpace.Activities;
 using MainSpace.ScriptableObject;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityScript.Scripting.Pipeline;
 
 namespace MainSpace.Grid
 {

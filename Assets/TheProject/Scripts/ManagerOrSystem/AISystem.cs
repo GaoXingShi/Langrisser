@@ -38,7 +38,7 @@ namespace MainSpace
                 TileSaveData[] commanderMovingData = sceneTileMapManager.CalculateMovingRange(v);
                 activitiesManager.EnterCommanderOrSoliderUnit(v);
                 yield return new WaitForSeconds(2);
-                activitiesManager.UnitMoveTo(sceneTileMapManager.GetMoveToUnitAllow(commanderMovingData[0].widthHeighValue), v, CtrlType.AI);
+                activitiesManager.UnitMoveTo(sceneTileMapManager.GetMoveToUnitAllow(commanderMovingData[0].widthHeighValue).RemoveDuplicates(), v, CtrlType.AI);
                 activitiesManager.ExitCommanderOrSoliderUnit();
                 yield return WaitMoveOn(v);
                 activitiesManager.EnterCommanderOrSoliderUnit(v);
@@ -47,7 +47,7 @@ namespace MainSpace
                 {
                     TileSaveData[] soliderMovingData = sceneTileMapManager.CalculateMovingRange(vv);
 
-                    activitiesManager.UnitMoveTo(sceneTileMapManager.GetMoveToUnitAllow(soliderMovingData[0].widthHeighValue), vv, CtrlType.AI);
+                    activitiesManager.UnitMoveTo(sceneTileMapManager.GetMoveToUnitAllow(soliderMovingData[0].widthHeighValue).RemoveDuplicates(), vv, CtrlType.AI);
 
                     yield return WaitMoveOn(vv);
                 }
