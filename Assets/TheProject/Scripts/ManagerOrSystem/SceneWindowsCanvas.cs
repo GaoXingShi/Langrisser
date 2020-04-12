@@ -40,12 +40,17 @@ namespace MainSpace
 
         [Header("NotClickPlane Link")] public CanvasGroup canNotClickImage;
 
+        private CommanderUnit cacheCommandUnit;
+        private SoliderUnit cacheSoliderUnit;
+
         /// <summary>
         /// 指挥官选中方法
         /// </summary>
         /// <param name="_unit"></param>
         public void SetActivitiesData(CommanderUnit _unit)
         {
+            cacheCommandUnit = _unit;
+
             CanvasGroupAdjust(intBtnArray, false);
             CanvasGroupAdjust(soliderPlane, false);
             CanvasGroupAdjust(commanderPlane, true);
@@ -78,6 +83,8 @@ namespace MainSpace
         /// <param name="_unit"></param>
         public void SetActivitiesData(SoliderUnit _unit)
         {
+            cacheSoliderUnit = _unit;
+
             CanvasGroupAdjust(intBtnArray, false);
             CanvasGroupAdjust(commanderPlane, false);
             CanvasGroupAdjust(soliderPlane, true);
@@ -90,13 +97,52 @@ namespace MainSpace
             soliderAffiliationText.text = _unit.affiliationName;
             // todo 修正有问题,离开范围
             soliderCommanderText.text = string.Concat("指挥官:",_unit.mineCommanderUnit.unitName);
-            soliderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0], " + ",
-                _unit.mineCommanderUnit.correctedAttack[0]);
+            soliderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0], " + ", 
+                _unit.isInMineCommanderRange ? _unit.mineCommanderUnit.correctedAttack[0] : 0);
             soliderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0], " + ",
-                _unit.mineCommanderUnit.correctedDefense[0]);
+                _unit.isInMineCommanderRange ? _unit.mineCommanderUnit.correctedDefense[0] : 0);
             soliderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
             soliderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0], " / ", _unit.healthValue[1]);
             soliderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.healthValue[1]);
+        }
+
+        public void RefreshActivitiesData()
+        {
+            if (cacheCommandUnit)
+            {
+                faceImage.sprite = cacheCommandUnit.unitFaceSprite;
+                commanderAffiliationImage.sprite = cacheCommandUnit.affiliationSprite;
+
+                nameText.text = cacheCommandUnit.unitName;
+                roleText.text = cacheCommandUnit.roleTpe.ToString();
+                commanderAffiliationText.text = cacheCommandUnit.affiliationName;
+                levelText.text = "LV " + cacheCommandUnit.levelValue.ToString();
+                levelSlider.maxValue = cacheCommandUnit.levelSliderUpgradeValue;
+                levelSlider.value = cacheCommandUnit.levelSliderValue;
+
+                commanderAttackText.text = string.Concat("攻击力:", cacheCommandUnit.attackValue[0]);
+                commanderDefenseText.text = string.Concat("防御力:", cacheCommandUnit.defenseValue[0]);
+                commanderMoveText.text = string.Concat("移动:", cacheCommandUnit.moveRangeValue[0]);
+                commanderHealthPointText.text = string.Concat("生命值:", cacheCommandUnit.healthValue[0], " / ", cacheCommandUnit.healthValue[1]);
+                commanderMagicPointText.text = string.Concat("魔法值:", cacheCommandUnit.magicValue[0], " / ", cacheCommandUnit.magicValue[1]);
+                commandRangeText.text = string.Concat("指挥范围:", cacheCommandUnit.commandRangeValue[0]);
+                correctedText.text = string.Concat("修正值:", cacheCommandUnit.correctedAttack[0], " / " + cacheCommandUnit.correctedDefense[0]);
+            }
+            else if (cacheSoliderUnit)
+            {
+                soliderAffiliationImage.sprite = cacheSoliderUnit.affiliationSprite;
+                soliderText.text = cacheSoliderUnit.soliderType.ToString();
+                soliderAffiliationText.text = cacheSoliderUnit.affiliationName;
+                // todo 修正有问题,离开范围
+                soliderCommanderText.text = string.Concat("指挥官:", cacheSoliderUnit.mineCommanderUnit.unitName);
+                soliderAttackText.text = string.Concat("攻击力:", cacheSoliderUnit.attackValue[0], " + ",
+                    cacheSoliderUnit.isInMineCommanderRange ? cacheSoliderUnit.mineCommanderUnit.correctedAttack[0] : 0);
+                soliderDefenseText.text = string.Concat("防御力:", cacheSoliderUnit.defenseValue[0], " + ",
+                    cacheSoliderUnit.isInMineCommanderRange ? cacheSoliderUnit.mineCommanderUnit.correctedDefense[0] : 0);
+                soliderMoveText.text = string.Concat("移动:", cacheSoliderUnit.moveRangeValue[0]);
+                soliderHealthPointText.text = string.Concat("生命值:", cacheSoliderUnit.healthValue[0], " / ", cacheSoliderUnit.healthValue[1]);
+                soliderMagicPointText.text = string.Concat("魔法值:", cacheSoliderUnit.magicValue[0], " / ", cacheSoliderUnit.healthValue[1]);
+            }
         }
 
         /// <summary>
@@ -104,6 +150,9 @@ namespace MainSpace
         /// </summary>
         public void ClearUIInfo()
         {
+            cacheSoliderUnit = null;
+            cacheCommandUnit = null;
+
             CanvasGroupAdjust(intBtnArray, false);
             CanvasGroupAdjust(commanderPlane, false);
             CanvasGroupAdjust(soliderPlane, false);

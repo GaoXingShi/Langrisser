@@ -335,6 +335,8 @@ namespace MainSpace.Grid
                 //activitiesManager.SetActivitiesUnitIconState(v, "sword");
             }
 
+            LoadInfo.Instance.sceneWindowsCanvas.RefreshActivitiesData();
+
             cursor.AddStepEvent(_unit, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.StandByOrOtherActionGridCallBack, null,
                 () =>
                 {

@@ -189,6 +189,7 @@ namespace MainSpace
             }
             else
             {
+
                 StepInfo temp = stepInfoStack.Peek();
                 switch (temp.actionScopeType)
                 {
@@ -220,6 +221,8 @@ namespace MainSpace
                         break;
                 }
             }
+
+
         }
 
         /// <summary>
@@ -258,6 +261,7 @@ namespace MainSpace
                 FinishStepEvent(true);
             }
 
+            LoadInfo.Instance.sceneWindowsCanvas.RefreshActivitiesData();
 
         }
 

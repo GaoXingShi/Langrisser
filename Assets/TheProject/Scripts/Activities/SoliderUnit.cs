@@ -10,6 +10,9 @@ namespace MainSpace.Activities
 
         public CommanderUnit mineCommanderUnit { set; get; }
 
+        public bool isInMineCommanderRange =>
+            currentPos.Vector3IntRangeValue(mineCommanderUnit.currentPos) <=
+            mineCommanderUnit.commandRangeValue[0];
     }
 }
 
