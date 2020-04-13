@@ -282,14 +282,14 @@ namespace MainSpace
             if (_unit.GetType() == typeof(CommanderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
-                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as CommanderUnit);
+                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as CommanderUnit,false);
 
 
             }
             else if (_unit.GetType() == typeof(SoliderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit((_unit as SoliderUnit)?.mineCommanderUnit);
-                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as SoliderUnit);
+                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as SoliderUnit,false);
 
             }
         }
