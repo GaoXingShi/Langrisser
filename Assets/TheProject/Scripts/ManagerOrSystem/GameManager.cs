@@ -178,7 +178,7 @@ namespace MainSpace
             else if (campData[currentRoundCampDataIndex].ctrlType == CtrlType.AI)
             {
                 // AI操作
-                LoadInfo.Instance.sceneWindowsCanvas.SetCanNotClickPanelState(true);
+                //LoadInfo.Instance.sceneWindowsCanvas.SetCanNotClickPanelState(true);
 
                 aiSystem.SetAIData(
                     activitiesManager.GetCampCommanderArray(campData[currentRoundCampDataIndex].identifyValue));

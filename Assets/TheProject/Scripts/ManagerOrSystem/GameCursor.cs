@@ -233,7 +233,7 @@ namespace MainSpace
             if (stepInfoStack.Count == 0)
             {
                 // 则ui进入初始化界面
-                LoadInfo.Instance.sceneWindowsCanvas.SetInitPanel();
+                LoadInfo.Instance.sceneWindowsCanvas.SetUpPanel();
             }
             else
             {
@@ -282,10 +282,15 @@ namespace MainSpace
             if (_unit.GetType() == typeof(CommanderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
+                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as CommanderUnit);
+
+
             }
             else if (_unit.GetType() == typeof(SoliderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit((_unit as SoliderUnit)?.mineCommanderUnit);
+                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as SoliderUnit);
+
             }
         }
 

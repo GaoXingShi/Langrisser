@@ -198,6 +198,7 @@ namespace MainSpace
             tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
             SetActivityAnim(_unit, true);
 
+
             if (currentSelectionUnit == null)
                 cacheRangeUnit = _unit;
         }
@@ -228,6 +229,8 @@ namespace MainSpace
             }
             else
             {
+                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData();
+
                 if (cacheRangeUnit != null)
                 {
                     SetActivityAnim(cacheRangeUnit, false);

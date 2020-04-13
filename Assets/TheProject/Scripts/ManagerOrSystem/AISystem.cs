@@ -51,6 +51,9 @@ namespace MainSpace
 
                     yield return WaitMoveOn(vv);
                 }
+
+                yield return new WaitForSeconds(2);
+
                 activitiesManager.ExitCommanderOrSoliderUnit();
 
                 // 主要为了去掉cacheSaveData数据

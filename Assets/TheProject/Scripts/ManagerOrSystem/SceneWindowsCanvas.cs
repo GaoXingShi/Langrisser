@@ -24,8 +24,6 @@ namespace MainSpace
             commandRangeText,
             correctedText;
 
-        public Button magicBtn, cureBtn, instructBtn;
-
         [Header("SoliderPlane Link")] public bool soliderPlaneData;
         public Image soliderAffiliationImage;
 
@@ -38,25 +36,20 @@ namespace MainSpace
             soliderHealthPointText,
             soliderMagicPointText;
 
+        [Header("UnitOtherActionPlane Link")] public CanvasGroup unitOtherActionPlane;
+        public Button roundOverBtn, skillBtn, treatBtn, detailPanelBtn, setUpBtn;
+
         [Header("NotClickPlane Link")] public CanvasGroup canNotClickImage;
 
         private CommanderUnit cacheCommandUnit;
         private SoliderUnit cacheSoliderUnit;
 
-        /// <summary>
-        /// 指挥官选中方法
-        /// </summary>
-        /// <param name="_unit"></param>
-        public void SetActivitiesData(CommanderUnit _unit)
-        {
-            cacheCommandUnit = _unit;
 
+        public void ShowActivitiesData(CommanderUnit _unit)
+        {
             CanvasGroupAdjust(intBtnArray, false);
             CanvasGroupAdjust(soliderPlane, false);
             CanvasGroupAdjust(commanderPlane, true);
-
-            SetCanNotClickPanelState(false);
-
 
             faceImage.sprite = _unit.unitFaceSprite;
             commanderAffiliationImage.sprite = _unit.affiliationSprite;
@@ -64,7 +57,7 @@ namespace MainSpace
             nameText.text = _unit.unitName;
             roleText.text = _unit.roleTpe.ToString();
             commanderAffiliationText.text = _unit.affiliationName;
-            levelText.text = "LV " + _unit.levelValue.ToString();
+            levelText.text = "LV " + _unit.levelValue;
             levelSlider.maxValue = _unit.levelSliderUpgradeValue;
             levelSlider.value = _unit.levelSliderValue;
 
@@ -75,6 +68,43 @@ namespace MainSpace
             commanderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.magicValue[1]);
             commandRangeText.text = string.Concat("指挥范围:", _unit.commandRangeValue[0]);
             correctedText.text = string.Concat("修正值:", _unit.correctedAttack[0], " / " + _unit.correctedDefense[0]);
+
+        }
+        public void ShowActivitiesData(SoliderUnit _unit)
+        {
+            CanvasGroupAdjust(intBtnArray, false);
+            CanvasGroupAdjust(commanderPlane, false);
+            CanvasGroupAdjust(soliderPlane, true);
+            soliderAffiliationImage.sprite = _unit.affiliationSprite;
+            soliderText.text = _unit.soliderType.ToString();
+            soliderAffiliationText.text = _unit.affiliationName;
+
+            soliderCommanderText.text = string.Concat("指挥官:", _unit.mineCommanderUnit.unitName);
+            soliderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0], " + ",
+                _unit.isInMineCommanderRange ? _unit.mineCommanderUnit.correctedAttack[0] : 0);
+            soliderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0], " + ",
+                _unit.isInMineCommanderRange ? _unit.mineCommanderUnit.correctedDefense[0] : 0);
+            soliderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
+            soliderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0], " / ", _unit.healthValue[1]);
+            soliderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.healthValue[1]);
+        }
+
+        public void ShowActivitiesData()
+        {
+            CanvasGroupAdjust(intBtnArray, false);
+            CanvasGroupAdjust(commanderPlane, false);
+            CanvasGroupAdjust(soliderPlane, false);
+        }
+
+        /// <summary>
+        /// 指挥官选中方法
+        /// </summary>
+        /// <param name="_unit"></param>
+        public void SetActivitiesData(CommanderUnit _unit)
+        {
+            cacheCommandUnit = _unit;
+            SetCanNotClickPanelState(false);
+            OnSetActivitiesData(_unit);
         }
 
         /// <summary>
@@ -84,26 +114,8 @@ namespace MainSpace
         public void SetActivitiesData(SoliderUnit _unit)
         {
             cacheSoliderUnit = _unit;
-
-            CanvasGroupAdjust(intBtnArray, false);
-            CanvasGroupAdjust(commanderPlane, false);
-            CanvasGroupAdjust(soliderPlane, true);
-
             SetCanNotClickPanelState(false);
-
-
-            soliderAffiliationImage.sprite = _unit.affiliationSprite;
-            soliderText.text = _unit.soliderType.ToString();
-            soliderAffiliationText.text = _unit.affiliationName;
-            // todo 修正有问题,离开范围
-            soliderCommanderText.text = string.Concat("指挥官:",_unit.mineCommanderUnit.unitName);
-            soliderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0], " + ", 
-                _unit.isInMineCommanderRange ? _unit.mineCommanderUnit.correctedAttack[0] : 0);
-            soliderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0], " + ",
-                _unit.isInMineCommanderRange ? _unit.mineCommanderUnit.correctedDefense[0] : 0);
-            soliderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
-            soliderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0], " / ", _unit.healthValue[1]);
-            soliderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.healthValue[1]);
+            OnSetActivitiesData(_unit);
         }
 
         public void RefreshActivitiesData()
@@ -116,7 +128,7 @@ namespace MainSpace
                 nameText.text = cacheCommandUnit.unitName;
                 roleText.text = cacheCommandUnit.roleTpe.ToString();
                 commanderAffiliationText.text = cacheCommandUnit.affiliationName;
-                levelText.text = "LV " + cacheCommandUnit.levelValue.ToString();
+                levelText.text = "LV " + cacheCommandUnit.levelValue;
                 levelSlider.maxValue = cacheCommandUnit.levelSliderUpgradeValue;
                 levelSlider.value = cacheCommandUnit.levelSliderValue;
 
@@ -133,7 +145,7 @@ namespace MainSpace
                 soliderAffiliationImage.sprite = cacheSoliderUnit.affiliationSprite;
                 soliderText.text = cacheSoliderUnit.soliderType.ToString();
                 soliderAffiliationText.text = cacheSoliderUnit.affiliationName;
-                // todo 修正有问题,离开范围
+
                 soliderCommanderText.text = string.Concat("指挥官:", cacheSoliderUnit.mineCommanderUnit.unitName);
                 soliderAttackText.text = string.Concat("攻击力:", cacheSoliderUnit.attackValue[0], " + ",
                     cacheSoliderUnit.isInMineCommanderRange ? cacheSoliderUnit.mineCommanderUnit.correctedAttack[0] : 0);
@@ -157,10 +169,17 @@ namespace MainSpace
             CanvasGroupAdjust(commanderPlane, false);
             CanvasGroupAdjust(soliderPlane, false);
 
+            // UnitOtherActionPlane
+            roundOverBtn.gameObject.SetActive(true);
+            skillBtn.gameObject.SetActive(false);
+            treatBtn.gameObject.SetActive(false);
+            detailPanelBtn.gameObject.SetActive(false);
+
+
             SetCanNotClickPanelState(false);
 
         }
-        public void SetInitPanel()
+        public void SetUpPanel()
         {
             CanvasGroupAdjust(intBtnArray, true);
             CanvasGroupAdjust(commanderPlane, false);
@@ -185,12 +204,19 @@ namespace MainSpace
             saveBtn.onClick.AddListener(SaveBtnEvent);
             loadBtn.onClick.AddListener(LoadBtnEvent);
             cancelBtn.onClick.AddListener(CancelBtnEvent);
+
+            roundOverBtn.onClick.AddListener(TurnOverBtnEvent);
+
+            skillBtn.gameObject.SetActive(false);
+            treatBtn.gameObject.SetActive(false);
+            detailPanelBtn.gameObject.SetActive(false);
         }
 
         private void TurnOverBtnEvent()
         {
             LoadInfo.Instance.gameManager.FinishCurrentRoundTurn();
             ClearUIInfo();
+            SetCanNotClickPanelState(true);
         }
 
         private void SetAsBtnEvent()
@@ -218,6 +244,15 @@ namespace MainSpace
             _group.alpha = _isAlpha ? 1 : 0;
             _group.interactable = _isAlpha;
             _group.blocksRaycasts = _isAlpha;
+        }
+
+        private void OnSetActivitiesData(ActivitiesUnit _unit)
+        {
+            // UnitOtherActionPlane
+            roundOverBtn.gameObject.SetActive(false);
+            skillBtn.gameObject.SetActive(_unit.skillMastery != 0);
+            treatBtn.gameObject.SetActive(true);
+            detailPanelBtn.gameObject.SetActive(true);
         }
     }
 }
