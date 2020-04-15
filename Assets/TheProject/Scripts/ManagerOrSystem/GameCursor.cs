@@ -77,7 +77,8 @@ namespace MainSpace
                         // Touch Unit 
                         if (cacheHitRaycastUnit != null && cacheHitRaycastUnit != unit)
                         {
-                            CommanderRangeUnit(null);
+                            Debug.Log("????");
+                            //CommanderRangeUnit(null);
                         }
 
                         if (cacheHitRaycastUnit == null || cacheHitRaycastUnit != unit)
@@ -90,6 +91,8 @@ namespace MainSpace
                         // Exit Unit
                         if (cacheHitRaycastUnit != null)
                         {
+                            Debug.Log("??");
+
                             CommanderRangeUnit(null);
                         }
 
@@ -106,6 +109,7 @@ namespace MainSpace
                     // 通知现在没点到士兵
                     if (cacheHitRaycastUnit != null)
                     {
+                        Debug.Log("??");
                         CommanderRangeUnit(null);
                     }
                 }
@@ -283,8 +287,6 @@ namespace MainSpace
             {
                 activitiesManager.EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
                 LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as CommanderUnit,false);
-
-
             }
             else if (_unit.GetType() == typeof(SoliderUnit))
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Schema;
+using DG.Tweening;
 using MainSpace.Activities;
 using MainSpace.ScriptableObject;
 using UnityEngine;
@@ -69,7 +70,8 @@ namespace MainSpace.Grid
         private ActivitiesManager activitiesManager;
         private GameManager gameManager;
         private GameCursor cursor;
-        private bool lerpStart;
+        private Vector3Int cacheCommandPos = -Vector3Int.one;
+        private Sequence colorASequence;
         void Start()
         {
             InitCalculateValue();
@@ -78,17 +80,21 @@ namespace MainSpace.Grid
             cursor = LoadInfo.Instance.gameCursor;
 
             HideCommanderCircleGrid();
-        }
 
-        void Update()
-        {
-            if (!lerpStart)
-            {
-                return;
-            }
-            colorAValue = LoadInfo.Instance.gameManager.lerpIntValue * 1.2f;
+            DOTween.Init(false, true, LogBehaviour.ErrorsOnly);
+            colorASequence = DOTween.Sequence();
 
         }
+
+        //void Update()
+        //{
+        //    if (!lerpStart)
+        //    {
+        //        return;
+        //    }
+        //    colorAValue = Mathf.Lerp(colorAValue, LoadInfo.Instance.gameManager.lerpIntValue * 1.2f,0.15f);
+
+        //}
 
         #region 移动区域计算相关
 
@@ -426,6 +432,12 @@ namespace MainSpace.Grid
         /// <param name="_commanderCircleColor"></param>
         public void ShowCommanderCircleGrid(Vector3Int _pos, int _range, Color _commanderCircleColor)
         {
+            if (_pos.Vector3IntRangeValue(cacheCommandPos) != 0)
+            {
+                SetColorValueState(true);
+            }
+            cacheCommandPos = _pos;
+
             TileSaveData[] array = tileList.Where(x =>
                 x.widthHeighValue.Vector3IntRangeValue(_pos) <= _range).ToArray();
             foreach (var v in array)
@@ -443,6 +455,9 @@ namespace MainSpace.Grid
             {
                 return;
             }
+
+            cacheCommandPos = -Vector3Int.one;
+            SetColorValueState(false);
 
             foreach (var v in tileList.Where(x => x.activitiesAllowUnit.commandSpriteRenderer.enabled))
             {
@@ -475,7 +490,27 @@ namespace MainSpace.Grid
         /// <param name="_enabled"></param>
         public void SetColorValueState(bool _enabled)
         {
-            lerpStart = _enabled;
+            if (_enabled)
+            {
+                CommandRangeTweenPlay();
+            }
+            else
+            {
+                colorASequence.Pause();
+            }
+        }
+
+        private void CommandRangeTweenPlay()
+        {
+
+            if (!colorASequence.IsPlaying())
+            {
+                colorAValue = 0;
+                colorASequence = DOTween.Sequence();
+                colorASequence.Append(DOTween.To(() => colorAValue, x => colorAValue = x, 120, 1));
+                colorASequence.AppendInterval(0.2f);
+                colorASequence.SetLoops(-1, LoopType.Yoyo);
+            }
         }
 
         #endregion

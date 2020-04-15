@@ -192,9 +192,10 @@ namespace MainSpace
             {
                 tileMapManager.HideCommanderCircleGrid();
                 SetActivityAnim(cacheRangeUnit, false);
+                //tileMapManager.SetColorValueState(true);
+
             }
 
-            tileMapManager.SetColorValueState(true);
             tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
             SetActivityAnim(_unit, true);
 
