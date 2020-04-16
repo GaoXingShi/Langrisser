@@ -16,7 +16,7 @@ namespace MainSpace
 
         private ActivitiesUnit currentSelectionUnit { get; set; }
         private CommanderUnit cacheRangeUnit { get; set; }
-
+        private CommanderUnit clickSelectionCommanderRangeUnit { get; set; }
         private SceneTileMapManager tileMapManager;
         private SceneWindowsCanvas sceneWindowsCanvas;
         private GameManager gameManager;
@@ -70,6 +70,7 @@ namespace MainSpace
                 tileMapManager.CalculateMovingRange(_unit);
                 tileMapManager.ShowCanMoveCorrelationGrid(_unit, true);
                 currentSelectionUnit = _unit;
+                clickSelectionCommanderRangeUnit = (_unit.GetType() == typeof(CommanderUnit)) ? _unit as CommanderUnit : (_unit as SoliderUnit).mineCommanderUnit;
 
                 if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
                 {
@@ -173,6 +174,7 @@ namespace MainSpace
 
             sceneWindowsCanvas.ClearUIInfo();
             currentSelectionUnit = null;
+            clickSelectionCommanderRangeUnit = null;
             tileMapManager.HideCanMoveCorrelationGrid();
             tileMapManager.ClearCacheSaveData();
             SetAllActivityAnim(false);
@@ -196,8 +198,7 @@ namespace MainSpace
             tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
             SetActivityAnim(_unit, true);
 
-            if (currentSelectionUnit == null)
-                cacheRangeUnit = _unit;
+            cacheRangeUnit = _unit;
         }
 
         /// <summary>
@@ -205,30 +206,20 @@ namespace MainSpace
         /// </summary>
         public void ExitCommanderOrSoliderUnit(bool _isChangeActivities = false)
         {
-            //tileMapManager.HideCommanderCircleGrid();
-
-            if (currentSelectionUnit != null)
+            if (clickSelectionCommanderRangeUnit != null)
             {
-                if (_isChangeActivities)
+                if (!GetUnitSameCommander(cacheRangeUnit, clickSelectionCommanderRangeUnit))
                 {
                     tileMapManager.HideCommanderCircleGrid();
                 }
-
-                if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
-                {
-                    EnterCommanderOrSoliderUnit(currentSelectionUnit as CommanderUnit);
-                }
-                else if (currentSelectionUnit.GetType() == typeof(SoliderUnit))
-                {
-                    EnterCommanderOrSoliderUnit((currentSelectionUnit as SoliderUnit)?.mineCommanderUnit);
-                }
+                EnterCommanderOrSoliderUnit(clickSelectionCommanderRangeUnit);
 
                 // 取消所有
                 SetAllActivityAnim(false);
-                if (cacheRangeUnit != null)
+                if (clickSelectionCommanderRangeUnit != null)
                 {
                     // 指定acheRangeUnit动画播放
-                    SetActivityAnim(cacheRangeUnit, true);
+                    SetActivityAnim(clickSelectionCommanderRangeUnit, true);
                 }
             }
             else
