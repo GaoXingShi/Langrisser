@@ -86,16 +86,6 @@ namespace MainSpace.Grid
 
         }
 
-        //void Update()
-        //{
-        //    if (!lerpStart)
-        //    {
-        //        return;
-        //    }
-        //    colorAValue = Mathf.Lerp(colorAValue, LoadInfo.Instance.gameManager.lerpIntValue * 1.2f,0.15f);
-
-        //}
-
         #region 移动区域计算相关
 
         /// <summary>
@@ -643,12 +633,9 @@ namespace MainSpace.Grid
                 }
             }
 
-            foreach (var v in array)
+            foreach (var v in array.Where(v => !activitiesManager.GetUnitPosContains(v.widthHeighValue)))
             {
-                if (!activitiesManager.GetUnitPosContains(v.widthHeighValue))
-                {
-                    return v.widthHeighValue;
-                }
+                return v.widthHeighValue;
             }
 
             return null;

@@ -155,7 +155,7 @@ namespace MainSpace
             StepInfo temp = new StepInfo()
             {
                 unit = _unit,
-                unitCurrentPos = _unit == null ? Vector3Int.one :_unit.currentPos,
+                unitCurrentPos = _unit == null ? Vector3Int.one : _unit.currentPos,
                 tileCommand = valueNull ? null : addStepValue,
                 actionScopeType = _actionScopeType,
                 activitiesAction = _activitiesAction,
@@ -275,26 +275,35 @@ namespace MainSpace
         /// <param name="_unit"></param>
         private void CommanderRangeUnit(ActivitiesUnit _unit)
         {
-            cacheHitRaycastUnit = _unit;
 
             if (_unit == null)
             {
-                activitiesManager.ExitCommanderOrSoliderUnit();
+                activitiesManager.ExitCommanderOrSoliderUnit(true);
+                cacheHitRaycastUnit = null;
                 return;
+            }
+
+            if (!activitiesManager.GetUnitSameCommander(cacheHitRaycastUnit, _unit))
+            {
+                activitiesManager.ExitCommanderOrSoliderUnit(true);
             }
 
             if (_unit.GetType() == typeof(CommanderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
-                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as CommanderUnit,false);
+                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as CommanderUnit, false);
             }
             else if (_unit.GetType() == typeof(SoliderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit((_unit as SoliderUnit)?.mineCommanderUnit);
-                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as SoliderUnit,false);
+                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as SoliderUnit, false);
 
             }
+
+            cacheHitRaycastUnit = _unit;
         }
+
+
 
         private bool isMouseBtn;
         private float cacheDeadZone = 0.95f;

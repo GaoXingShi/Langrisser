@@ -149,7 +149,7 @@ namespace MainSpace
             Vector3Int[] temp = new Vector3Int[] { _pos };
             UnitMoveTo(temp, _unit, _ctrlType);
         }
-        
+
         /// <summary>
         /// 结束单位的选择
         /// </summary>
@@ -180,7 +180,7 @@ namespace MainSpace
 
         #endregion
 
-        #region 指挥圈相关
+        #region 触发指挥圈相关
         /// <summary>
         /// 触发指挥圈范围
         /// </summary>
@@ -192,13 +192,9 @@ namespace MainSpace
             {
                 tileMapManager.HideCommanderCircleGrid();
                 SetActivityAnim(cacheRangeUnit, false);
-                //tileMapManager.SetColorValueState(true);
-
             }
-
             tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
             SetActivityAnim(_unit, true);
-
 
             if (currentSelectionUnit == null)
                 cacheRangeUnit = _unit;
@@ -207,12 +203,17 @@ namespace MainSpace
         /// <summary>
         /// 退出指挥圈范围
         /// </summary>
-        public void ExitCommanderOrSoliderUnit()
+        public void ExitCommanderOrSoliderUnit(bool _isChangeActivities = false)
         {
-            tileMapManager.HideCommanderCircleGrid();
+            //tileMapManager.HideCommanderCircleGrid();
 
             if (currentSelectionUnit != null)
             {
+                if (_isChangeActivities)
+                {
+                    tileMapManager.HideCommanderCircleGrid();
+                }
+
                 if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
                 {
                     EnterCommanderOrSoliderUnit(currentSelectionUnit as CommanderUnit);
@@ -222,14 +223,18 @@ namespace MainSpace
                     EnterCommanderOrSoliderUnit((currentSelectionUnit as SoliderUnit)?.mineCommanderUnit);
                 }
 
+                // 取消所有
                 SetAllActivityAnim(false);
                 if (cacheRangeUnit != null)
                 {
+                    // 指定acheRangeUnit动画播放
                     SetActivityAnim(cacheRangeUnit, true);
                 }
             }
             else
             {
+                tileMapManager.HideCommanderCircleGrid();
+
                 LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData();
 
                 if (cacheRangeUnit != null)
@@ -279,7 +284,35 @@ namespace MainSpace
             var campData = gameManager.GetCampData(_mineKeyName);
             return unit.troopsType == campData.troopType;
         }
-       
+
+        public bool GetUnitSameCommander(ActivitiesUnit _unit1, ActivitiesUnit _unit2)
+        {
+            if (_unit1 == null || _unit2 == null)
+            {
+                return false;
+            }
+
+            if (_unit1.GetType() == typeof(CommanderUnit) && _unit2.GetType() == typeof(CommanderUnit))
+            {
+                return (_unit1 as CommanderUnit) == (_unit2 as CommanderUnit);
+            }
+            else if (_unit1.GetType() == typeof(CommanderUnit) && _unit2.GetType() == typeof(SoliderUnit))
+            {
+                return (_unit1 as CommanderUnit) == (_unit2 as SoliderUnit)?.mineCommanderUnit;
+            }
+            else if (_unit1.GetType() == typeof(SoliderUnit) && _unit2.GetType() == typeof(CommanderUnit))
+            {
+                return (_unit1 as SoliderUnit)?.mineCommanderUnit == (_unit2 as CommanderUnit);
+
+            }
+            else if (_unit1.GetType() == typeof(SoliderUnit) && _unit2.GetType() == typeof(SoliderUnit))
+            {
+                return (_unit1 as SoliderUnit)?.mineCommanderUnit == (_unit2 as SoliderUnit)?.mineCommanderUnit;
+            }
+
+            return false;
+        }
+
         // 设置:
         /// <summary>
         /// 添加可行动单位
