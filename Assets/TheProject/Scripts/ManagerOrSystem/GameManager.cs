@@ -60,6 +60,8 @@ namespace MainSpace
         public int lerpIntValue { get; set; }
         // 人物左下角的阵营小星
         public Vector3 lerpVector3Value => new Vector3(lerpValue, lerpValue, lerpValue);
+
+
         private int currentRoundCampDataIndex;
         private AISystem aiSystem;
         private ActivitiesManager activitiesManager;
@@ -232,22 +234,19 @@ namespace MainSpace
     [CustomEditor(typeof(GameManager))]
     public class GameManagerEditor : Editor
     {
-        // 序列化对象
-        private SerializedObject serialized;
         private GameManager editorCampData;
         private CampType campType;
         private int campDataCount;
         private Color[] allColor = new Color[] { Color.blue, Color.red, Color.yellow, Color.cyan, Color.green };
         void OnEnable()
         {
-            serialized = new SerializedObject(target);
             editorCampData = target as GameManager;
             if (editorCampData != null) campDataCount = editorCampData.campData.Length;
-        }
 
+        }
         public override void OnInspectorGUI()
         {
-            serialized.Update();
+            serializedObject.Update();
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("阵营相关信息：");
             campDataCount = EditorGUILayout.IntField(campDataCount);
@@ -309,10 +308,9 @@ namespace MainSpace
             }
 
 
-            serialized.ApplyModifiedProperties();
-
-
+            serializedObject.ApplyModifiedProperties();
         }
+
 
         private Vector3[] cubePosArray, labelPosArray;
         private int height, width;

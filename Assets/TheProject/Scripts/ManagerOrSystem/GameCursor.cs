@@ -278,7 +278,7 @@ namespace MainSpace
 
             if (_unit == null)
             {
-                activitiesManager.ExitCommanderOrSoliderUnit(true);
+                activitiesManager.ExitCommanderOrSoliderUnit();
                 cacheHitRaycastUnit = null;
                 return;
             }
