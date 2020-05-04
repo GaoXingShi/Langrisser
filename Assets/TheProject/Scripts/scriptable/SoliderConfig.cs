@@ -16,7 +16,8 @@ namespace MainSpace.ScriptableObject
             public SoliderType soliderType;
             public ActivityConfig activityConfig;
             public int attackValue, attackRangeValue, defenseValue, moveRangeValue, healthValue, magicValue;
-            public SkillFlag skillMastery;
+            public ActiveSkillsFlag activeSkillsMastery;
+            public PassiveSkillsFlag passiveSkillsMastery;
             public int skillRangeValue;
         }
 

@@ -17,7 +17,8 @@ namespace Sense.BehaviourTree.Apply
         public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
         public int levelSliderValue, levelSliderUpgradeValue, attackValue,attackRangeValue = 1,skillRangeValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
-        public SkillFlag skillMastery;
+        public ActiveSkillsFlag activeSkillsMastery;
+        public PassiveSkillsFlag passiveSkillsMastery;
         public Vector3Int showPos;
         private CommanderUnit cacheCommanderUnit = null;
         private CampData campData;
@@ -79,7 +80,9 @@ namespace Sense.BehaviourTree.Apply
             temp.roleTpe = roleType;
             temp.troopsType = campData.troopType;
             temp.movingType = activityConfig.movingType;
-            temp.skillMastery = skillMastery;
+            temp.activeSkillsMastery = activeSkillsMastery;
+            temp.passiveSkillsMastery = passiveSkillsMastery;
+            
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);

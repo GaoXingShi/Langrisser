@@ -171,8 +171,7 @@ namespace MainSpace
                 PlayerFinishCallBack(currentSelectionUnit);
             }
 
-
-            sceneWindowsCanvas.ClearUIInfo();
+            sceneWindowsCanvas.ClearUIInfo(gameCursor.isHaveCacheHitRayCastUnit);
             currentSelectionUnit = null;
             clickSelectionCommanderRangeUnit = null;
             tileMapManager.HideCanMoveCorrelationGrid();

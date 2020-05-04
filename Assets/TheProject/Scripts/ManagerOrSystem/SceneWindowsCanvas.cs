@@ -148,10 +148,15 @@ namespace MainSpace
         /// <summary>
         /// 清空选中信息
         /// </summary>
-        public void ClearUIInfo()
+        public void ClearUIInfo(bool _isMouseNotExit = false)
         {
             cacheSoliderUnit = null;
             cacheCommandUnit = null;
+
+            if (_isMouseNotExit)
+            {
+                return;
+            }
 
             CanvasGroupAdjust(intBtnArray, false);
             CanvasGroupAdjust(commanderPlane, false);
@@ -167,6 +172,8 @@ namespace MainSpace
             SetCanNotClickPanelState(false);
 
         }
+
+
         public void SetUpPanel()
         {
             CanvasGroupAdjust(intBtnArray, true);
@@ -238,8 +245,8 @@ namespace MainSpace
         {
             // UnitOtherActionPlane
             roundOverBtn.gameObject.SetActive(false);
-            skillBtn.gameObject.SetActive(_unit.skillMastery != 0);
-            treatBtn.gameObject.SetActive(true);
+            skillBtn.gameObject.SetActive(_unit.activeSkillsMastery != 0);
+            treatBtn.gameObject.SetActive(_unit.GetType() == typeof(CommanderUnit));
             detailPanelBtn.gameObject.SetActive(true);
         }
     }

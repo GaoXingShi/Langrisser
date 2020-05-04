@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -10,28 +11,37 @@ using UnityEngine;
 namespace MainSpace
 {
     [Flags]
-    public enum SkillFlag
+    public enum ActiveSkillsFlag
     {
         none = 0,
         魔法箭 = 1,
         火球 = 2,
         冰刺 = 4,
         龙卷 = 8,
-        闪电链 = 16
+        闪电链 = 16,
+    }
+
+    [Flags]
+    public enum PassiveSkillsFlag
+    {
+        none = 0,
+        疗伤指导 = 1,           // 周边范围1的己方士兵可以得到相等的治疗
+        TheBoss = 2,
+        战争狂 = 4,
     }
 
     public class SkillSystem : MonoBehaviour
     {
-        public SkillFlag skillFlag;
+        public ActiveSkillsFlag activeSkillsFlag;
         void Start()
         {
         }
 
 
-        public bool IsContain(SkillFlag _allSkill, SkillFlag _sthSkill)
+        public bool IsContain(ActiveSkillsFlag _allActiveSkills, ActiveSkillsFlag _sthActiveSkills)
         {
             // 与运算， 如果sthSkill 与 _allSkill并不对应则会返回0
-            return 0 != (_allSkill & _sthSkill);
+            return 0 != (_allActiveSkills & _sthActiveSkills);
         }
 
 
@@ -44,7 +54,8 @@ namespace MainSpace
         private static Sense.BehaviourTree.Apply.CreateCommanderUnitNodeInspectorEditor createCommanderEditor;
         private static MainSpace.ScriptableObject.SoliderConfigInspectorEditor soliderConfig;
         private static int soliderConfigIndex;
-        private static bool[] toggleInitArray, toggleRuntimeArray;
+        private static bool[] activeSkillsToggleInitArray, activeSkillsToggleRuntimeArray;
+        private static bool[] passiveSkillsToggleInitArray, passiveSkillsToggleRuntimeArray;
 
         public static void OpenWindow(Sense.BehaviourTree.Apply.CreateCommanderUnitNodeInspectorEditor _createCommanderEditor)
         {
@@ -55,30 +66,48 @@ namespace MainSpace
             }
 
             createCommanderEditor = _createCommanderEditor;
-            toggleInitArray = new bool[Enum.GetValues(typeof(SkillFlag)).Length];
-            toggleRuntimeArray = new bool[Enum.GetValues(typeof(SkillFlag)).Length];
-            //createCommanderEditor.editorTarget.skillMastery
+            activeSkillsToggleInitArray = new bool[Enum.GetValues(typeof(ActiveSkillsFlag)).Length];
+            passiveSkillsToggleInitArray = new bool[Enum.GetValues(typeof(PassiveSkillsFlag)).Length];
+            activeSkillsToggleRuntimeArray = new bool[Enum.GetValues(typeof(ActiveSkillsFlag)).Length];
+            passiveSkillsToggleRuntimeArray = new bool[Enum.GetValues(typeof(PassiveSkillsFlag)).Length];
 
-            if ((int)createCommanderEditor.editorTarget.skillMastery == -1)
+            ToggleInit((int) createCommanderEditor.editorTarget.activeSkillsMastery, activeSkillsToggleInitArray,
+                activeSkillsToggleRuntimeArray, Enum.GetValues(typeof(ActiveSkillsFlag)));
+
+            ToggleInit((int)createCommanderEditor.editorTarget.passiveSkillsMastery, passiveSkillsToggleInitArray,
+                passiveSkillsToggleRuntimeArray, Enum.GetValues(typeof(PassiveSkillsFlag)));
+
+            windows.Show();
+        }
+
+        /// <summary>
+        /// toggle初始化
+        /// </summary>
+        /// <param name="skillValue"></param>
+        /// <param name="activeSkillsToggleInitArray"></param>
+        /// <param name="activeSkillsToggleRuntimeArray"></param>
+        /// <param name="skillsArray"></param>
+        private static void ToggleInit(int skillValue,bool[] activeSkillsToggleInitArray,bool[] activeSkillsToggleRuntimeArray,Array skillsArray)
+        {
+            if (skillValue == -1)
             {
-                for (int i = 1; i < toggleInitArray.Length; i++)
+                for (int i = 1; i < activeSkillsToggleInitArray.Length; i++)
                 {
-                    toggleInitArray[i] = toggleRuntimeArray[i] = true;
+                    activeSkillsToggleInitArray[i] = activeSkillsToggleRuntimeArray[i] = true;
                 }
+
             }
-            else if ((int)createCommanderEditor.editorTarget.skillMastery == 0)
+            else if (skillValue == 0)
             {
-                toggleInitArray[0] = toggleRuntimeArray[0] = true;
+                activeSkillsToggleInitArray[0] = activeSkillsToggleRuntimeArray[0] = true;
             }
             else
             {
-                for (int i = 1; i < toggleInitArray.Length; i++)
+                for (int i = 1; i < activeSkillsToggleInitArray.Length; i++)
                 {
-                    toggleInitArray[i] = toggleRuntimeArray[i] = (createCommanderEditor.editorTarget.skillMastery &
-                                                                  (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i)) != 0;
+                    activeSkillsToggleInitArray[i] = activeSkillsToggleRuntimeArray[i] = (skillValue & (int)skillsArray.GetValue(i)) != 0;
                 }
             }
-            windows.Show();
         }
 
         public static void OpenWindow(ScriptableObject.SoliderConfigInspectorEditor _soliderConfig, int _index)
@@ -91,29 +120,17 @@ namespace MainSpace
 
             soliderConfig = _soliderConfig;
             soliderConfigIndex = _index;
-            toggleInitArray = new bool[Enum.GetValues(typeof(SkillFlag)).Length];
-            toggleRuntimeArray = new bool[Enum.GetValues(typeof(SkillFlag)).Length];
-            //createCommanderEditor.editorTarget.skillMastery
+            activeSkillsToggleInitArray = new bool[Enum.GetValues(typeof(ActiveSkillsFlag)).Length];
+            passiveSkillsToggleInitArray = new bool[Enum.GetValues(typeof(PassiveSkillsFlag)).Length];
+            activeSkillsToggleRuntimeArray = new bool[Enum.GetValues(typeof(ActiveSkillsFlag)).Length];
+            passiveSkillsToggleRuntimeArray = new bool[Enum.GetValues(typeof(PassiveSkillsFlag)).Length];
 
-            if ((int)_soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery == -1)
-            {
-                for (int i = 1; i < toggleInitArray.Length; i++)
-                {
-                    toggleInitArray[i] = toggleRuntimeArray[i] = true;
-                }
-            }
-            else if ((int)_soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery == 0)
-            {
-                toggleInitArray[0] = toggleRuntimeArray[0] = true;
-            }
-            else
-            {
-                for (int i = 1; i < toggleInitArray.Length; i++)
-                {
-                    toggleInitArray[i] = toggleRuntimeArray[i] = (_soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery &
-                                                                  (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i)) != 0;
-                }
-            }
+            ToggleInit((int)_soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].activeSkillsMastery,
+                activeSkillsToggleInitArray, activeSkillsToggleRuntimeArray, Enum.GetValues(typeof(ActiveSkillsFlag)));
+
+            ToggleInit((int)_soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].passiveSkillsMastery, 
+                passiveSkillsToggleInitArray, passiveSkillsToggleRuntimeArray, Enum.GetValues(typeof(PassiveSkillsFlag)));
+
             windows.Show();
         }
 
@@ -132,13 +149,82 @@ namespace MainSpace
                 GUILayout.Label(new GUIContent(soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].activityConfig.normalSprite.texture));
             }
 
+            // 主动技能
+            {
+                GUILayout.Label(new GUIContent("主动技能"));
+
+                int skill1 = 0;
+                int skill2 = 0;
+                if (createCommanderEditor != null)
+                {
+                    skill1 = (int) createCommanderEditor.editorTarget.activeSkillsMastery;
+                }
+
+                if (soliderConfig != null)
+                {
+                    skill2 = (int) soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].activeSkillsMastery;
+                }
+
+                ToggleValueUpdate<ActiveSkillsFlag>(activeSkillsToggleInitArray, activeSkillsToggleRuntimeArray, ref skill1,
+                    Enum.GetValues(typeof(ActiveSkillsFlag)),
+                    ref skill2, Enum.GetValues(typeof(ActiveSkillsFlag)));
+
+                if (createCommanderEditor != null)
+                    createCommanderEditor.editorTarget.activeSkillsMastery = (ActiveSkillsFlag) skill1;
+                if (soliderConfig != null)
+                    soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].activeSkillsMastery =
+                        (ActiveSkillsFlag) skill2;
+            }
+
+            // 被动技能
+            {
+                GUILayout.Label(new GUIContent("被动技能"));
+
+                int skill1 = 0;
+                int skill2 = 0;
+                if (createCommanderEditor != null)
+                {
+                    skill1 = (int)createCommanderEditor.editorTarget.passiveSkillsMastery;
+                }
+
+                if (soliderConfig != null)
+                {
+                    skill2 = (int)soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].passiveSkillsMastery;
+                }
+
+                ToggleValueUpdate<PassiveSkillsFlag>(passiveSkillsToggleInitArray, passiveSkillsToggleRuntimeArray, ref skill1,
+                    Enum.GetValues(typeof(PassiveSkillsFlag)),
+                    ref skill2, Enum.GetValues(typeof(PassiveSkillsFlag)));
+
+                if (createCommanderEditor != null)
+                    createCommanderEditor.editorTarget.passiveSkillsMastery = (PassiveSkillsFlag)skill1;
+                if (soliderConfig != null)
+                    soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].passiveSkillsMastery =
+                        (PassiveSkillsFlag)skill2;
+            }
+
+            EditorGUILayout.EndVertical();
 
 
+        }
+
+        /// <summary>
+        /// Toggle的绘制
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="_toggleInitArray"></param>
+        /// <param name="_toggleRuntimeArray"></param>
+        /// <param name="_createCommanderActiveSkills"></param>
+        /// <param name="_createCommanderArray"></param>
+        /// <param name="_soliderConfigActiveSkills"></param>
+        /// <param name="_soliderConfigArray"></param>
+        private void ToggleValueUpdate<T>(bool[] _toggleInitArray, bool[] _toggleRuntimeArray, ref int _createCommanderActiveSkills,Array _createCommanderArray, ref int _soliderConfigActiveSkills, Array _soliderConfigArray) where T:Enum
+        {
             int index = 0;
 
-            for (int i = 0; i < Enum.GetValues(typeof(SkillFlag)).Length; i++)
+            for (int i = 0; i < _createCommanderArray.Length; i++)
             {
-                SkillFlag currentFlag = (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                T currentFlag = (T)_createCommanderArray.GetValue(i);
 
                 if (index == 0)
                 {
@@ -146,8 +232,8 @@ namespace MainSpace
                 }
 
                 index++;
-                toggleRuntimeArray[i] = EditorGUILayout.ToggleLeft(currentFlag.ToString(),
-                    toggleRuntimeArray[i]);
+                _toggleRuntimeArray[i] = EditorGUILayout.ToggleLeft(currentFlag.ToString(),
+                    _toggleRuntimeArray[i]);
 
                 if (index == 3)
                 {
@@ -160,57 +246,51 @@ namespace MainSpace
                 EditorGUILayout.EndHorizontal();
             }
 
-            if (toggleInitArray[0] == toggleRuntimeArray[0])
+            if (_toggleInitArray[0] == _toggleRuntimeArray[0])
             {
-                for (int i = 1; i < toggleRuntimeArray.Length; i++)
+                for (int i = 1; i < _toggleRuntimeArray.Length; i++)
                 {
-                    if (toggleInitArray[i] != toggleRuntimeArray[i])
+                    if (_toggleInitArray[i] != _toggleRuntimeArray[i])
                     {
-                        toggleInitArray[i] = toggleRuntimeArray[i];
-                        if (toggleRuntimeArray[i])
+                        _toggleInitArray[i] = _toggleRuntimeArray[i];
+                        if (_toggleRuntimeArray[i])
                         {
-                            toggleInitArray[0] = toggleRuntimeArray[0] = false;
+                            _toggleInitArray[0] = _toggleRuntimeArray[0] = false;
 
                             if (createCommanderEditor != null)
                             {
-                                createCommanderEditor.editorTarget.skillMastery =
-                                    createCommanderEditor.editorTarget.skillMastery |
-                                    (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                                _createCommanderActiveSkills =
+                                    _createCommanderActiveSkills | (int)_createCommanderArray.GetValue(i);
                             }
                             else if (soliderConfig != null)
                             {
-                                soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery =
-                                    soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery |
-                                    (SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                                _soliderConfigActiveSkills =
+                                    _soliderConfigActiveSkills | (int)_soliderConfigArray.GetValue(i);
                             }
                         }
                         else
                         {
                             if (createCommanderEditor != null)
                             {
-                                createCommanderEditor.editorTarget.skillMastery =
-                                    createCommanderEditor.editorTarget.skillMastery &
-                                    ~(SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                                _createCommanderActiveSkills =  _createCommanderActiveSkills & ~(int)_createCommanderArray.GetValue(i);
                             }
                             else if (soliderConfig != null)
                             {
-                                soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery =
-                                    soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery &
-                                    ~(SkillFlag)Enum.GetValues(typeof(SkillFlag)).GetValue(i);
+                                _soliderConfigActiveSkills = _soliderConfigActiveSkills & ~(int)_soliderConfigArray.GetValue(i);
                             }
 
-                            if (!toggleRuntimeArray.Any(x => x))
+                            if (!_toggleRuntimeArray.Any(x => x))
                             {
                                 if (createCommanderEditor != null)
                                 {
-                                    createCommanderEditor.editorTarget.skillMastery = 0;
+                                    _createCommanderActiveSkills = 0;
                                 }
                                 else if (soliderConfig != null)
                                 {
-                                    soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery = 0;
+                                    _soliderConfigActiveSkills = 0;
                                 }
 
-                                toggleRuntimeArray[0] = toggleInitArray[0] = true;
+                                _toggleRuntimeArray[0] = _toggleInitArray[0] = true;
                             }
                         }
                     }
@@ -218,30 +298,24 @@ namespace MainSpace
             }
             else
             {
-                toggleInitArray[0] = toggleRuntimeArray[0];
-                if (toggleRuntimeArray[0])
+                _toggleInitArray[0] = _toggleRuntimeArray[0];
+                if (_toggleRuntimeArray[0])
                 {
                     if (createCommanderEditor != null)
                     {
-                        createCommanderEditor.editorTarget.skillMastery = 0;
+                        _createCommanderActiveSkills = 0;
                     }
                     else if (soliderConfig != null)
                     {
-                        soliderConfig.editorTarget.soliderDataArray[soliderConfigIndex].skillMastery = 0;
+                        _soliderConfigActiveSkills = 0;
                     }
 
-                    for (int i = 1; i < toggleInitArray.Length; i++)
+                    for (int i = 1; i < _toggleInitArray.Length; i++)
                     {
-                        toggleInitArray[i] = toggleRuntimeArray[i] = false;
+                        _toggleInitArray[i] = _toggleRuntimeArray[i] = false;
                     }
                 }
             }
-
-
-
-            EditorGUILayout.EndVertical();
-
-
         }
 
         private void OnDestroy()
@@ -250,7 +324,7 @@ namespace MainSpace
             createCommanderEditor = null;
             soliderConfig = null;
             soliderConfigIndex = 0;
-            toggleInitArray = null;
+            activeSkillsToggleInitArray = null;
         }
     }
 #endif

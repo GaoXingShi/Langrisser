@@ -56,7 +56,8 @@ namespace Sense.BehaviourTree.Apply
             temp.soliderType = soliderType;
             temp.movingType = data.activityConfig.movingType;
             temp.troopsType = followCommander.GetCampData().troopType;
-            temp.skillMastery = data.skillMastery;
+            temp.activeSkillsMastery = data.activeSkillsMastery;
+            temp.passiveSkillsMastery = data.passiveSkillsMastery;
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(followCommander.showPos);
