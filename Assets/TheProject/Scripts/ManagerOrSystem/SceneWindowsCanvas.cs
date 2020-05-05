@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using MainSpace.Activities;
 using UnityEngine;
@@ -38,6 +39,7 @@ namespace MainSpace
 
         [Header("UnitOtherActionPlane Link")] public CanvasGroup unitOtherActionPlane;
         public Button roundOverBtn, skillBtn, treatBtn, detailPanelBtn, setUpBtn;
+        public SkillPlaneModule skillPlaneModule;
 
         [Header("NotClickPlane Link")] public CanvasGroup canNotClickImage;
 
@@ -170,7 +172,6 @@ namespace MainSpace
 
 
             SetCanNotClickPanelState(false);
-
         }
 
 
