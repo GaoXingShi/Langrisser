@@ -9,7 +9,8 @@ namespace MainSpace
 {
     public class SceneWindowsCanvas : MonoBehaviour
     {
-        public CanvasGroup intBtnArray, commanderPlane, soliderPlane;
+        // 显示属性的root面板
+        public GameObject intBtnArray, commanderPlane, soliderPlane;
         [Header("IntBtnArray Link")] public bool intBtnArrayData;
         public Button turnOverBtn, setAsBtn, saveBtn, loadBtn, cancelBtn;
         [Header("CommanderPlane Link")] public bool commanderPlaneData;
@@ -55,9 +56,7 @@ namespace MainSpace
                     return;
                 }
 
-            CanvasGroupAdjust(intBtnArray, false);
-            CanvasGroupAdjust(soliderPlane, false);
-            CanvasGroupAdjust(commanderPlane, true);
+            ClearActivitiesUIInfo();
 
             faceImage.sprite = _unit.unitFaceSprite;
             commanderAffiliationImage.sprite = _unit.affiliationSprite;
@@ -78,7 +77,7 @@ namespace MainSpace
             correctedText.text = string.Concat("修正值:", _unit.correctedAttack[0], " / " + _unit.correctedDefense[0]);
 
         }
-        public void ShowActivitiesData(SoliderUnit _unit, bool _isLocal)
+        public void ClearActivitiesData(SoliderUnit _unit, bool _isLocal)
         {
             if (!_isLocal)
                 if (cacheCommandUnit || cacheSoliderUnit)
@@ -86,9 +85,10 @@ namespace MainSpace
                     return;
                 }
 
-            CanvasGroupAdjust(intBtnArray, false);
-            CanvasGroupAdjust(commanderPlane, false);
-            CanvasGroupAdjust(soliderPlane, true);
+            intBtnArray.SetActive(false);
+            soliderPlane.SetActive(true);
+            commanderPlane.SetActive(false);
+
             soliderAffiliationImage.sprite = _unit.affiliationSprite;
             soliderText.text = _unit.soliderType.ToString();
             soliderAffiliationText.text = _unit.affiliationName;
@@ -103,11 +103,14 @@ namespace MainSpace
             soliderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.healthValue[1]);
         }
 
-        public void ShowActivitiesData()
+        /// <summary>
+        /// 清空人物的UI面板
+        /// </summary>
+        public void ClearActivitiesUIInfo()
         {
-            CanvasGroupAdjust(intBtnArray, false);
-            CanvasGroupAdjust(commanderPlane, false);
-            CanvasGroupAdjust(soliderPlane, false);
+            intBtnArray.SetActive(false);
+            soliderPlane.SetActive(false);
+            commanderPlane.SetActive(false);
         }
 
         /// <summary>
@@ -143,7 +146,7 @@ namespace MainSpace
             }
             else if (cacheSoliderUnit)
             {
-                ShowActivitiesData(cacheSoliderUnit, true);
+                ClearActivitiesData(cacheSoliderUnit, true);
             }
         }
 
@@ -160,9 +163,7 @@ namespace MainSpace
                 return;
             }
 
-            CanvasGroupAdjust(intBtnArray, false);
-            CanvasGroupAdjust(commanderPlane, false);
-            CanvasGroupAdjust(soliderPlane, false);
+            ClearActivitiesUIInfo();
 
             // UnitOtherActionPlane
             roundOverBtn.gameObject.SetActive(true);
@@ -177,9 +178,8 @@ namespace MainSpace
 
         public void SetUpPanel()
         {
-            CanvasGroupAdjust(intBtnArray, true);
-            CanvasGroupAdjust(commanderPlane, false);
-            CanvasGroupAdjust(soliderPlane, false);
+            ClearActivitiesUIInfo();
+            intBtnArray.SetActive(true);
 
             SetCanNotClickPanelState(true);
         }
@@ -206,6 +206,8 @@ namespace MainSpace
             skillBtn.gameObject.SetActive(false);
             treatBtn.gameObject.SetActive(false);
             detailPanelBtn.gameObject.SetActive(false);
+
+            ClearActivitiesUIInfo();
         }
 
         private void TurnOverBtnEvent()
@@ -246,7 +248,6 @@ namespace MainSpace
         {
             // UnitOtherActionPlane
             roundOverBtn.gameObject.SetActive(false);
-            skillBtn.gameObject.SetActive(_unit.activeSkillsMastery != 0);
             treatBtn.gameObject.SetActive(_unit.GetType() == typeof(CommanderUnit));
             detailPanelBtn.gameObject.SetActive(true);
         }

@@ -44,6 +44,7 @@ namespace MainSpace
             else if (currentSelectionUnit != null)
             {
                 // attack
+                // 不是相同的队伍 && 符合攻击范围
                 if (!gameManager.VerifySameTroop(currentSelectionUnit, _unit) && currentSelectionUnit.currentPos.Vector3IntRangeValue(_unit.currentPos) <= currentSelectionUnit.attackRangeValue[0])
                 {
                     // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
@@ -225,7 +226,7 @@ namespace MainSpace
             {
                 tileMapManager.HideCommanderCircleGrid();
 
-                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData();
+                LoadInfo.Instance.sceneWindowsCanvas.ClearActivitiesUIInfo();
 
                 if (cacheRangeUnit != null)
                 {
@@ -385,6 +386,7 @@ namespace MainSpace
 
             if (_ctrlType == CtrlType.Player)
             {
+                // 加入栈事件 无任务、
                 gameCursor.AddStepEvent(null, null, ActionScopeType.none, null, null,
                     () => { dotweenSequence.Kill(true); });
             }

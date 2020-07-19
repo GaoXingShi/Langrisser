@@ -126,10 +126,9 @@ namespace MainSpace
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="_unit"></param>
-        /// <param name="_unitCurrentPos"></param>
-        /// <param name="_tile"></param>
-        /// <param name="_actionScopeType"></param>
+        /// <param name="_unit">角色信息</param>
+        /// <param name="_tile">瓦片存储信息,比如角色移动后又撤销了，需要把之前存储过可移动的瓦片信息再次显示出来</param>
+        /// <param name="_actionScopeType">可操作类型</param>
         /// <param name="_activitiesAction"> 鼠标左键触发的事件 </param>
         /// <param name="_clickTilePosAction"> 鼠标左键触发的事件 </param>
         /// <param name="_cancelAction"> 鼠标右键触发的事件 </param>
@@ -138,7 +137,7 @@ namespace MainSpace
             bool valueNull = _tile == null;
 
             TileSaveDataCommand[] addStepValue = new TileSaveDataCommand[valueNull ? 1 : _tile.Length];
-            if (_tile != null)
+            if (!valueNull)
             {
                 for (int i = 0; i < _tile.Length; i++)
                 {
@@ -237,7 +236,7 @@ namespace MainSpace
             if (stepInfoStack.Count == 0)
             {
                 // 则ui进入初始化界面
-                LoadInfo.Instance.sceneWindowsCanvas.SetUpPanel();
+               // LoadInfo.Instance.sceneWindowsCanvas.SetUpPanel();
             }
             else
             {
@@ -296,7 +295,7 @@ namespace MainSpace
             else if (_unit.GetType() == typeof(SoliderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit((_unit as SoliderUnit)?.mineCommanderUnit);
-                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as SoliderUnit, false);
+                LoadInfo.Instance.sceneWindowsCanvas.ClearActivitiesData(_unit as SoliderUnit, false);
 
             }
 

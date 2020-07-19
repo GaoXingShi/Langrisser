@@ -17,8 +17,6 @@ namespace Sense.BehaviourTree.Apply
         public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
         public int levelSliderValue, levelSliderUpgradeValue, attackValue,attackRangeValue = 1,skillRangeValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
-        public ActiveSkillsFlag activeSkillsMastery;
-        public PassiveSkillsFlag passiveSkillsMastery;
         public Vector3Int showPos;
         private CommanderUnit cacheCommanderUnit = null;
         private CampData campData;
@@ -80,8 +78,6 @@ namespace Sense.BehaviourTree.Apply
             temp.roleTpe = roleType;
             temp.troopsType = campData.troopType;
             temp.movingType = activityConfig.movingType;
-            temp.activeSkillsMastery = activeSkillsMastery;
-            temp.passiveSkillsMastery = passiveSkillsMastery;
             
 
             // pos
@@ -126,7 +122,7 @@ namespace Sense.BehaviourTree.Apply
             base.OnInspectorGUI();
             if (GUILayout.Button("编辑技能"))
             {
-                SkillSelectionEditorWindows.OpenWindow(this);
+                SkillSelectionEditorWindows.OpenWindow();
             }
         }
     }

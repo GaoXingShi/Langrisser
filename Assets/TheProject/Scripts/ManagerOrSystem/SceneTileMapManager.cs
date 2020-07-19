@@ -11,13 +11,16 @@ using UnityEngine.Tilemaps;
 
 namespace MainSpace.Grid
 {
+    /// <summary>
+    /// 瓦片存储信息结构
+    /// </summary>
     [System.Serializable]
     public class TileSaveData
     {
         public TileBase tile;                           // 瓦片信息
         public Sprite sprite;                           // sprite信息
         public Vector3Int widthHeighValue;              // 瓦片坐标
-        public AllowUnitInfo activitiesAllowUnit;      // 坐标位置的可移动方块
+        public AllowUnitInfo activitiesAllowUnit;      // 坐标位置的可移动方块(指挥圈与移动灰暗的信息)
         //public int aSont;                             // A值是 阶数
         public int[] pixelValue;    // 0 是更改数 1是不变数
         public string aliasName, path;    // 别名
@@ -251,6 +254,7 @@ namespace MainSpace.Grid
                 v.activitiesAllowUnit.SetMoveGrid(true);
             }
 
+            // 以30毫秒的速度延迟显示
             int ms = 30;
             int moveValue = _unit.moveRangeValue[0];
             for (int i = 0; i <= moveValue; i++)

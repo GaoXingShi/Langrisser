@@ -45,8 +45,6 @@ namespace MainSpace.Activities
         public ActivitiesManager manager;
         public Color campColor;
         public TroopsType troopsType;
-        public ActiveSkillsFlag activeSkillsMastery;
-        public PassiveSkillsFlag passiveSkillsMastery;
 
         [Header("Local Link")]
         public SpriteRenderer mRendererComponent;

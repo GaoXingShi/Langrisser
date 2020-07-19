@@ -49,7 +49,7 @@ namespace MainSpace
     }
 
     /// <summary>
-    /// 游戏信息类 目前掌管回合系统与人物阵营信息
+    /// 游戏信息类 目前管理回合系统与人物阵营信息
     /// </summary>
     public class GameManager : MonoBehaviour
     {

@@ -16,8 +16,6 @@ namespace MainSpace.ScriptableObject
             public SoliderType soliderType;
             public ActivityConfig activityConfig;
             public int attackValue, attackRangeValue, defenseValue, moveRangeValue, healthValue, magicValue;
-            public ActiveSkillsFlag activeSkillsMastery;
-            public PassiveSkillsFlag passiveSkillsMastery;
             public int skillRangeValue;
         }
 
@@ -47,7 +45,7 @@ namespace MainSpace.ScriptableObject
 
                 if (GUILayout.Button("编辑技能"))
                 {
-                    SkillSelectionEditorWindows.OpenWindow(this, selectionIndex);
+                    SkillSelectionEditorWindows.OpenWindow();
                 }
             }
 
