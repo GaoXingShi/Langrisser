@@ -91,7 +91,7 @@ namespace MainSpace
                         // Exit Unit
                         if (cacheHitRaycastUnit != null)
                         {
-                            Debug.Log("??");
+                            Debug.Log("???");
 
                             CommanderRangeUnit(null);
                         }
@@ -274,11 +274,11 @@ namespace MainSpace
         /// <param name="_unit"></param>
         private void CommanderRangeUnit(ActivitiesUnit _unit)
         {
-
             if (_unit == null)
             {
                 activitiesManager.ExitCommanderOrSoliderUnit();
                 cacheHitRaycastUnit = null;
+                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesUIData(null);
                 return;
             }
 
@@ -287,16 +287,14 @@ namespace MainSpace
                 activitiesManager.ExitCommanderOrSoliderUnit(true);
             }
 
+            LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesUIData(_unit);
             if (_unit.GetType() == typeof(CommanderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
-                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesData(_unit as CommanderUnit, false);
             }
             else if (_unit.GetType() == typeof(SoliderUnit))
             {
                 activitiesManager.EnterCommanderOrSoliderUnit((_unit as SoliderUnit)?.mineCommanderUnit);
-                LoadInfo.Instance.sceneWindowsCanvas.ClearActivitiesData(_unit as SoliderUnit, false);
-
             }
 
             cacheHitRaycastUnit = _unit;

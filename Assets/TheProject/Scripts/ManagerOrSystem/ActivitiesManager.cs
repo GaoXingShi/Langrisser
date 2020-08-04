@@ -73,14 +73,15 @@ namespace MainSpace
                 currentSelectionUnit = _unit;
                 clickSelectionCommanderRangeUnit = (_unit.GetType() == typeof(CommanderUnit)) ? _unit as CommanderUnit : (_unit as SoliderUnit).mineCommanderUnit;
 
-                if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
-                {
-                    sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as CommanderUnit);
-                }
-                else
-                {
-                    sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as SoliderUnit);
-                }
+                sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit);
+                //if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
+                //{
+                //    sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as CommanderUnit);
+                //}
+                //else
+                //{
+                //    sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as SoliderUnit);
+                //}
             }
             else if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
             {

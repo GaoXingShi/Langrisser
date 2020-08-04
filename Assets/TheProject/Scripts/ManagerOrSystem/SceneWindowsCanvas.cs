@@ -44,63 +44,81 @@ namespace MainSpace
 
         [Header("NotClickPlane Link")] public CanvasGroup canNotClickImage;
 
-        private CommanderUnit cacheCommandUnit;
-        private SoliderUnit cacheSoliderUnit;
+        private ActivitiesUnit cacheActivitiesUnit;
 
-
-        public void ShowActivitiesData(CommanderUnit _unit, bool _isLocal)
+        /// <summary>
+        /// 显示ActivitiesUnit信息(目前是鼠标经过Unit单位时，显示信息)
+        /// </summary>
+        /// <param name="_unit"></param>
+        public void ShowActivitiesUIData(ActivitiesUnit _unit)
         {
-            if (!_isLocal)
-                if (cacheCommandUnit || cacheSoliderUnit)
+            ActivitiesUnit localUnit = _unit;
+
+            // 鼠标离开Unit信息
+            if (cacheActivitiesUnit == null && localUnit == null)
+            {
+                ClearActivitiesUIInfo();
+                return;
+            } // 已经选中Unit时，鼠标离开其他Unit
+            else if (cacheActivitiesUnit != null && localUnit == null)
+            {
+                localUnit = cacheActivitiesUnit;
+            }
+
+            if (localUnit != null)
+            {
+                OnSetActivitiesUnitUIData(localUnit);
+            }
+
+            if (localUnit.GetType() == typeof(CommanderUnit))
+            {
+                CommanderUnit commanderUnit = localUnit as CommanderUnit;
+                if (commanderUnit == null)
                 {
+                    Debug.LogError("commanderUnit is Null", gameObject);
                     return;
                 }
+                faceImage.sprite = commanderUnit.unitFaceSprite;
+                commanderAffiliationImage.sprite = commanderUnit.affiliationSprite;
 
-            ClearActivitiesUIInfo();
+                nameText.text = commanderUnit.unitName;
+                roleText.text = commanderUnit.roleTpe.ToString();
+                commanderAffiliationText.text = commanderUnit.affiliationName;
+                levelText.text = "LV " + commanderUnit.levelValue;
+                levelSlider.maxValue = commanderUnit.levelSliderUpgradeValue;
+                levelSlider.value = commanderUnit.levelSliderValue;
 
-            faceImage.sprite = _unit.unitFaceSprite;
-            commanderAffiliationImage.sprite = _unit.affiliationSprite;
-
-            nameText.text = _unit.unitName;
-            roleText.text = _unit.roleTpe.ToString();
-            commanderAffiliationText.text = _unit.affiliationName;
-            levelText.text = "LV " + _unit.levelValue;
-            levelSlider.maxValue = _unit.levelSliderUpgradeValue;
-            levelSlider.value = _unit.levelSliderValue;
-
-            commanderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0]);
-            commanderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0]);
-            commanderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
-            commanderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0], " / ", _unit.healthValue[1]);
-            commanderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.magicValue[1]);
-            commandRangeText.text = string.Concat("指挥范围:", _unit.commandRangeValue[0]);
-            correctedText.text = string.Concat("修正值:", _unit.correctedAttack[0], " / " + _unit.correctedDefense[0]);
-
-        }
-        public void ClearActivitiesData(SoliderUnit _unit, bool _isLocal)
-        {
-            if (!_isLocal)
-                if (cacheCommandUnit || cacheSoliderUnit)
+                commanderAttackText.text = string.Concat("攻击力:", commanderUnit.attackValue[0]);
+                commanderDefenseText.text = string.Concat("防御力:", commanderUnit.defenseValue[0]);
+                commanderMoveText.text = string.Concat("移动:", commanderUnit.moveRangeValue[0]);
+                commanderHealthPointText.text = string.Concat("生命值:", commanderUnit.healthValue[0], " / ", commanderUnit.healthValue[1]);
+                commanderMagicPointText.text = string.Concat("魔法值:", commanderUnit.magicValue[0], " / ", commanderUnit.magicValue[1]);
+                commandRangeText.text = string.Concat("指挥范围:", commanderUnit.commandRangeValue[0]);
+                correctedText.text = string.Concat("修正值:", commanderUnit.correctedAttack[0], " / " + commanderUnit.correctedDefense[0]);
+            }
+            else if (localUnit.GetType() == typeof(SoliderUnit))
+            {
+                SoliderUnit soliderUnit = localUnit as SoliderUnit;
+                if (soliderUnit == null)
                 {
+                    Debug.LogError("soliderUnit is Null", gameObject);
                     return;
                 }
+                soliderAffiliationImage.sprite = soliderUnit.affiliationSprite;
+                soliderText.text = soliderUnit.soliderType.ToString();
+                soliderAffiliationText.text = soliderUnit.affiliationName;
 
-            intBtnArray.SetActive(false);
-            soliderPlane.SetActive(true);
-            commanderPlane.SetActive(false);
+                soliderCommanderText.text = string.Concat("指挥官:", soliderUnit.mineCommanderUnit.unitName);
+                soliderAttackText.text = string.Concat("攻击力:", soliderUnit.attackValue[0], " + ",
+                    soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.correctedAttack[0] : 0);
+                soliderDefenseText.text = string.Concat("防御力:", soliderUnit.defenseValue[0], " + ",
+                    soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.correctedDefense[0] : 0);
+                soliderMoveText.text = string.Concat("移动:", soliderUnit.moveRangeValue[0]);
+                soliderHealthPointText.text = string.Concat("生命值:", soliderUnit.healthValue[0], " / ", soliderUnit.healthValue[1]);
+                soliderMagicPointText.text = string.Concat("魔法值:", soliderUnit.magicValue[0], " / ", soliderUnit.healthValue[1]);
+            }
 
-            soliderAffiliationImage.sprite = _unit.affiliationSprite;
-            soliderText.text = _unit.soliderType.ToString();
-            soliderAffiliationText.text = _unit.affiliationName;
 
-            soliderCommanderText.text = string.Concat("指挥官:", _unit.mineCommanderUnit.unitName);
-            soliderAttackText.text = string.Concat("攻击力:", _unit.attackValue[0], " + ",
-                _unit.isInMineCommanderRange ? _unit.mineCommanderUnit.correctedAttack[0] : 0);
-            soliderDefenseText.text = string.Concat("防御力:", _unit.defenseValue[0], " + ",
-                _unit.isInMineCommanderRange ? _unit.mineCommanderUnit.correctedDefense[0] : 0);
-            soliderMoveText.text = string.Concat("移动:", _unit.moveRangeValue[0]);
-            soliderHealthPointText.text = string.Concat("生命值:", _unit.healthValue[0], " / ", _unit.healthValue[1]);
-            soliderMagicPointText.text = string.Concat("魔法值:", _unit.magicValue[0], " / ", _unit.healthValue[1]);
         }
 
         /// <summary>
@@ -114,25 +132,15 @@ namespace MainSpace
         }
 
         /// <summary>
-        /// 指挥官选中方法
+        /// 人物选中方法
         /// </summary>
         /// <param name="_unit"></param>
-        public void SetActivitiesData(CommanderUnit _unit)
+        public void SetActivitiesData(ActivitiesUnit _unit)
         {
-            cacheCommandUnit = _unit;
-            SetCanNotClickPanelState(false);
-            OnSetActivitiesData(_unit);
-        }
+            cacheActivitiesUnit = _unit;
 
-        /// <summary>
-        /// 士兵选中方法
-        /// </summary>
-        /// <param name="_unit"></param>
-        public void SetActivitiesData(SoliderUnit _unit)
-        {
-            cacheSoliderUnit = _unit;
             SetCanNotClickPanelState(false);
-            OnSetActivitiesData(_unit);
+            OnSetMenuData(_unit);
         }
 
         /// <summary>
@@ -140,14 +148,8 @@ namespace MainSpace
         /// </summary>
         public void RefreshActivitiesData()
         {
-            if (cacheCommandUnit)
-            {
-                ShowActivitiesData(cacheCommandUnit,true);
-            }
-            else if (cacheSoliderUnit)
-            {
-                ClearActivitiesData(cacheSoliderUnit, true);
-            }
+            if (cacheActivitiesUnit != null)
+                ShowActivitiesUIData(cacheActivitiesUnit);
         }
 
         /// <summary>
@@ -155,9 +157,7 @@ namespace MainSpace
         /// </summary>
         public void ClearUIInfo(bool _isMouseNotExit = false)
         {
-            cacheSoliderUnit = null;
-            cacheCommandUnit = null;
-
+            cacheActivitiesUnit = null;
             if (_isMouseNotExit)
             {
                 return;
@@ -244,7 +244,17 @@ namespace MainSpace
             _group.blocksRaycasts = _isAlpha;
         }
 
-        private void OnSetActivitiesData(ActivitiesUnit _unit)
+        private void OnSetActivitiesUnitUIData(ActivitiesUnit _unit)
+        {
+            commanderPlane.SetActive(_unit.GetType() == typeof(CommanderUnit));
+            soliderPlane.SetActive(_unit.GetType() == typeof(SoliderUnit));
+        }
+
+        /// <summary>
+        /// 右下角UI
+        /// </summary>
+        /// <param name="_unit"></param>
+        private void OnSetMenuData(ActivitiesUnit _unit)
         {
             // UnitOtherActionPlane
             roundOverBtn.gameObject.SetActive(false);
