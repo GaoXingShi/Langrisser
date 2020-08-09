@@ -39,8 +39,6 @@ namespace MainSpace
         public UnityEngine.Grid grid;
         public Texture2D cursorTexture, attackTexture;
         [HideInInspector] public bool isExecute = true;
-
-        public bool isHaveCacheHitRayCastUnit => cacheHitRaycastUnit != null;
         private CinemachineFramingTransposer cine;
         private ActivitiesManager activitiesManager;
         private ActivitiesUnit cacheHitRaycastUnit;
@@ -78,12 +76,12 @@ namespace MainSpace
                         if (cacheHitRaycastUnit != null && cacheHitRaycastUnit != unit)
                         {
                             Debug.Log("????");
-                            //CommanderRangeUnit(null);
+                            //MouseHoverUnit(null);
                         }
 
                         if (cacheHitRaycastUnit == null || cacheHitRaycastUnit != unit)
                         {
-                            CommanderRangeUnit(unit);
+                            MouseHoverUnit(unit);
                         }
                     }
                     else
@@ -91,16 +89,14 @@ namespace MainSpace
                         // Exit Unit
                         if (cacheHitRaycastUnit != null)
                         {
-                            Debug.Log("???");
-
-                            CommanderRangeUnit(null);
+                            MouseHoverUnit(null);
                         }
 
                     }
 
                     if (Input.GetMouseButtonDown(0))
                     {
-                        ExecuteClickStepEvent(unit, cellPos, gridPlayerLayer);
+                        MouseLeftClickUnit(unit, cellPos, gridPlayerLayer);
                     }
 
                 }
@@ -110,14 +106,14 @@ namespace MainSpace
                     if (cacheHitRaycastUnit != null)
                     {
                         Debug.Log("??");
-                        CommanderRangeUnit(null);
+                        MouseHoverUnit(null);
                     }
                 }
             }
 
             if (Input.GetMouseButtonDown(1))
             {
-                CancelStepEvent();
+                MouseRightClick();
             }
 
         }
@@ -175,7 +171,7 @@ namespace MainSpace
             stepInfoStack.Clear();
         }
 
-        private void ExecuteClickStepEvent(ActivitiesUnit _unit, Vector3Int _cellPos, bool _gridPlayerLayer)
+        private void MouseLeftClickUnit(ActivitiesUnit _unit, Vector3Int _cellPos, bool _gridPlayerLayer)
         {
             if (stepInfoStack.Count == 0)
             {
@@ -231,12 +227,15 @@ namespace MainSpace
         /// <summary>
         /// 鼠标调用取消时的回调
         /// </summary>
-        private void CancelStepEvent()
+        private void MouseRightClick()
         {
+            // 如果，栈里有数据，则使用栈的取消方法。
+            // 否则，则使用系统内部的完成方法。
             if (stepInfoStack.Count == 0)
             {
                 // 则ui进入初始化界面
                // LoadInfo.Instance.sceneWindowsCanvas.SetUpPanel();
+               // 打算做一个魔法或者召唤或者指令用的选项
             }
             else
             {
@@ -247,16 +246,21 @@ namespace MainSpace
                     var whileValue = stepInfoStack.Pop();
                     whileValue.cancelAction();
                 }
-                ResetStepEvent();
+                CancelStepEvent();
             }
         }
 
-        private void ResetStepEvent()
+        /// <summary>
+        /// 取消当前步骤
+        /// </summary>
+        private void CancelStepEvent()
         {
             if (stepInfoStack.Count != 0)
             {
                 StepInfo temp = stepInfoStack.Peek();
+                // 加载栈顶的信息，回到上一步时tileMap的状态
                 LoadInfo.Instance.sceneTileMapManager.LoadCorrelationGrid(temp);
+                LoadInfo.Instance.sceneWindowsCanvas.RefreshActivitiesData(temp.unit,0);
             }
             else
             {
@@ -264,43 +268,17 @@ namespace MainSpace
                 FinishStepEvent(true);
             }
 
-            LoadInfo.Instance.sceneWindowsCanvas.RefreshActivitiesData();
-
         }
 
         /// <summary>
-        /// 指挥圈变更通知
+        /// 鼠标Enter Exit 角色通知
         /// </summary>
         /// <param name="_unit"></param>
-        private void CommanderRangeUnit(ActivitiesUnit _unit)
+        private void MouseHoverUnit(ActivitiesUnit _unit)
         {
-            if (_unit == null)
-            {
-                activitiesManager.ExitCommanderOrSoliderUnit();
-                cacheHitRaycastUnit = null;
-                LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesUIData(null);
-                return;
-            }
-
-            if (!activitiesManager.GetUnitSameCommander(cacheHitRaycastUnit, _unit))
-            {
-                activitiesManager.ExitCommanderOrSoliderUnit(true);
-            }
-
-            LoadInfo.Instance.sceneWindowsCanvas.ShowActivitiesUIData(_unit);
-            if (_unit.GetType() == typeof(CommanderUnit))
-            {
-                activitiesManager.EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
-            }
-            else if (_unit.GetType() == typeof(SoliderUnit))
-            {
-                activitiesManager.EnterCommanderOrSoliderUnit((_unit as SoliderUnit)?.mineCommanderUnit);
-            }
-
+            activitiesManager.ActivitiesUnitCursorEvent(_unit);
             cacheHitRaycastUnit = _unit;
         }
-
-
 
         private bool isMouseBtn;
         private float cacheDeadZone = 0.95f;

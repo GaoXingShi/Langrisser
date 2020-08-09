@@ -15,6 +15,7 @@ namespace MainSpace
         private readonly List<ActivitiesUnit> activitiesUnitList = new List<ActivitiesUnit>();
 
         private ActivitiesUnit currentSelectionUnit { get; set; }
+        private ActivitiesUnit currentCursorUnit { get; set; }
         private CommanderUnit cacheRangeUnit { get; set; }
         private CommanderUnit clickSelectionCommanderRangeUnit { get; set; }
         private SceneTileMapManager tileMapManager;
@@ -31,6 +32,47 @@ namespace MainSpace
             gameManager = LoadInfo.Instance.gameManager;
             gameCursor = LoadInfo.Instance.gameCursor;
         }
+
+        /// <summary>
+        /// 接收鼠标事件的函数
+        /// </summary>
+        /// <param name="_unit"></param>
+        public void ActivitiesUnitCursorEvent(ActivitiesUnit _unit)
+        {
+            if (_unit == null)
+            {
+                ExitCommanderOrSoliderUnit();
+                currentCursorUnit = null;
+
+                if (currentSelectionUnit == null)
+                {
+                    sceneWindowsCanvas.ClearActivitiesUIInfo();
+                }
+                else
+                {
+                    sceneWindowsCanvas.ShowActivitiesUIData(currentSelectionUnit,0);
+                }
+                return;
+            }
+
+            if (!GetUnitSameCommander(currentCursorUnit, _unit))
+            {
+                ExitCommanderOrSoliderUnit(true);
+            }
+
+            sceneWindowsCanvas.ShowActivitiesUIData(_unit,0);
+            if (_unit.GetType() == typeof(CommanderUnit))
+            {
+                EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
+            }
+            else if (_unit.GetType() == typeof(SoliderUnit))
+            {
+                EnterCommanderOrSoliderUnit((_unit as SoliderUnit)?.mineCommanderUnit);
+            }
+
+            currentCursorUnit = _unit;
+        }
+
         #region 移动相关
 
         public void StandByOrOtherActionGridCallBack(ActivitiesUnit _unit)
@@ -73,7 +115,7 @@ namespace MainSpace
                 currentSelectionUnit = _unit;
                 clickSelectionCommanderRangeUnit = (_unit.GetType() == typeof(CommanderUnit)) ? _unit as CommanderUnit : (_unit as SoliderUnit).mineCommanderUnit;
 
-                sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit);
+                sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit,0);
                 //if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
                 //{
                 //    sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as CommanderUnit);
@@ -159,7 +201,8 @@ namespace MainSpace
         /// <param name="_isCancel"> 是否,是取消进入的该函数 </param>
         public void OverSelection(bool _isCancel)
         {
-            if (_isCancel && !gameCursor.isHaveCacheHitRayCastUnit)
+            
+            if (_isCancel && !currentCursorUnit)
             {
                 tileMapManager.HideCommanderCircleGrid();
             }
@@ -173,7 +216,7 @@ namespace MainSpace
                 PlayerFinishCallBack(currentSelectionUnit);
             }
 
-            sceneWindowsCanvas.ClearUIInfo(gameCursor.isHaveCacheHitRayCastUnit);
+            sceneWindowsCanvas.ClearUIInfo();
             currentSelectionUnit = null;
             clickSelectionCommanderRangeUnit = null;
             tileMapManager.HideCanMoveCorrelationGrid();

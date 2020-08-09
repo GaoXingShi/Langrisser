@@ -4213,7 +4213,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &699811254
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9423,7 +9423,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1325910434
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11932,7 +11932,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1610944412
 RectTransform:
   m_ObjectHideFlags: 0
@@ -24943,39 +24943,67 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   intBtnArray: {fileID: 75319373}
-  commanderPlane: {fileID: 1656189411}
-  soliderPlane: {fileID: 2078164668}
   intBtnArrayData: 0
   turnOverBtn: {fileID: 1269963782}
   setAsBtn: {fileID: 537921777}
   saveBtn: {fileID: 1575539307}
   loadBtn: {fileID: 13907946}
   cancelBtn: {fileID: 1741067457}
-  commanderPlaneData: 0
-  faceImage: {fileID: 497125027}
-  commanderAffiliationImage: {fileID: 553769787}
-  nameText: {fileID: 804001820}
-  roleText: {fileID: 874873164}
-  commanderAffiliationText: {fileID: 1547459101}
-  levelText: {fileID: 118668900}
-  levelSlider: {fileID: 56450548}
-  commanderAttackText: {fileID: 1559202452}
-  commanderDefenseText: {fileID: 1684486796}
-  commanderMoveText: {fileID: 755143998}
-  commanderHealthPointText: {fileID: 945931467}
-  commanderMagicPointText: {fileID: 604540347}
-  commandRangeText: {fileID: 758645409}
-  correctedText: {fileID: 1583294033}
-  soliderPlaneData: 0
-  soliderAffiliationImage: {fileID: 476110602}
-  soliderText: {fileID: 1066605912}
-  soliderAffiliationText: {fileID: 656915998}
-  soliderCommanderText: {fileID: 1062127092}
-  soliderAttackText: {fileID: 920957017}
-  soliderDefenseText: {fileID: 1030274412}
-  soliderMoveText: {fileID: 1151580371}
-  soliderHealthPointText: {fileID: 1320209513}
-  soliderMagicPointText: {fileID: 1407960285}
+  uiPropertyInspectors:
+  - commanderPlane: {fileID: 1656189411}
+    soliderPlane: {fileID: 2078164668}
+    commanderPlaneData: 0
+    faceImage: {fileID: 497125027}
+    commanderAffiliationImage: {fileID: 553769787}
+    nameText: {fileID: 804001820}
+    roleText: {fileID: 874873164}
+    commanderAffiliationText: {fileID: 804001820}
+    levelText: {fileID: 118668900}
+    levelSlider: {fileID: 56450548}
+    commanderAttackText: {fileID: 1559202452}
+    commanderDefenseText: {fileID: 1684486796}
+    commanderMoveText: {fileID: 755143998}
+    commanderHealthPointText: {fileID: 945931467}
+    commanderMagicPointText: {fileID: 604540347}
+    commandRangeText: {fileID: 758645409}
+    correctedText: {fileID: 1583294033}
+    soliderPlaneData: 0
+    soliderAffiliationImage: {fileID: 476110602}
+    soliderText: {fileID: 1066605912}
+    soliderAffiliationText: {fileID: 656915998}
+    soliderCommanderText: {fileID: 1062127092}
+    soliderAttackText: {fileID: 920957017}
+    soliderDefenseText: {fileID: 1030274412}
+    soliderMoveText: {fileID: 1151580371}
+    soliderHealthPointText: {fileID: 1320209513}
+    soliderMagicPointText: {fileID: 1407960285}
+  - commanderPlane: {fileID: 1325910433}
+    soliderPlane: {fileID: 1610944411}
+    commanderPlaneData: 0
+    faceImage: {fileID: 1801771908}
+    commanderAffiliationImage: {fileID: 2092471440}
+    nameText: {fileID: 1670449684}
+    roleText: {fileID: 1732238416}
+    commanderAffiliationText: {fileID: 1578950753}
+    levelText: {fileID: 2028829623}
+    levelSlider: {fileID: 1970742322}
+    commanderAttackText: {fileID: 1090525645}
+    commanderDefenseText: {fileID: 1597430533}
+    commanderMoveText: {fileID: 1033859699}
+    commanderHealthPointText: {fileID: 1713296886}
+    commanderMagicPointText: {fileID: 1066831897}
+    commandRangeText: {fileID: 663363596}
+    correctedText: {fileID: 1812855012}
+    soliderPlaneData: 0
+    soliderAffiliationImage: {fileID: 1566453505}
+    soliderText: {fileID: 339008076}
+    soliderAffiliationText: {fileID: 1502690290}
+    soliderCommanderText: {fileID: 245257530}
+    soliderAttackText: {fileID: 1309988035}
+    soliderDefenseText: {fileID: 338147710}
+    soliderMoveText: {fileID: 1516344561}
+    soliderHealthPointText: {fileID: 186096600}
+    soliderMagicPointText: {fileID: 920255638}
   unitOtherActionPlane: {fileID: 1549095435}
   roundOverBtn: {fileID: 477217375}
   skillBtn: {fileID: 839773799}
