@@ -50,7 +50,8 @@ namespace MainSpace
                 }
                 else
                 {
-                    sceneWindowsCanvas.ShowActivitiesUIData(currentSelectionUnit,0);
+                    sceneWindowsCanvas.ShowActivitiesUIData(currentSelectionUnit, 0);
+                    sceneWindowsCanvas.ClearActivitiesUIInfo(1);
                 }
                 return;
             }
@@ -60,7 +61,21 @@ namespace MainSpace
                 ExitCommanderOrSoliderUnit(true);
             }
 
-            sceneWindowsCanvas.ShowActivitiesUIData(_unit,0);
+            if (currentSelectionUnit != null && currentSelectionUnit != _unit)
+            {
+                sceneWindowsCanvas.ShowActivitiesUIData(_unit, currentSelectionUnit == null ? 0 : 1);
+            }
+            else if (currentSelectionUnit != null && currentSelectionUnit == _unit)
+            {
+                sceneWindowsCanvas.ClearActivitiesUIInfo(1);
+            }
+            else if (currentSelectionUnit == null)
+            {
+                sceneWindowsCanvas.ShowActivitiesUIData(_unit, 0);
+            }
+
+
+
             if (_unit.GetType() == typeof(CommanderUnit))
             {
                 EnterCommanderOrSoliderUnit(_unit as CommanderUnit);
@@ -115,7 +130,7 @@ namespace MainSpace
                 currentSelectionUnit = _unit;
                 clickSelectionCommanderRangeUnit = (_unit.GetType() == typeof(CommanderUnit)) ? _unit as CommanderUnit : (_unit as SoliderUnit).mineCommanderUnit;
 
-                sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit,0);
+                sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit, 0);
                 //if (currentSelectionUnit.GetType() == typeof(CommanderUnit))
                 //{
                 //    sceneWindowsCanvas.SetActivitiesData(currentSelectionUnit as CommanderUnit);
@@ -201,7 +216,7 @@ namespace MainSpace
         /// <param name="_isCancel"> 是否,是取消进入的该函数 </param>
         public void OverSelection(bool _isCancel)
         {
-            
+
             if (_isCancel && !currentCursorUnit)
             {
                 tileMapManager.HideCommanderCircleGrid();
