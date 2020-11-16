@@ -167,7 +167,7 @@ namespace MainSpace
         {
             // 回到初始状态
             activitiesManager.OverSelection(_isCancel);
-            //clickActivitiesUnit = null;
+            cacheHitRaycastUnit = null;
             stepInfoStack.Clear();
         }
 
@@ -234,8 +234,8 @@ namespace MainSpace
             if (stepInfoStack.Count == 0)
             {
                 // 则ui进入初始化界面
-               // LoadInfo.Instance.sceneWindowsCanvas.SetUpPanel();
-               // 打算做一个魔法或者召唤或者指令用的选项
+                // LoadInfo.Instance.sceneWindowsCanvas.SetUpPanel();
+                // 打算做一个魔法或者召唤或者指令用的选项
             }
             else
             {

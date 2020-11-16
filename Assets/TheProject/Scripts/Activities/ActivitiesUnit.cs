@@ -45,7 +45,6 @@ namespace MainSpace.Activities
         public ActivitiesManager manager;
         public Color campColor;
         public TroopsType troopsType;
-
         [Header("Local Link")]
         public SpriteRenderer mRendererComponent;
         public TextMesh hpText;
