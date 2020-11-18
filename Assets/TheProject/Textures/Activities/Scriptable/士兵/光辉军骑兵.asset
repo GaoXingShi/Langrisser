@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf360fd6e4cc2c64b937b2ce17a89097, type: 3}
-  m_Name: "\u72C2\u6218\u58EB"
+  m_Name: "\u5149\u8F89\u519B\u9A91\u5175"
   m_EditorClassIdentifier: 
-  normalSprite: {fileID: 21300000, guid: 25c4e896a152e794fb9abaa229fe7667, type: 3}
-  showOffSprite: {fileID: 21300000, guid: 0a33c4cb54da46744ac88a1f05d83431, type: 3}
-  movingType: 0
+  normalSprite: {fileID: 21300000, guid: d87d62d9849ca604587101a47119ba15, type: 3}
+  showOffSprite: {fileID: 21300000, guid: 5e20f3feee34d7f4d84be4f3521af743, type: 3}
+  roleName: "\u9A91\u5175"
+  movingType: 1

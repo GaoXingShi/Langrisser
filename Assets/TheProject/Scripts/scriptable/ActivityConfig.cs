@@ -12,6 +12,7 @@ namespace MainSpace.ScriptableObject
     public class ActivityConfig : UnityEngine.ScriptableObject
     {
         public Sprite normalSprite, showOffSprite;
+        public string roleName;
         public TerrainActionType movingType;
     }
 
@@ -40,6 +41,7 @@ namespace MainSpace.ScriptableObject
             activityConfig.showOffSprite =
                 EditorGUILayout.ObjectField(new GUIContent("ShowOffSprite"),activityConfig.showOffSprite, typeof(Sprite), true) as Sprite;
 
+            activityConfig.roleName = EditorGUILayout.TextField("职业描述", activityConfig.roleName);
             activityConfig.movingType = (TerrainActionType)EditorGUILayout.EnumPopup("行动方式", activityConfig.movingType);
 
             EditorGUILayout.EndVertical();
