@@ -111,6 +111,9 @@ namespace MainSpace
                 campData[currentRoundCampDataIndex].affiliationSprite, false);
         }
 
+        /// <summary>
+        /// 结束当前回合
+        /// </summary>
         public void FinishCurrentRoundTurn()
         {
             // 所有的士兵颜色恢复

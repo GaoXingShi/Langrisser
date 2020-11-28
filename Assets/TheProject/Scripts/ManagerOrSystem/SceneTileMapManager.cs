@@ -52,8 +52,7 @@ namespace MainSpace.Grid
     /// </summary>
     public class SceneTileMapManager : MonoBehaviour
     {
-        [Header("Prefab")]
-        public GameObject moveSprite;
+
 
         [Header("Link")]
         public Tilemap ground;
@@ -67,6 +66,9 @@ namespace MainSpace.Grid
         [HideInInspector]
         public int width, height;
 
+        [Header("Prefab")]
+        private GameObject moveSprite;
+
         private TileSaveData[,] tileArray;
         private List<TileSaveData> tileList = new List<TileSaveData>();
         private TileSaveData[] cacheSaveData;
@@ -77,6 +79,7 @@ namespace MainSpace.Grid
         private Sequence colorASequence;
         void Start()
         {
+            moveSprite = Resources.Load<GameObject>("Prefabs/AllowUnit");
             InitCalculateValue();
             activitiesManager = LoadInfo.Instance.activitiesManager;
             gameManager = LoadInfo.Instance.gameManager;

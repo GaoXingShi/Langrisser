@@ -13,7 +13,7 @@ namespace MainSpace.Activities
         public int levelValue, levelSliderValue, levelSliderUpgradeValue;
         public Sprite unitFaceSprite;
         public string unitName;
-        public RoleType roleTpe;
+        public string role;
         private List<SoliderUnit> mSoliderUnits = new List<SoliderUnit>();
 
         public override void NodeInitData()

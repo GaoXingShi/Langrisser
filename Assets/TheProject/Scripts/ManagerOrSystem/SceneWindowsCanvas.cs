@@ -70,7 +70,7 @@ namespace MainSpace
                 }
 
                 uiPropertyInspectors[_index].nameText.text = commanderUnit.unitName;
-                uiPropertyInspectors[_index].roleText.text = commanderUnit.roleTpe.ToString();
+                uiPropertyInspectors[_index].roleText.text = commanderUnit.role;
                 uiPropertyInspectors[_index].levelText.text = "LV " + commanderUnit.levelValue;
                 uiPropertyInspectors[_index].levelSlider.maxValue = commanderUnit.levelSliderUpgradeValue;
                 uiPropertyInspectors[_index].levelSlider.value = commanderUnit.levelSliderValue;

@@ -10,13 +10,13 @@ namespace Sense.BehaviourTree.Apply
 {
     public class CreateSoliderUnitNode : BehaviourNode
     {
-        public SoliderUnit template;
         public SoliderType soliderType;
         //public TerrainActionType movingType;
         public SoliderConfig soliderConfig;
+        // 跟随指挥官
         public CreateCommanderUnitNode followCommander;
-        // 王国 位置 跟随指挥官
 
+        private SoliderUnit template;
         public override void ResetNode(int _depth, int _nodeNumber, BehaviourNode _parentNode)
         {
             base.ResetNode(_depth, _nodeNumber, _parentNode);
@@ -24,6 +24,7 @@ namespace Sense.BehaviourTree.Apply
 
         public override void Execute(bool _isLinear)
         {
+            template = Resources.Load<SoliderUnit>("Prefabs/SoliderUnitTemplate");
             SoliderUnit temp = Instantiate(template);
 
             temp.NodeInitData();

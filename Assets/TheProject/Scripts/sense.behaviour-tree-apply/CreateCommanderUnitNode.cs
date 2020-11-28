@@ -9,15 +9,15 @@ namespace Sense.BehaviourTree.Apply
 {
     public class CreateCommanderUnitNode : BehaviourNode
     {
-        public CommanderUnit template;
 
         public Sprite unitFaceSprite;
         public ActivityConfig activityConfig;
         public string unitName , managerKeyName;
-        public RoleType roleType;
+        //public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
         public int levelSliderValue, levelSliderUpgradeValue, attackValue,attackRangeValue = 1,skillRangeValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
         public Vector3Int showPos;
+        private CommanderUnit template;
         private CommanderUnit cacheCommanderUnit = null;
         private CampData campData;
 
@@ -34,7 +34,7 @@ namespace Sense.BehaviourTree.Apply
         public override void Execute(bool _isLinear)
         {
             campData = LoadInfo.Instance.gameManager.GetCampData(managerKeyName);
-
+            template = Resources.Load<CommanderUnit>("Prefabs/CommanderUnitTemplate");
             CommanderUnit temp = Instantiate(template);
 
             temp.NodeInitData();
@@ -73,9 +73,9 @@ namespace Sense.BehaviourTree.Apply
             temp.mRendererComponent.sprite = activityConfig.normalSprite;
             temp.hpText.text = healthValue.ToString();
             temp.professionSprite.sprite = campData.affiliationSprite;
+            temp.role = activityConfig.roleName;
 
             // enum
-            temp.roleTpe = roleType;
             temp.troopsType = campData.troopType;
             temp.movingType = activityConfig.movingType;
             
