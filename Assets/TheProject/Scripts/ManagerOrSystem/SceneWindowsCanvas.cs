@@ -90,7 +90,7 @@ namespace MainSpace
                 }
 
                 uiPropertyInspectors[_index].nameText.text = soliderUnit.mineCommanderUnit.unitName;
-                uiPropertyInspectors[_index].roleText.text = soliderUnit.soliderType.ToString();
+                uiPropertyInspectors[_index].roleText.text = soliderUnit.FightType.ToString();
                 uiPropertyInspectors[_index].levelText.text = "LV " + (soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.levelValue : 0);
                 uiPropertyInspectors[_index].levelSlider.maxValue = (soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.levelSliderUpgradeValue : 0);
                 uiPropertyInspectors[_index].levelSlider.value = (soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.levelSliderValue : 0);

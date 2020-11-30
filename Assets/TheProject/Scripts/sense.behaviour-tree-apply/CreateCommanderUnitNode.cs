@@ -12,7 +12,7 @@ namespace Sense.BehaviourTree.Apply
 {
     public class CreateCommanderUnitNode : BehaviourNode
     {
-
+        // 指挥官属性
         public Sprite unitFaceSprite;
         public ActivityConfig activityConfig;
         public string unitName , managerKeyName;
@@ -20,6 +20,10 @@ namespace Sense.BehaviourTree.Apply
         [Range(1, 10)] public int levelValue = 1;
         public int levelSliderValue, levelSliderUpgradeValue, attackValue,attackRangeValue = 1,skillRangeValue = 1,skillPowerValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
         public Vector3Int showPos;
+
+        // 携带佣兵与数量
+        public Dictionary<SoliderConfig,int> troops;
+
         private CommanderUnit template;
         private CommanderUnit cacheCommanderUnit = null;
         private CampData campData;
@@ -37,11 +41,17 @@ namespace Sense.BehaviourTree.Apply
         public override void Execute(bool _isLinear)
         {
             campData = LoadInfo.Instance.gameManager.GetCampData(managerKeyName);
+            CommanderSpawn();
+            SoliderSpawn();
+
+            State = NodeState.Succeed;
+        }
+
+        private void CommanderSpawn()
+        {
             template = Resources.Load<CommanderUnit>("Prefabs/CommanderUnitTemplate");
             CommanderUnit temp = Instantiate(template);
-
             temp.NodeInitData();
-
             // int[]
             temp.SetIntArrayData(ref temp.healthValue, healthValue);
             temp.SetIntArrayData(ref temp.magicValue, magicValue);
@@ -81,7 +91,7 @@ namespace Sense.BehaviourTree.Apply
             // enum
             temp.troopsType = campData.troopType;
             temp.movingType = activityConfig.movingType;
-            
+
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);
@@ -95,8 +105,11 @@ namespace Sense.BehaviourTree.Apply
 
 
             cacheCommanderUnit = temp;
+        }
 
-            State = NodeState.Succeed;
+        private void SoliderSpawn()
+        {
+
         }
 
         public CommanderUnit GetCacheCommanderUnit()
@@ -125,7 +138,7 @@ namespace Sense.BehaviourTree.Apply
             //base.OnInspectorGUI();
             GUILayout.BeginVertical();
             editorTarget.unitFaceSprite = EditorGUILayout.ObjectField(new GUIContent("指挥官头像"), editorTarget.unitFaceSprite, typeof(Sprite),true) as Sprite;
-            editorTarget.activityConfig = EditorGUILayout.ObjectField(new GUIContent("单位模版"), editorTarget.activityConfig, typeof(ActivityConfig),true) as ActivityConfig;
+            editorTarget.activityConfig = EditorGUILayout.ObjectField(new GUIContent("单位Config"), editorTarget.activityConfig, typeof(ActivityConfig),true) as ActivityConfig;
             editorTarget.unitName = EditorGUILayout.TextField("指挥官名称", editorTarget.unitName);
             editorTarget.managerKeyName = EditorGUILayout.TextField("玩家阵营", editorTarget.managerKeyName);
 
@@ -133,7 +146,7 @@ namespace Sense.BehaviourTree.Apply
             style.fontSize = 12;
             style.normal.textColor = Color.red;
 
-            GUILayout.Label(new GUIContent("等级相关"), style);
+            GUILayout.Label(new GUIContent("等级数值"), style);
             EditorGUILayout.BeginHorizontal();
             GUILayout.Label(new GUIContent("经验条最大值"));
             editorTarget.levelSliderUpgradeValue = EditorGUILayout.IntField(editorTarget.levelSliderUpgradeValue);
@@ -142,7 +155,7 @@ namespace Sense.BehaviourTree.Apply
             editorTarget.levelValue = EditorGUILayout.IntSlider(editorTarget.levelValue, 1, 10);
             EditorGUILayout.EndHorizontal();
 
-            GUILayout.Label(new GUIContent("攻防移"), style);
+            GUILayout.Label(new GUIContent("攻防移数值"), style);
             GUILayout.BeginHorizontal();
             GUILayout.Label("攻击");
             editorTarget.attackValue = EditorGUILayout.IntField( editorTarget.attackValue);
@@ -172,7 +185,7 @@ namespace Sense.BehaviourTree.Apply
             editorTarget.magicValue = EditorGUILayout.IntField(editorTarget.magicValue);
             GUILayout.EndHorizontal();
 
-            GUILayout.Label(new GUIContent("指挥圈相关"), style);
+            GUILayout.Label(new GUIContent("指挥圈数值"), style);
             GUILayout.BeginHorizontal();
             GUILayout.Label(new GUIContent("指挥范围"));
             editorTarget.commandRangeValue = EditorGUILayout.IntField(editorTarget.commandRangeValue);
@@ -182,10 +195,67 @@ namespace Sense.BehaviourTree.Apply
             editorTarget.correctedDefenseValue = EditorGUILayout.IntField( editorTarget.correctedDefenseValue);
             GUILayout.EndHorizontal();
 
+            GUILayout.Label(new GUIContent("佣兵数值"), style);
+            GUILayout.BeginHorizontal();
+
+            if (editorTarget.troops == null)
+            {
+                editorTarget.troops = new Dictionary<SoliderConfig, int>();
+            }
+
+            List<SoliderConfig> removeArray = new List<SoliderConfig>();
+            foreach (SoliderConfig v in editorTarget.troops.Keys)
+            {
+                if (v == null)
+                {
+                    //editorTarget.troops[v] = EditorGUILayout.ObjectField( editorTarget.unitFaceSprite, typeof(SoliderConfig), true) as SoliderConfig;
+                    continue;
+                }
+                SoliderConfig key = v;
+                GUILayout.BeginVertical();
+                GUILayout.Label(key.roleName);
+                GUILayout.Box(key.normalSprite.texture);
+
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("-"))
+                {
+                    editorTarget.troops[key] -= 1;
+                    if (editorTarget.troops[key] == 0)
+                    {
+                        removeArray.Add(key);
+                    }
+                }
+                GUILayout.Label(editorTarget.troops[key].ToString());
+                if (GUILayout.Button("+"))
+                {
+                    editorTarget.troops[key] += 1;
+                }
+                GUILayout.EndHorizontal();
+
+                GUILayout.EndVertical();
+            }
+            for (int i = 0; i < removeArray.Count; i++)
+            {
+                editorTarget.troops.Remove(removeArray[i]);
+            }
+
+            if (GUILayout.Button("+"))
+            {
+
+            }
+
+
+            GUILayout.EndHorizontal();
+
             Vector2Int tempShowPos = EditorGUILayout.Vector2IntField("出现位置", new Vector2Int(editorTarget.showPos.x, editorTarget.showPos.y));
             editorTarget.showPos = new Vector3Int(tempShowPos.x, tempShowPos.y, -1);
 
             GUILayout.EndVertical();
+
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(target);
+            }
 
             if (GUILayout.Button("编辑技能"))
             {

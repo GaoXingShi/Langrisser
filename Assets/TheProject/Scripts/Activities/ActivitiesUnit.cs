@@ -5,11 +5,20 @@ using UnityEngine;
 
 namespace MainSpace.Activities
 {
-    public enum SoliderType
+    /// <summary>
+    /// 战斗类型 (用于计算兵种克制)
+    /// </summary>
+    public enum FightType
     {
-        步兵, 狂战士,
-        骑兵, 重装骑兵,
-        枪兵, 重装枪兵,
+        步兵,
+        骑兵,
+        枪兵,
+        僧侣,
+        飞兵,
+        水兵,
+        灵体,
+        魔鬼,
+        无           // 不参与克制关系
     }
 
     public enum TerrainActionType
@@ -23,13 +32,6 @@ namespace MainSpace.Activities
 
     }
 
-    public enum RoleType
-    {
-        战士, 兵长, 领主, 步兵统帅, 将军,
-        骑士, 骑士长, 骑士统帅, 封号骑士,
-        法师,
-        牧师
-    }
 
     public class ActivitiesUnit : MonoBehaviour
     {

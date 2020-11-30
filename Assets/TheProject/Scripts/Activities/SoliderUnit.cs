@@ -6,7 +6,7 @@ namespace MainSpace.Activities
 {
     public class SoliderUnit : ActivitiesUnit
     {
-        public SoliderType soliderType { set; get; }
+        public FightType FightType { set; get; }
 
         public CommanderUnit mineCommanderUnit { set; get; }
 
