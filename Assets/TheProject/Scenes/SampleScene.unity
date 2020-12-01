@@ -700,7 +700,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &47861990
 Transform:
   m_ObjectHideFlags: 0
@@ -713,7 +713,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2126392338}
-  m_RootOrder: 15
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &47861991
 MonoBehaviour:
@@ -727,7 +727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
+  soliderConfig: {fileID: 11400000, guid: 8b1f6576033d5d14780dc82ad59c8980, type: 2}
   followCommander: {fileID: 957201896}
 --- !u!1 &52864472
 GameObject:
@@ -2673,7 +2673,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2126392338}
-  m_RootOrder: 16
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &332286204
 MonoBehaviour:
@@ -2688,7 +2688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitFaceSprite: {fileID: 21300000, guid: 96b692da4ee80264788106d2f8204040, type: 3}
-  activityConfig: {fileID: 0}
+  activityConfig: {fileID: 11400000, guid: de4a33648efd06449bc6875d1365f4f9, type: 2}
   unitName: "\u674E\u56DB"
   managerKeyName: $Friend
   levelValue: 4
@@ -2706,6 +2706,9 @@ MonoBehaviour:
   correctedAttackValue: 4
   correctedDefenseValue: 2
   showPos: {x: 24, y: 13, z: -1}
+  troops:
+  - {fileID: 11400000, guid: 127f30774fd47da4f95591c9d4ba9a41, type: 2}
+  troopsCount: 04000000
 --- !u!1 &338147708
 GameObject:
   m_ObjectHideFlags: 0
@@ -2902,51 +2905,6 @@ RectTransform:
   m_AnchoredPosition: {x: 3, y: 0}
   m_SizeDelta: {x: 376.7, y: 103.91}
   m_Pivot: {x: 0, y: 1}
---- !u!1 &360494627
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 360494628}
-  - component: {fileID: 360494629}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &360494628
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 360494627}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &360494629
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 360494627}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 1086363773}
 --- !u!1 &365888315
 GameObject:
   m_ObjectHideFlags: 0
@@ -3519,51 +3477,6 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
---- !u!1 &440996265
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 440996266}
-  - component: {fileID: 440996267}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (10)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &440996266
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 440996265}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 14
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &440996267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 440996265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 957201896}
 --- !u!1 &476110600
 GameObject:
   m_ObjectHideFlags: 0
@@ -3868,51 +3781,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 497125025}
   m_CullTransparentMesh: 0
---- !u!1 &500727888
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 500727889}
-  - component: {fileID: 500727890}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &500727889
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 500727888}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &500727890
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 500727888}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 1086363773}
 --- !u!1 &502081031
 GameObject:
   m_ObjectHideFlags: 0
@@ -4467,51 +4335,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 553769785}
   m_CullTransparentMesh: 0
---- !u!1 &553895738
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 553895739}
-  - component: {fileID: 553895740}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (3)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &553895739
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 553895738}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &553895740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 553895738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 1086363773}
 --- !u!1 &558068056
 GameObject:
   m_ObjectHideFlags: 0
@@ -6373,51 +6196,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!1 &782669055
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 782669056}
-  - component: {fileID: 782669057}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (8)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &782669056
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 782669055}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 12
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &782669057
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 782669055}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 957201896}
 --- !u!1 &795749460
 GameObject:
   m_ObjectHideFlags: 0
@@ -6802,96 +6580,6 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
---- !u!1 &815923438
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 815923439}
-  - component: {fileID: 815923440}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (7)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &815923439
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815923438}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 10
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &815923440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815923438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 1086363773}
---- !u!1 &828128563
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 828128564}
-  - component: {fileID: 828128565}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (9)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &828128564
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 828128563}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &828128565
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 828128563}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 957201896}
 --- !u!1 &831428798
 GameObject:
   m_ObjectHideFlags: 0
@@ -6935,51 +6623,6 @@ Transform:
   m_Father: {fileID: 1969820334}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &839144537
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 839144538}
-  - component: {fileID: 839144539}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (4)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &839144538
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839144537}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &839144539
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839144537}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 1086363773}
 --- !u!1 &839773795
 GameObject:
   m_ObjectHideFlags: 0
@@ -7411,7 +7054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitFaceSprite: {fileID: 21300000, guid: 96b692da4ee80264788106d2f8204040, type: 3}
-  activityConfig: {fileID: 0}
+  activityConfig: {fileID: 11400000, guid: de4a33648efd06449bc6875d1365f4f9, type: 2}
   unitName: "\u6D4B\u8BD5\u4EBA\u5458"
   managerKeyName: $Player
   levelValue: 4
@@ -7429,6 +7072,10 @@ MonoBehaviour:
   correctedAttackValue: 2
   correctedDefenseValue: 1
   showPos: {x: 12, y: 13, z: -1}
+  troops:
+  - {fileID: 11400000, guid: 8b1f6576033d5d14780dc82ad59c8980, type: 2}
+  - {fileID: 11400000, guid: 8fa8bd3ddb477b44eb158856d03c4f64, type: 2}
+  troopsCount: 04000000020000000100000001000000
 --- !u!1 &903738072
 GameObject:
   m_ObjectHideFlags: 0
@@ -8044,7 +7691,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2126392338}
-  m_RootOrder: 11
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &957201896
 MonoBehaviour:
@@ -8059,7 +7706,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitFaceSprite: {fileID: 21300000, guid: 96b692da4ee80264788106d2f8204040, type: 3}
-  activityConfig: {fileID: 0}
+  activityConfig: {fileID: 11400000, guid: de4a33648efd06449bc6875d1365f4f9, type: 2}
   unitName: "\u5F20\u4E09"
   managerKeyName: $Enemy
   levelValue: 6
@@ -8077,6 +7724,10 @@ MonoBehaviour:
   correctedAttackValue: 4
   correctedDefenseValue: 2
   showPos: {x: 20, y: 13, z: -1}
+  troops:
+  - {fileID: 11400000, guid: 8b1f6576033d5d14780dc82ad59c8980, type: 2}
+  - {fileID: 11400000, guid: 9fb9ab4a5be7f62448d5588d1816d4a4, type: 2}
+  troopsCount: 0400000002000000
 --- !u!1 &988774398
 GameObject:
   m_ObjectHideFlags: 0
@@ -9155,6 +8806,10 @@ MonoBehaviour:
   correctedAttackValue: 4
   correctedDefenseValue: 0
   showPos: {x: 17, y: 13, z: -1}
+  troops:
+  - {fileID: 11400000, guid: 9fb9ab4a5be7f62448d5588d1816d4a4, type: 2}
+  - {fileID: 11400000, guid: 8b1f6576033d5d14780dc82ad59c8980, type: 2}
+  troopsCount: 0400000002000000
 --- !u!1 &1090525643
 GameObject:
   m_ObjectHideFlags: 0
@@ -10976,51 +10631,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1283025716}
   m_CullTransparentMesh: 0
---- !u!1 &1296214881
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1296214882}
-  - component: {fileID: 1296214883}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (5)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1296214882
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1296214881}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1296214883
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1296214881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 1086363773}
 --- !u!1 &1302399016
 GameObject:
   m_ObjectHideFlags: 0
@@ -13890,51 +13500,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1559202450}
   m_CullTransparentMesh: 0
---- !u!1 &1563262654
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1563262655}
-  - component: {fileID: 1563262656}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (6)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1563262655
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563262654}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 9
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1563262656
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1563262654}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 1086363773}
 --- !u!1 &1566453503
 GameObject:
   m_ObjectHideFlags: 0
@@ -26536,7 +26101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitFaceSprite: {fileID: 21300000, guid: 96b692da4ee80264788106d2f8204040, type: 3}
-  activityConfig: {fileID: 0}
+  activityConfig: {fileID: 11400000, guid: de4a33648efd06449bc6875d1365f4f9, type: 2}
   unitName: "\u79D1\u8D5B\u6602"
   managerKeyName: $Player
   levelValue: 4
@@ -26554,6 +26119,10 @@ MonoBehaviour:
   correctedAttackValue: 2
   correctedDefenseValue: 1
   showPos: {x: 14, y: 11, z: -1}
+  troops:
+  - {fileID: 11400000, guid: 127f30774fd47da4f95591c9d4ba9a41, type: 2}
+  - {fileID: 11400000, guid: 8b1f6576033d5d14780dc82ad59c8980, type: 2}
+  troopsCount: 0200000004000000
 --- !u!1 &1836513238
 GameObject:
   m_ObjectHideFlags: 0
@@ -29247,51 +28816,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092471438}
   m_CullTransparentMesh: 0
---- !u!1 &2093561786
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2093561787}
-  - component: {fileID: 2093561788}
-  m_Layer: 0
-  m_Name: CreateSoliderUnitNode (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2093561787
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2093561786}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 2126392338}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2093561788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2093561786}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b7157d42bdb902429c723de704c8b91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  soliderConfig: {fileID: 0}
-  followCommander: {fileID: 1086363773}
 --- !u!1 &2124346562
 GameObject:
   m_ObjectHideFlags: 0
@@ -29401,18 +28925,7 @@ Transform:
   - {fileID: 891140991}
   - {fileID: 1827124358}
   - {fileID: 1086363772}
-  - {fileID: 360494628}
-  - {fileID: 500727889}
-  - {fileID: 2093561787}
-  - {fileID: 553895739}
-  - {fileID: 839144538}
-  - {fileID: 1296214882}
-  - {fileID: 1563262655}
-  - {fileID: 815923439}
   - {fileID: 957201895}
-  - {fileID: 782669056}
-  - {fileID: 828128564}
-  - {fileID: 440996266}
   - {fileID: 47861990}
   - {fileID: 332286203}
   m_Father: {fileID: 1345416309}

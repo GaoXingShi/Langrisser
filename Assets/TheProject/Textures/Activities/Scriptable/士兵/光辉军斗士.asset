@@ -17,11 +17,11 @@ MonoBehaviour:
   roleName: "\u6597\u58EB"
   fightType: 0
   movingType: 0
-  attackValue: 0
+  attackValue: 23
   attackDistanceValue: 0
-  defenseValue: 0
-  moveValue: 0
-  healthValue: 0
+  defenseValue: 19
+  moveValue: 6
+  healthValue: 100
   magicValue: 0
-  skillRangeValue: 0
-  skillPowerValue: 0
+  skillRangeValue: 1
+  skillPowerValue: 1

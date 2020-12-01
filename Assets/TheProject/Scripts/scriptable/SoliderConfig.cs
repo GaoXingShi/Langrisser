@@ -1,8 +1,10 @@
 ﻿using MainSpace.Activities;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.SceneManagement;
 #endif
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MainSpace.ScriptableObject
 {
@@ -10,8 +12,8 @@ namespace MainSpace.ScriptableObject
     [CreateAssetMenu]
     public class SoliderConfig : ActivityConfig
     {
-        public int attackValue, attackDistanceValue, defenseValue, moveValue, healthValue, magicValue;
-        public int skillRangeValue, skillPowerValue;
+        public int attackValue = 20, attackDistanceValue = 1, defenseValue = 20, moveValue = 5, healthValue = 100, magicValue = 0;
+        public int skillRangeValue = 1, skillPowerValue = 1;
     }
 
 #if UNITY_EDITOR
@@ -63,6 +65,21 @@ namespace MainSpace.ScriptableObject
             GUILayout.Label(new GUIContent("MP"));
             editorTarget.magicValue = EditorGUILayout.IntField(editorTarget.magicValue);
             GUILayout.EndHorizontal();
+
+            if (GUI.changed)
+            {
+                EditorUtility.SetDirty(target);
+            }
+
+            if (EditorUtility.IsDirty(target))
+            {
+                if (GUILayout.Button("Save"))
+                {
+                    EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
+                    AssetDatabase.Refresh();
+                    EditorUtility.ClearDirty(target);
+                }
+            }
         }
     }
 #endif

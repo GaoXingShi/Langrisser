@@ -28,8 +28,13 @@ namespace MainSpace.ScriptableObject
         //public override void OnInspectorGUI()
         //{
         //    base.OnInspectorGUI();
+
+        //if (GUI.changed)
+        //{
+        //    EditorUtility.SetDirty(target);
         //}
-    }
+    //}
+}
 
 #endif
 

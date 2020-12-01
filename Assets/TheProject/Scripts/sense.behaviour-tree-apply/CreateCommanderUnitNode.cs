@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using MainSpace;
 using MainSpace.Activities;
 using MainSpace.ScriptableObject;
@@ -15,16 +16,18 @@ namespace Sense.BehaviourTree.Apply
         // 指挥官属性
         public Sprite unitFaceSprite;
         public ActivityConfig activityConfig;
-        public string unitName , managerKeyName;
+        public string unitName, managerKeyName;
         //public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
-        public int levelSliderValue, levelSliderUpgradeValue, attackValue,attackRangeValue = 1,skillRangeValue = 1,skillPowerValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
+        public int levelSliderValue, levelSliderUpgradeValue, attackValue, attackRangeValue = 1, skillRangeValue = 1, skillPowerValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
         public Vector3Int showPos;
 
         // 携带佣兵与数量
-        public Dictionary<SoliderConfig,int> troops;
+        public List<SoliderConfig> troops;
+        public List<int> troopsCount;
 
-        private CommanderUnit template;
+        private CommanderUnit commanderTemplate;
+        private SoliderUnit soliderTemplate;
         private CommanderUnit cacheCommanderUnit = null;
         private CampData campData;
 
@@ -49,8 +52,8 @@ namespace Sense.BehaviourTree.Apply
 
         private void CommanderSpawn()
         {
-            template = Resources.Load<CommanderUnit>("Prefabs/CommanderUnitTemplate");
-            CommanderUnit temp = Instantiate(template);
+            commanderTemplate = Resources.Load<CommanderUnit>("Prefabs/CommanderUnitTemplate");
+            CommanderUnit temp = Instantiate(commanderTemplate);
             temp.NodeInitData();
             // int[]
             temp.SetIntArrayData(ref temp.healthValue, healthValue);
@@ -109,7 +112,61 @@ namespace Sense.BehaviourTree.Apply
 
         private void SoliderSpawn()
         {
+            for (int i = 0; i < troops.Count; i++)
+            {
+                for (int j = 0; j < troopsCount[i]; j++)
+                {
+                    soliderTemplate = Resources.Load<SoliderUnit>("Prefabs/SoliderUnitTemplate");
+                    SoliderUnit temp = Instantiate(soliderTemplate);
 
+                    temp.NodeInitData();
+
+                    SoliderConfig data = troops[i];
+
+                    // int[]
+                    temp.SetIntArrayData(ref temp.healthValue, data.healthValue);
+                    temp.SetIntArrayData(ref temp.magicValue, data.magicValue);
+                    temp.SetIntArrayData(ref temp.attackValue, data.attackValue);
+                    temp.SetIntArrayData(ref temp.attackRangeValue, data.attackDistanceValue);
+                    temp.SetIntArrayData(ref temp.defenseValue, data.defenseValue);
+                    temp.SetIntArrayData(ref temp.moveRangeValue, data.moveValue);
+                    temp.SetIntArrayData(ref temp.skillRangeValue, data.skillRangeValue);
+
+                    temp.affiliationName = campData.campType.ToString();
+                    temp.managerKeyName = managerKeyName;
+
+                    // scriptable
+                    temp.activityConfig = data;
+
+                    // sprite
+                    temp.affiliationSprite = campData.affiliationSprite;
+
+                    // component
+                    temp.PlayActivityAnim(false);
+                    temp.mRendererComponent.sprite = data.normalSprite;
+                    temp.hpText.text = data.healthValue.ToString();
+                    temp.professionSprite.sprite = campData.affiliationSprite;
+
+                    // enum
+                    temp.FightType = data.fightType;
+                    temp.movingType = data.movingType;
+                    temp.troopsType = campData.troopType;
+
+                    // pos
+                    Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);
+                    calculateValue.z = -1;
+                    temp.transform.position = calculateValue;
+                    temp.currentPos = calculateValue;
+
+                    temp.mineCommanderUnit = cacheCommanderUnit;
+                    cacheCommanderUnit.AddSoliderUnits(temp);
+
+                    temp.campColor = campData.campColor;
+                    temp.manager = LoadInfo.Instance.activitiesManager;
+                    temp.manager.AddActivitiesUnit(temp);
+
+                }
+            }
         }
 
         public CommanderUnit GetCacheCommanderUnit()
@@ -137,8 +194,15 @@ namespace Sense.BehaviourTree.Apply
         {
             //base.OnInspectorGUI();
             GUILayout.BeginVertical();
-            editorTarget.unitFaceSprite = EditorGUILayout.ObjectField(new GUIContent("指挥官头像"), editorTarget.unitFaceSprite, typeof(Sprite),true) as Sprite;
-            editorTarget.activityConfig = EditorGUILayout.ObjectField(new GUIContent("单位Config"), editorTarget.activityConfig, typeof(ActivityConfig),true) as ActivityConfig;
+            editorTarget.unitFaceSprite = EditorGUILayout.ObjectField(new GUIContent("指挥官头像"), editorTarget.unitFaceSprite, typeof(Sprite), true) as Sprite;
+            GUILayout.BeginHorizontal();
+            if (editorTarget.activityConfig != null)
+            {
+                GUILayout.Label(new GUIContent(editorTarget.activityConfig.normalSprite.texture));
+            }
+            GUILayout.Label(new GUIContent("单位Config"));
+            editorTarget.activityConfig = EditorGUILayout.ObjectField(editorTarget.activityConfig, typeof(ActivityConfig), true) as ActivityConfig;
+            GUILayout.EndHorizontal();
             editorTarget.unitName = EditorGUILayout.TextField("指挥官名称", editorTarget.unitName);
             editorTarget.managerKeyName = EditorGUILayout.TextField("玩家阵营", editorTarget.managerKeyName);
 
@@ -158,19 +222,19 @@ namespace Sense.BehaviourTree.Apply
             GUILayout.Label(new GUIContent("攻防移数值"), style);
             GUILayout.BeginHorizontal();
             GUILayout.Label("攻击");
-            editorTarget.attackValue = EditorGUILayout.IntField( editorTarget.attackValue);
+            editorTarget.attackValue = EditorGUILayout.IntField(editorTarget.attackValue);
             GUILayout.Label("防御");
             editorTarget.defenseValue = EditorGUILayout.IntField(editorTarget.defenseValue);
             GUILayout.Label("移动");
-            editorTarget.moveValue = EditorGUILayout.IntField( editorTarget.moveValue);
+            editorTarget.moveValue = EditorGUILayout.IntField(editorTarget.moveValue);
             GUILayout.EndHorizontal();
 
             GUILayout.Label(new GUIContent("技能相关"), style);
             GUILayout.BeginHorizontal();
             GUILayout.Label(new GUIContent("魔法范围"));
-            editorTarget.skillRangeValue = EditorGUILayout.IntField( editorTarget.skillRangeValue);
+            editorTarget.skillRangeValue = EditorGUILayout.IntField(editorTarget.skillRangeValue);
             GUILayout.Label(new GUIContent("魔法伤害"));
-            editorTarget.skillPowerValue = EditorGUILayout.IntField( editorTarget.skillPowerValue);
+            editorTarget.skillPowerValue = EditorGUILayout.IntField(editorTarget.skillPowerValue);
             GUILayout.EndHorizontal();
 
             // 这个位置采用添加图片那个样式来添加可使用法术
@@ -192,60 +256,66 @@ namespace Sense.BehaviourTree.Apply
             GUILayout.Label(new GUIContent("攻击加成"));
             editorTarget.correctedAttackValue = EditorGUILayout.IntField(editorTarget.correctedAttackValue);
             GUILayout.Label(new GUIContent("防御加成"));
-            editorTarget.correctedDefenseValue = EditorGUILayout.IntField( editorTarget.correctedDefenseValue);
+            editorTarget.correctedDefenseValue = EditorGUILayout.IntField(editorTarget.correctedDefenseValue);
             GUILayout.EndHorizontal();
 
             GUILayout.Label(new GUIContent("佣兵数值"), style);
-            GUILayout.BeginHorizontal();
+            GUILayout.BeginVertical();
 
             if (editorTarget.troops == null)
             {
-                editorTarget.troops = new Dictionary<SoliderConfig, int>();
+                editorTarget.troops = new List<SoliderConfig>();
+                editorTarget.troopsCount = new List<int>();
             }
 
-            List<SoliderConfig> removeArray = new List<SoliderConfig>();
-            foreach (SoliderConfig v in editorTarget.troops.Keys)
+            List<int> removeArray = new List<int>();
+            for (int i = 0; i < editorTarget.troops.Count; i++)
             {
+                SoliderConfig v = editorTarget.troops[i];
                 if (v == null)
                 {
                     //editorTarget.troops[v] = EditorGUILayout.ObjectField( editorTarget.unitFaceSprite, typeof(SoliderConfig), true) as SoliderConfig;
                     continue;
                 }
                 SoliderConfig key = v;
-                GUILayout.BeginVertical();
-                GUILayout.Label(key.roleName);
-                GUILayout.Box(key.normalSprite.texture);
-
                 GUILayout.BeginHorizontal();
+                GUILayout.Label(key.name);
+                //GUILayout.Box(key.normalSprite.texture);
+                EditorGUILayout.LabelField(new GUIContent(key.normalSprite.texture));
+
                 if (GUILayout.Button("-"))
                 {
-                    editorTarget.troops[key] -= 1;
-                    if (editorTarget.troops[key] == 0)
+                    editorTarget.troopsCount[i] -= 1;
+                    if (editorTarget.troopsCount[i] == 0)
                     {
-                        removeArray.Add(key);
+                        removeArray.Add(i);
                     }
                 }
-                GUILayout.Label(editorTarget.troops[key].ToString());
+                GUILayout.Label(editorTarget.troopsCount[i].ToString());
                 if (GUILayout.Button("+"))
                 {
-                    editorTarget.troops[key] += 1;
+                    editorTarget.troopsCount[i] += 1;
                 }
-                GUILayout.EndHorizontal();
 
-                GUILayout.EndVertical();
+                GUILayout.EndHorizontal();
             }
             for (int i = 0; i < removeArray.Count; i++)
             {
-                editorTarget.troops.Remove(removeArray[i]);
+                editorTarget.troops.RemoveAt(removeArray[i]);
+                editorTarget.troopsCount.RemoveAt(removeArray[i]);
             }
 
-            if (GUILayout.Button("+"))
+            SoliderConfig soliderConfig = EditorGUILayout.ObjectField(null, typeof(SoliderConfig), true) as SoliderConfig;
+            if (soliderConfig != null)
             {
-
+                if (!editorTarget.troops.Contains(soliderConfig))
+                {
+                    editorTarget.troops.Add(soliderConfig);
+                    editorTarget.troopsCount.Add(1);
+                }
             }
 
-
-            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
 
             Vector2Int tempShowPos = EditorGUILayout.Vector2IntField("出现位置", new Vector2Int(editorTarget.showPos.x, editorTarget.showPos.y));
             editorTarget.showPos = new Vector3Int(tempShowPos.x, tempShowPos.y, -1);
