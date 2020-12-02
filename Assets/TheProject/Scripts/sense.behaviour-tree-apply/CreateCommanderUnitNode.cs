@@ -19,7 +19,7 @@ namespace Sense.BehaviourTree.Apply
         public string unitName, managerKeyName;
         //public RoleType roleType;
         [Range(1, 10)] public int levelValue = 1;
-        public int levelSliderValue, levelSliderUpgradeValue, attackValue, attackRangeValue = 1, skillRangeValue = 1, skillPowerValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
+        public int levelSliderValue, levelSliderUpgradeValue, attackValue, attackDistanceValue = 1, skillRangeValue = 1, skillPowerValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
         public Vector3Int showPos;
 
         // 携带佣兵与数量
@@ -62,7 +62,7 @@ namespace Sense.BehaviourTree.Apply
             temp.SetIntArrayData(ref temp.correctedAttack, correctedAttackValue);
             temp.SetIntArrayData(ref temp.correctedDefense, correctedDefenseValue);
             temp.SetIntArrayData(ref temp.attackValue, attackValue);
-            temp.SetIntArrayData(ref temp.attackRangeValue, attackRangeValue);
+            temp.SetIntArrayData(ref temp.attackRangeValue, attackDistanceValue);
             temp.SetIntArrayData(ref temp.defenseValue, defenseValue);
             temp.SetIntArrayData(ref temp.moveRangeValue, moveValue);
             temp.SetIntArrayData(ref temp.skillRangeValue, skillRangeValue);
@@ -219,7 +219,7 @@ namespace Sense.BehaviourTree.Apply
             editorTarget.levelValue = EditorGUILayout.IntSlider(editorTarget.levelValue, 1, 10);
             EditorGUILayout.EndHorizontal();
 
-            GUILayout.Label(new GUIContent("攻防移数值"), style);
+            GUILayout.Label(new GUIContent("基础数值"), style);
             GUILayout.BeginHorizontal();
             GUILayout.Label("攻击");
             editorTarget.attackValue = EditorGUILayout.IntField(editorTarget.attackValue);
@@ -227,6 +227,8 @@ namespace Sense.BehaviourTree.Apply
             editorTarget.defenseValue = EditorGUILayout.IntField(editorTarget.defenseValue);
             GUILayout.Label("移动");
             editorTarget.moveValue = EditorGUILayout.IntField(editorTarget.moveValue);
+            GUILayout.Label("攻击范围");
+            editorTarget.attackDistanceValue = EditorGUILayout.IntField(editorTarget.attackDistanceValue);
             GUILayout.EndHorizontal();
 
             GUILayout.Label(new GUIContent("技能相关"), style);

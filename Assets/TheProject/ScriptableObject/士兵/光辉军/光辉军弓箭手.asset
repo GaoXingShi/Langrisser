@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2702a06936c58d847a19c7106ef8eec9, type: 3}
-  m_Name: "\u5149\u8F89\u519B\u6B65\u5175"
+  m_Name: "\u5149\u8F89\u519B\u5F13\u7BAD\u624B"
   m_EditorClassIdentifier: 
-  normalSprite: {fileID: 21300000, guid: 864a327f123eb2f408156088b350e279, type: 3}
-  showOffSprite: {fileID: 21300000, guid: ec2a37998f7c5364a926f279306f8e2a, type: 3}
-  roleName: "\u6B65\u5175"
+  normalSprite: {fileID: 21300000, guid: 508b32efd3e45d943a815fbfdefee87e, type: 3}
+  showOffSprite: {fileID: 21300000, guid: 46024c4e72c22284daa1100670d47559, type: 3}
+  roleName: "\u5F13\u7BAD\u5175"
   fightType: 0
   movingType: 0
   attackValue: 20
-  attackDistanceValue: 0
+  attackDistanceValue: 2
   defenseValue: 14
   moveValue: 5
   healthValue: 100

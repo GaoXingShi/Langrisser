@@ -36,7 +36,7 @@ namespace MainSpace.ScriptableObject
             style.fontSize = 12;
             style.normal.textColor = Color.red;
 
-            GUILayout.Label(new GUIContent("攻防移数值"), style);
+            GUILayout.Label(new GUIContent("基础数值"), style);
             GUILayout.BeginHorizontal();
             GUILayout.Label("攻击");
             editorTarget.attackValue = EditorGUILayout.IntField(editorTarget.attackValue);
@@ -44,6 +44,8 @@ namespace MainSpace.ScriptableObject
             editorTarget.defenseValue = EditorGUILayout.IntField(editorTarget.defenseValue);
             GUILayout.Label("移动");
             editorTarget.moveValue = EditorGUILayout.IntField(editorTarget.moveValue);
+            GUILayout.Label("攻击范围");
+            editorTarget.attackDistanceValue = EditorGUILayout.IntField(editorTarget.attackDistanceValue);
             GUILayout.EndHorizontal();
 
             GUILayout.Label(new GUIContent("技能相关"), style);

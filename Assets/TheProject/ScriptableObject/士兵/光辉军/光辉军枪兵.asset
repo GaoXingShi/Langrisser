@@ -18,7 +18,7 @@ MonoBehaviour:
   fightType: 0
   movingType: 0
   attackValue: 18
-  attackDistanceValue: 0
+  attackDistanceValue: 1
   defenseValue: 18
   moveValue: 5
   healthValue: 100

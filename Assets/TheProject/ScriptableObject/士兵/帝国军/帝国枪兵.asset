@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2702a06936c58d847a19c7106ef8eec9, type: 3}
+  m_Name: "\u5E1D\u56FD\u67AA\u5175"
+  m_EditorClassIdentifier: 
+  normalSprite: {fileID: 21300000, guid: f484a8fbaed39db4a9c8756f40de0154, type: 3}
+  showOffSprite: {fileID: 21300000, guid: d070aaf364162d8479c6d7cd6a7014e4, type: 3}
+  roleName: "\u67AA\u5175"
+  fightType: 0
+  movingType: 0
+  attackValue: 18
+  attackDistanceValue: 1
+  defenseValue: 17
+  moveValue: 5
+  healthValue: 100
+  magicValue: 0
+  skillRangeValue: 1
+  skillPowerValue: 1
