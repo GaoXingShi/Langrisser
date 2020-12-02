@@ -40,10 +40,21 @@ namespace MainSpace.ScriptableObject
 
             EditorGUILayout.BeginVertical();
 
+            EditorGUILayout.BeginHorizontal();
+            GUILayout.Label("单位在地图显示的小图案：");
+            if (activityConfig.normalSprite != null)
+            {
+                GUILayout.Label(new GUIContent(activityConfig.normalSprite.texture));
+            }
             activityConfig.normalSprite =
-                EditorGUILayout.ObjectField(new GUIContent("NormalSprite"), activityConfig.normalSprite, typeof(Sprite), true) as Sprite;
+                EditorGUILayout.ObjectField(activityConfig.normalSprite, typeof(Sprite), true) as Sprite;
+            if (activityConfig.showOffSprite != null)
+            {
+                GUILayout.Label(new GUIContent(activityConfig.showOffSprite.texture));
+            }
             activityConfig.showOffSprite =
-                EditorGUILayout.ObjectField(new GUIContent("ShowOffSprite"), activityConfig.showOffSprite, typeof(Sprite), true) as Sprite;
+                EditorGUILayout.ObjectField(activityConfig.showOffSprite, typeof(Sprite), true) as Sprite;
+            EditorGUILayout.EndHorizontal();
 
             activityConfig.roleName = EditorGUILayout.TextField("职业描述", activityConfig.roleName);
             activityConfig.fightType = (FightType)EditorGUILayout.EnumPopup("战斗克制", activityConfig.fightType);
