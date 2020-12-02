@@ -15,7 +15,7 @@ MonoBehaviour:
   normalSprite: {fileID: 21300000, guid: f484a8fbaed39db4a9c8756f40de0154, type: 3}
   showOffSprite: {fileID: 21300000, guid: d070aaf364162d8479c6d7cd6a7014e4, type: 3}
   roleName: "\u67AA\u5175"
-  fightType: 0
+  fightType: 2
   movingType: 0
   attackValue: 18
   attackDistanceValue: 1
