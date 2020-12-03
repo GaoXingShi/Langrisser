@@ -74,7 +74,7 @@ namespace MainSpace.Grid
         private TileSaveData[] cacheSaveData;
         private ActivitiesManager activitiesManager;
         private GameManager gameManager;
-        private GameCursor cursor;
+        private CommandEventQueue commandEventQueue;
         private Vector3Int cacheCommandPos = -Vector3Int.one;
         private Sequence colorASequence;
         void Start()
@@ -83,7 +83,7 @@ namespace MainSpace.Grid
             InitCalculateValue();
             activitiesManager = LoadInfo.Instance.activitiesManager;
             gameManager = LoadInfo.Instance.gameManager;
-            cursor = LoadInfo.Instance.gameCursor;
+            commandEventQueue = LoadInfo.Instance.commandEventQueue;
 
             HideCommanderCircleGrid();
 
@@ -245,7 +245,7 @@ namespace MainSpace.Grid
         public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit, bool _isAsync)
         {
             // 问题出在这了，底下的方格还没显示完就注册了。
-            cursor.AddStepEvent(_unit, cacheSaveData,ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
+            commandEventQueue.AddStepEvent(_unit, cacheSaveData,ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
                 () =>
                 {
                     asyncBoolValue = false;
@@ -340,7 +340,7 @@ namespace MainSpace.Grid
 
             LoadInfo.Instance.sceneWindowsCanvas.RefreshActivitiesData(_unit,0);
 
-            cursor.AddStepEvent(_unit, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.StandByOrOtherActionGridCallBack, null,
+            commandEventQueue.AddStepEvent(_unit, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.StandByOrOtherActionGridCallBack, null,
                 () =>
                 {
                 });

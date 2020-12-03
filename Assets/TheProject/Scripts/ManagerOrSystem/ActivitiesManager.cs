@@ -21,7 +21,7 @@ namespace MainSpace
         private SceneTileMapManager tileMapManager;
         private SceneWindowsCanvas sceneWindowsCanvas;
         private GameManager gameManager;
-        private GameCursor gameCursor;
+        private CommandEventQueue commandEventQueue;
         private Sequence dotweenSequence;
 
         private void Start()
@@ -30,7 +30,7 @@ namespace MainSpace
             tileMapManager = LoadInfo.Instance.sceneTileMapManager;
             sceneWindowsCanvas = LoadInfo.Instance.sceneWindowsCanvas;
             gameManager = LoadInfo.Instance.gameManager;
-            gameCursor = LoadInfo.Instance.gameCursor;
+            commandEventQueue = LoadInfo.Instance.commandEventQueue;
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace MainSpace
             if (_unit.GetInstanceID() == currentSelectionUnit.GetInstanceID())
             {
                 //PlayerFinishCallBack(_unit);
-                gameCursor.FinishStepEvent(false);
+                commandEventQueue.FinishStepEvent(false);
             }
             else if (currentSelectionUnit != null)
             {
@@ -105,7 +105,7 @@ namespace MainSpace
                 if (!gameManager.VerifySameTroop(currentSelectionUnit, _unit) && currentSelectionUnit.currentPos.Vector3IntRangeValue(_unit.currentPos) <= currentSelectionUnit.attackRangeValue[0])
                 {
                     // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
-                    gameCursor.FinishStepEvent(false);
+                    commandEventQueue.FinishStepEvent(false);
                 }
                 else
                 {
@@ -446,7 +446,7 @@ namespace MainSpace
             if (_ctrlType == CtrlType.Player)
             {
                 // 加入栈事件 无任务、
-                gameCursor.AddStepEvent(null, null, ActionScopeType.none, null, null,
+                commandEventQueue.AddStepEvent(null, null, ActionScopeType.none, null, null,
                     () => { dotweenSequence.Kill(true); });
             }
 

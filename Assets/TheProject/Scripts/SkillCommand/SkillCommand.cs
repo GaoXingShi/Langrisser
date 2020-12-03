@@ -9,7 +9,7 @@ namespace MainSpace.SkillCommandSpace
 {
     public class SkillBaseCommand
     {
-        public virtual void StartCommand(ActivitiesUnit _unit, GameCursor _cursor, SceneTileMapManager _tileMapManager)
+        public virtual void StartCommand(ActivitiesUnit _unit, CommandEventQueue _commandEventQueue, SceneTileMapManager _tileMapManager)
         { }
 
     }
@@ -19,7 +19,7 @@ namespace MainSpace.SkillCommandSpace
         protected int skillIncrement;
 
         protected ActivitiesUnit cacheUnit;
-        protected GameCursor cursor;
+        protected CommandEventQueue commandEventQueue;
         protected SceneTileMapManager tileMapManager;
         protected Vector3Int skillPos;
 
@@ -30,15 +30,15 @@ namespace MainSpace.SkillCommandSpace
         }
 
         // 第一步 技能施法范围显示
-        public override void StartCommand(ActivitiesUnit _unit, GameCursor _cursor, SceneTileMapManager _tileMapManager)
+        public override void StartCommand(ActivitiesUnit _unit, CommandEventQueue _commandEventQueue, SceneTileMapManager _tileMapManager)
         {
             cacheUnit = _unit;
-            cursor = _cursor;
+            commandEventQueue = _commandEventQueue;
             tileMapManager = _tileMapManager;
 
             TileSaveData[] tileData = _tileMapManager.GetRoundTileSaveData(_unit.currentPos, _unit.skillRangeValue[0] + skillIncrement);
             _tileMapManager.ShowCustomActionGrid(tileData);
-            _cursor.AddStepEvent(_unit, tileData, ActionScopeType.AllUnit, null, SkillTriggerClick, () =>
+            _commandEventQueue.AddStepEvent(_unit, tileData, ActionScopeType.AllUnit, null, SkillTriggerClick, () =>
                {
 
                });
@@ -52,7 +52,7 @@ namespace MainSpace.SkillCommandSpace
                 skillPos = _cellPos;
                 TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(_cellPos, cacheUnit.skillRangeValue[0]);
                 tileMapManager.ShowCustomActionGrid(tileData);
-                cursor.AddStepEvent(cacheUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerSureClick, () =>
+                commandEventQueue.AddStepEvent(cacheUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerSureClick, () =>
                 {
 
                 });
@@ -65,7 +65,7 @@ namespace MainSpace.SkillCommandSpace
             if (skillPos.Vector3IntRangeValue(_cellPos) <= cacheUnit.skillRangeValue[0])
             {
                 // 成功了
-                cursor.FinishStepEvent(false);
+                commandEventQueue.FinishStepEvent(false);
             }
         }
     }

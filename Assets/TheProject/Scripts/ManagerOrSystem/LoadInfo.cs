@@ -10,6 +10,7 @@ namespace MainSpace
     public class LoadInfo : MonoBehaviour
     {
         public GameManager gameManager;
+        public CommandEventQueue commandEventQueue;
         public SceneTileMapManager sceneTileMapManager;
         public ActivitiesManager activitiesManager;
         public AISystem aiSystem;
@@ -30,6 +31,7 @@ namespace MainSpace
                 Destroy(this);
             }
 
+            commandEventQueue = new CommandEventQueue();
         }
 
 
