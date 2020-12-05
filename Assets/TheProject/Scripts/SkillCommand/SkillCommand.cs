@@ -7,11 +7,57 @@ using UnityEngine;
 
 namespace MainSpace.SkillCommandSpace
 {
+    // 或者像这么玩呢 ？
+    public interface FightCommand
+    {
+        public void FightStartCommand(ActivitiesUnit _enemy, ActivitiesUnit _self);
+
+        public void FightFinishCommand(ActivitiesUnit _enemy, ActivitiesUnit _self);
+    }
+
     public class SkillBaseCommand
     {
+        /// <summary>
+        /// 主动使用这个技能
+        /// </summary>
+        /// <param name="_unit"></param>
+        /// <param name="_commandEventQueue"></param>
+        /// <param name="_tileMapManager"></param>
         public virtual void StartCommand(ActivitiesUnit _unit, CommandEventQueue _commandEventQueue, SceneTileMapManager _tileMapManager)
         { }
+        // todo 还有像破甲或者燃烧这类持续数回合的被动效果
 
+        /// <summary>
+        /// 战斗开始时触发技能
+        /// </summary>
+        /// <param name="_enemy"></param>
+        /// <param name="_self"></param>
+        public virtual void FightStartCommand(ActivitiesUnit _enemy, ActivitiesUnit _self)
+        {
+        }
+
+        /// <summary>
+        /// 战斗结束时的回收
+        /// </summary>
+        /// <param name="_enemy"></param>
+        /// <param name="_self"></param>
+        public virtual void FightFinishCommand(ActivitiesUnit _enemy, ActivitiesUnit _self)
+        {
+        }
+
+        /// <summary>
+        /// 能力直接的影响
+        /// </summary>
+        public virtual void CapacityEffect(ActivitiesUnit _self)
+        {
+        }
+
+        /// <summary>
+        /// 指挥圈内的影响
+        /// </summary>
+        public virtual void CommandRangeEffect(ActivitiesUnit _self)
+        {
+        }
     }
 
     public class SkillRangeCommand : SkillBaseCommand
