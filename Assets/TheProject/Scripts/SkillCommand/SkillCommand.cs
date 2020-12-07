@@ -7,84 +7,115 @@ using UnityEngine;
 
 namespace MainSpace.SkillCommandSpace
 {
-    // 或者像这么玩呢 ？
-    public interface FightCommand
+    public interface FightSkill
     {
-        public void FightStartCommand(ActivitiesUnit _enemy, ActivitiesUnit _self);
-
-        public void FightFinishCommand(ActivitiesUnit _enemy, ActivitiesUnit _self);
-    }
-
-    public class SkillBaseCommand
-    {
-        /// <summary>
-        /// 主动使用这个技能
-        /// </summary>
-        /// <param name="_unit"></param>
-        /// <param name="_commandEventQueue"></param>
-        /// <param name="_tileMapManager"></param>
-        public virtual void StartCommand(ActivitiesUnit _unit, CommandEventQueue _commandEventQueue, SceneTileMapManager _tileMapManager)
-        { }
-        // todo 还有像破甲或者燃烧这类持续数回合的被动效果
-
+        // todo 给予敌方破甲持续两回合的样子
         /// <summary>
         /// 战斗开始时触发技能
         /// </summary>
         /// <param name="_enemy"></param>
         /// <param name="_self"></param>
-        public virtual void FightStartCommand(ActivitiesUnit _enemy, ActivitiesUnit _self)
-        {
-        }
+        void FightStartCommand(ActivitiesUnit _enemy, ActivitiesUnit _self);
 
         /// <summary>
-        /// 战斗结束时的回收
+        /// 战斗结束时触发技能
         /// </summary>
         /// <param name="_enemy"></param>
         /// <param name="_self"></param>
-        public virtual void FightFinishCommand(ActivitiesUnit _enemy, ActivitiesUnit _self)
-        {
-        }
+        void FightFinishCommand(ActivitiesUnit _enemy, ActivitiesUnit _self);
+    }
 
-        /// <summary>
-        /// 能力直接的影响
-        /// </summary>
-        public virtual void CapacityEffect(ActivitiesUnit _self)
-        {
-        }
-
+    public interface CommanderRangeSkill
+    {
+        // todo 配合己方回合开始时，指挥圈内敌方受到5点伤害
         /// <summary>
         /// 指挥圈内的影响
         /// </summary>
-        public virtual void CommandRangeEffect(ActivitiesUnit _self)
-        {
-        }
+        void InCommandRangeEffect(ActivitiesUnit _self);
+
+        /// <summary>
+        /// 指挥圈外的影响
+        /// </summary>
+        /// <param name="_self"></param>
+        void OutCommandRangeEffect(ActivitiesUnit _self);
     }
 
-    public class SkillRangeCommand : SkillBaseCommand
+    public interface ActivityUnitTurnState
     {
-        protected int skillIncrement;
+        // todo 己方回合开始时，攻击力增加x点
+        /// <summary>
+        /// 己方回合开始时
+        /// </summary>
+        void SelfTurnBegin();
 
-        protected ActivitiesUnit cacheUnit;
+        /// <summary>
+        /// 己方回合结束时
+        /// </summary>
+        void SelfTurnFinish();
+
+        void EnemyTurnBegin();
+        void EnemyTurnFinish();
+
+    }
+
+    public interface ActivityUnitWholeState
+    {
+        // todo 比如拥有这个技能就拥有两格攻击范围
+        /// <summary>
+        /// 全程状态
+        /// </summary>
+        /// <param name="_selfUnit"></param>
+        void WholeState(ActivitiesUnit _selfUnit);
+    }
+
+    public interface CastingSkill
+    {
+        /// <summary>
+        /// 施放技能（主动）
+        /// </summary>
+        void CastingSkill(ActivitiesUnit _selfUnit);
+
+    }
+
+    public class SkillBaseCommand
+    {}
+
+    public class SkillRangeCommand : SkillBaseCommand, CastingSkill
+    {
+        protected int skillIncrement1, skillIncrement2;
+
+        protected ActivitiesUnit cacheSelfUnit;
         protected CommandEventQueue commandEventQueue;
         protected SceneTileMapManager tileMapManager;
         protected Vector3Int skillPos;
 
+
+        public void CastingSkill(ActivitiesUnit _selfUnit)
+        {
+            cacheSelfUnit = _selfUnit;
+            commandEventQueue = LoadInfo.Instance.commandEventQueue;
+            tileMapManager = LoadInfo.Instance.sceneTileMapManager;
+
+            InitValue();
+            StartCommand();
+        }
+
+        /// <summary>
+        /// 初始化数值
+        /// </summary>
         protected virtual void InitValue()
         {
-            skillIncrement = 0;
-
+            // 技能第一二阶段增量
+            skillIncrement1 = 0;
+            skillIncrement2 = 0;
         }
 
         // 第一步 技能施法范围显示
-        public override void StartCommand(ActivitiesUnit _unit, CommandEventQueue _commandEventQueue, SceneTileMapManager _tileMapManager)
+        protected void StartCommand()
         {
-            cacheUnit = _unit;
-            commandEventQueue = _commandEventQueue;
-            tileMapManager = _tileMapManager;
-
-            TileSaveData[] tileData = _tileMapManager.GetRoundTileSaveData(_unit.currentPos, _unit.skillRangeValue[0] + skillIncrement);
-            _tileMapManager.ShowCustomActionGrid(tileData);
-            _commandEventQueue.AddStepEvent(_unit, tileData, ActionScopeType.AllUnit, null, SkillTriggerClick, () =>
+            TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(cacheSelfUnit.currentPos, cacheSelfUnit.skillRangeValue[0] + skillIncrement1);
+            tileMapManager.ShowCustomActionGrid(tileData);
+            commandEventQueue.AddStepEvent(cacheSelfUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerClick, () =>
                {
 
                });
@@ -93,27 +124,29 @@ namespace MainSpace.SkillCommandSpace
         // 第二步 技能计算范围显示
         protected void SkillTriggerClick(Vector3Int _cellPos)
         {
-            if (cacheUnit.currentPos.Vector3IntRangeValue(_cellPos) <= cacheUnit.moveRangeValue[0])
-            {
-                skillPos = _cellPos;
-                TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(_cellPos, cacheUnit.skillRangeValue[0]);
-                tileMapManager.ShowCustomActionGrid(tileData);
-                commandEventQueue.AddStepEvent(cacheUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerSureClick, () =>
-                {
+            //if (cacheSelfUnit.currentPos.Vector3IntRangeValue(_cellPos) <= cacheSelfUnit.moveRangeValue[0])
 
-                });
-            }
+            skillPos = _cellPos;
+            TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(_cellPos, cacheSelfUnit.skillRangeValue[0] + skillIncrement1);
+            tileMapManager.ShowCustomActionGrid(tileData);
+            commandEventQueue.AddStepEvent(cacheSelfUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerSureClick, () =>
+            {
+
+            });
+
         }
 
         // 第三步 确认该范围，只要点击该范围就直接开始播放动画并计算
         protected void SkillTriggerSureClick(Vector3Int _cellPos)
         {
-            if (skillPos.Vector3IntRangeValue(_cellPos) <= cacheUnit.skillRangeValue[0])
+            if (skillPos.Vector3IntRangeValue(_cellPos) <= cacheSelfUnit.skillRangeValue[0])
             {
                 // 成功了
                 commandEventQueue.FinishStepEvent(false);
             }
         }
+
+
     }
 
     public class FireSkillCommand : SkillRangeCommand
