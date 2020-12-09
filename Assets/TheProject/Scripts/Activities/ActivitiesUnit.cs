@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MainSpace.Activities
 {
+    // todo https://wenku.baidu.com/view/859b8cf3fab069dc502201fb.html 这种重甲无甲的概念怎么样呢
     /// <summary>
     /// 战斗类型 (用于计算兵种克制)
     /// </summary>

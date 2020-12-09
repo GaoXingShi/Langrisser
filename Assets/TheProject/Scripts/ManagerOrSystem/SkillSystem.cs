@@ -8,12 +8,23 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
-namespace MainSpace
+namespace MainSpace.SkillCommandSpace
 {
-
-    public class SkillSystem : MonoBehaviour
+    public enum SkillType
     {
+        初级火球术,
+        中级火球术,
+    }
 
+    public class SkillSystem
+    {
+        public readonly Dictionary<SkillType, SkillBaseCommand> skillsList;
+
+        public SkillSystem()
+        {
+            skillsList = new Dictionary<SkillType, SkillBaseCommand>();
+            skillsList.Add(SkillType.初级火球术,new FireBall1SkillCommand());
+        }
     }
 #if UNITY_EDITOR
     public class SkillSelectionEditorWindows : EditorWindow

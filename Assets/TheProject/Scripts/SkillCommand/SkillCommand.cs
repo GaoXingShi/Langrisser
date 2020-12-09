@@ -110,6 +110,11 @@ namespace MainSpace.SkillCommandSpace
             skillIncrement2 = 0;
         }
 
+        protected virtual void PlayMoving()
+        {
+
+        }
+
         // 第一步 技能施法范围显示
         protected void StartCommand()
         {
@@ -139,17 +144,29 @@ namespace MainSpace.SkillCommandSpace
         // 第三步 确认该范围，只要点击该范围就直接开始播放动画并计算
         protected void SkillTriggerSureClick(Vector3Int _cellPos)
         {
-            if (skillPos.Vector3IntRangeValue(_cellPos) <= cacheSelfUnit.skillRangeValue[0])
-            {
-                // 成功了
-                commandEventQueue.FinishStepEvent(false);
-            }
+            PlayMoving();
+            // 成功了
+            commandEventQueue.FinishStepEvent(false);
         }
 
 
     }
 
-    public class FireSkillCommand : SkillRangeCommand
+    /// <summary>
+    /// 1级火球术
+    /// </summary>
+    public class FireBall1SkillCommand : SkillRangeCommand
     {
+        protected override void InitValue()
+        {
+            // 技能第一二阶段增量
+            skillIncrement1 = 0;
+            skillIncrement2 = -cacheSelfUnit.skillRangeValue[0] + 1;
+        }
+
+        protected override void PlayMoving()
+        {
+            base.PlayMoving();
+        }
     }
 }
