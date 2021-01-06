@@ -4,10 +4,12 @@ using System.Linq;
 using MainSpace;
 using MainSpace.Activities;
 using MainSpace.ScriptableObject;
+using MainSpace.SkillCommandSpace;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 using UnityEngine;
+using SkillType = MainSpace.SkillCommandSpace.SkillType;
 
 namespace Sense.BehaviourTree.Apply
 {
@@ -25,6 +27,8 @@ namespace Sense.BehaviourTree.Apply
         // 携带佣兵与数量
         public List<SoliderConfig> troops;
         public List<int> troopsCount;
+
+        public List<MainSpace.SkillCommandSpace.SkillType> skillTypes;
 
         private CommanderUnit commanderTemplate;
         private SoliderUnit soliderTemplate;
@@ -95,6 +99,8 @@ namespace Sense.BehaviourTree.Apply
             temp.troopsType = campData.troopType;
             temp.movingType = activityConfig.movingType;
 
+            temp.skillTypes = new List<SkillType>();
+            temp.skillTypes.AddRange(skillTypes);
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);
@@ -152,6 +158,8 @@ namespace Sense.BehaviourTree.Apply
                     temp.movingType = data.movingType;
                     temp.troopsType = campData.troopType;
 
+                    temp.skillTypes = new List<SkillType>();
+                    temp.skillTypes.AddRange(skillTypes);
                     // pos
                     Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);
                     calculateValue.z = -1;
@@ -319,20 +327,31 @@ namespace Sense.BehaviourTree.Apply
 
             GUILayout.EndVertical();
 
+            if (editorTarget.skillTypes != null)
+            {
+                GUILayout.Label("技能", style);
+                foreach (var v in editorTarget.skillTypes)
+                {
+                    GUILayout.Label(v.ToString());
+                }
+            }
+            if (GUILayout.Button("编辑技能"))
+            {
+                SkillSelectionEditorWindows.OpenWindow(editorTarget);
+            }
+
             Vector2Int tempShowPos = EditorGUILayout.Vector2IntField("出现位置", new Vector2Int(editorTarget.showPos.x, editorTarget.showPos.y));
             editorTarget.showPos = new Vector3Int(tempShowPos.x, tempShowPos.y, -1);
 
             GUILayout.EndVertical();
+
 
             if (GUI.changed)
             {
                 EditorUtility.SetDirty(target);
             }
 
-            if (GUILayout.Button("编辑技能"))
-            {
-                SkillSelectionEditorWindows.OpenWindow();
-            }
+
         }
     }
 #endif

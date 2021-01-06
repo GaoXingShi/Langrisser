@@ -1,4 +1,6 @@
-﻿using MainSpace.Activities;
+﻿using System.Collections.Generic;
+using MainSpace.Activities;
+using MainSpace.SkillCommandSpace;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -14,6 +16,7 @@ namespace MainSpace.ScriptableObject
     {
         public int attackValue = 20, attackDistanceValue = 1, defenseValue = 20, moveValue = 5, healthValue = 100, magicValue = 0;
         public int skillRangeValue = 1, skillPowerValue = 1;
+        public List<MainSpace.SkillCommandSpace.SkillType> skillTypes;
     }
 
 #if UNITY_EDITOR
@@ -27,7 +30,6 @@ namespace MainSpace.ScriptableObject
             OnInit();
             editorTarget = target as SoliderConfig;
         }
-
 
         public override void OnInspectorGUI()
         {
@@ -67,6 +69,20 @@ namespace MainSpace.ScriptableObject
             GUILayout.Label(new GUIContent("MP"));
             editorTarget.magicValue = EditorGUILayout.IntField(editorTarget.magicValue);
             GUILayout.EndHorizontal();
+
+            if (editorTarget.skillTypes != null)
+            {
+                GUILayout.Label("技能", style);
+                foreach (var v in editorTarget.skillTypes)
+                {
+                    GUILayout.Label(v.ToString());
+                }
+            }
+            if (GUILayout.Button("编辑技能"))
+            {
+                SkillSelectionEditorWindows.OpenWindow(editorTarget);
+            }
+
 
             if (GUI.changed)
             {

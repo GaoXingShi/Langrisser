@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using MainSpace.ScriptableObject;
 using UnityEngine;
 
@@ -52,6 +53,8 @@ namespace MainSpace.Activities
         public SpriteRenderer mRendererComponent;
         public TextMesh hpText;
         public SpriteRenderer professionSprite , playerColorSprite;
+
+        public List<MainSpace.SkillCommandSpace.SkillType> skillTypes;
 
         private Material mMaterial;
         private GameManager gameManager;
