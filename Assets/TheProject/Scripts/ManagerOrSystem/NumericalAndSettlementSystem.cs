@@ -68,8 +68,25 @@ namespace MainSpace
         {
             // 主动、被动、回调
            // Vector2Int AtDp = Vector2Int.zero;
-            RefrainValue(_initiativeUnit, _passivityUnit, out Vector2Int AtDp);
-            
+            int refrainValue = RefrainValue(_initiativeUnit, _passivityUnit, out Vector2Int AtDp);
+
+            int player1AT = _initiativeUnit.attackValue[0];
+            int player2AT = _passivityUnit.attackValue[0];
+            int player1DF = _initiativeUnit.defenseValue[0];
+            int player2DF = _passivityUnit.defenseValue[0];
+
+            if (refrainValue == 1)
+            {
+                player1AT += AtDp.x;
+                player1DF += AtDp.y;
+            }
+            else if (refrainValue == 2)
+            {
+                player2AT += AtDp.x;
+                player2DF += AtDp.y;
+            }
+
+
         }
 
         public void SkillFighting(ActivitiesUnit _caster, ActivitiesUnit[] _affected)
