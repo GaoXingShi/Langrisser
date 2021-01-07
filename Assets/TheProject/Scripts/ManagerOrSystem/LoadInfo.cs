@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using MainSpace.Grid;
+﻿using MainSpace.Grid;
+using MainSpace.SkillCommandSpace;
 using Sense.BehaviourTree;
 using UnityEngine;
 
@@ -18,6 +16,8 @@ namespace MainSpace
         public SceneWindowsCanvas sceneWindowsCanvas;
         public NumericalAndSettlementSystem numericalAndSettlementSystem;
         public SequenceNode sequenceNode;
+        public SkillSystem skillSystem;
+
 
         public static LoadInfo Instance;
         void Awake()
@@ -31,7 +31,9 @@ namespace MainSpace
                 Destroy(this);
             }
 
+            numericalAndSettlementSystem = new NumericalAndSettlementSystem();
             commandEventQueue = new CommandEventQueue();
+            skillSystem = new SkillSystem();
         }
 
 

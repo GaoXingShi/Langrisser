@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using MainSpace.Activities;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ namespace MainSpace
 {
     public enum ActionScopeType
     {
-        none,                           // 哪都不能点
+        None,                           // 哪都不能点
         OnlyOurSoldiers,                // 仅我方士兵
         OnlyOurCommanders,              // 仅我方指挥官
         OnlyOur,                        // 仅我方
@@ -25,27 +26,95 @@ namespace MainSpace
         AllUnit,                        // 所有方格
     }
 
-    public enum SkillType
-    {
-        Attack,             // 只能对准攻击范围内,并选择
-        Range,              // 选择自己的施法范围+X,之后出现施法范围并施展
-        Selection,          // 选择自己的施法范围+X,选择某个单位后，圈中所在部队，对单位所在部分进行施展
-    }
-
     /// <summary>
     /// 数值结算系统
     /// </summary>
-    public class NumericalAndSettlementSystem : MonoBehaviour
+    public class NumericalAndSettlementSystem
     {
+        public struct RefrainStruct
+        {
+            public FightType fightType1, fightType2;
+            public int attackValue, defenseValue;
+        }
 
-        void Start()
+        public List<RefrainStruct> refrainArray;
+        public NumericalAndSettlementSystem()
+        {
+            refrainArray = new List<RefrainStruct>();
+            AddElement(FightType.步兵, FightType.枪兵, 5, 1);
+            AddElement(FightType.枪兵, FightType.骑兵, 8, 8);
+            AddElement(FightType.骑兵, FightType.步兵, 3, 5);
+        }
+
+        /// <summary>
+        /// fightType1 克制 fightType2
+        /// </summary>
+        /// <param name="_fightType1"></param>
+        /// <param name="_fightType2"></param>
+        /// <param name="_attackValue"></param>
+        /// <param name="_defenseValue"></param>
+        private void AddElement(FightType _fightType1, FightType _fightType2,int _attackValue,int _defenseValue)
+        {
+            RefrainStruct temp = new RefrainStruct();
+            temp.fightType1 = _fightType1;
+            temp.fightType2 = _fightType2;
+            temp.attackValue = _attackValue;
+            temp.defenseValue = _defenseValue;
+
+            refrainArray.Add(temp);
+        }
+
+        public void AttackFighting(ActivitiesUnit _initiativeUnit, ActivitiesUnit _passivityUnit, Action _callBack)
+        {
+            // 主动、被动、回调
+
+        }
+
+        public void SkillFighting(ActivitiesUnit _caster, ActivitiesUnit[] _affected)
         {
 
         }
 
-        public void AttackFighting(ActivitiesUnit _leftUnit,ActivitiesUnit _rightUnit,Action _callBack)
+        /// <summary>
+        /// 克制数值增长
+        /// </summary>
+        /// <param name="_unit1">左Unit</param>
+        /// <param name="_unit2">右Unit</param>
+        /// <param name="_value1">具体攻防</param>
+        /// <returns>
+        /// 0：不克制
+        /// 1：左克右
+        /// 2：右克左
+        /// </returns>
+        private int RefrainValue(ActivitiesUnit _unit1, ActivitiesUnit _unit2, out Vector2Int _value1)
         {
-            Debug.Log("left Attack firm to 30 damage");
+            FightType fightType1 = _unit1.activityConfig.fightType;
+            FightType fightType2 = _unit2.activityConfig.fightType;
+            _value1 = Vector2Int.zero;
+
+            if (fightType1 == fightType2)
+            {
+                return 0;
+            }
+
+            for (int i = 0; i < refrainArray.Count; i++)
+            {
+                RefrainStruct temp = refrainArray[i];
+                if (temp.fightType1 == fightType1 && temp.fightType2 == fightType2)
+                {
+                    _value1 = new Vector2Int(temp.attackValue, temp.defenseValue);
+                    return 1;
+                }
+                else if (temp.fightType2 == fightType1 && temp.fightType1 == fightType2)
+                {
+                    _value1 = new Vector2Int(temp.attackValue, temp.defenseValue);
+                    return 2;
+                }
+            }
+
+            return 0;
+
         }
+        
     }
 }

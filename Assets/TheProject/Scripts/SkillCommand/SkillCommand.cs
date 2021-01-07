@@ -80,6 +80,9 @@ namespace MainSpace.SkillCommandSpace
     public class SkillBaseCommand
     {}
 
+    /// <summary>
+    /// 选择自己的施法范围+X,之后出现施法范围并施展
+    /// </summary>
     public class SkillRangeCommand : SkillBaseCommand, CastingSkill
     {
         protected int skillIncrement1, skillIncrement2;
@@ -153,7 +156,18 @@ namespace MainSpace.SkillCommandSpace
     }
 
     /// <summary>
-    /// 1级火球术
+    /// 选择自己的施法范围+X,选择某个单位后，圈中所在部队，对单位所在部分进行施展
+    /// </summary>
+    public class SkillSelectionCommand : SkillBaseCommand, CastingSkill
+    {
+        public void CastingSkill(ActivitiesUnit _selfUnit)
+        {
+
+        }
+    }
+
+    /// <summary>
+    /// 焰火冲击术
     /// </summary>
     public class FireBall1SkillCommand : SkillRangeCommand
     {

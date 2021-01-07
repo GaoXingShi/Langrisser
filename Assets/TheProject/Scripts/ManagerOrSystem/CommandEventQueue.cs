@@ -66,7 +66,7 @@ namespace MainSpace
                 }
             }
 
-            // none 类型在弹出时直接跳过 因为none是角色移动过程
+            // None 类型在弹出时直接跳过 因为none是角色移动过程
             StepInfo temp = new StepInfo()
             {
                 unit = _unit,
@@ -159,7 +159,7 @@ namespace MainSpace
             {
                 StepInfo temp = stepInfoStack.Pop();
                 temp.cancelAction();
-                while (stepInfoStack.Count != 0 && stepInfoStack.Peek().actionScopeType == ActionScopeType.none)
+                while (stepInfoStack.Count != 0 && stepInfoStack.Peek().actionScopeType == ActionScopeType.None)
                 {
                     var whileValue = stepInfoStack.Pop();
                     whileValue.cancelAction();

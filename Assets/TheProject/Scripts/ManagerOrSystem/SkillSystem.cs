@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-#if UNITY_EDITOR
-using MainSpace.Activities;
 using MainSpace.ScriptableObject;
 using Sense.BehaviourTree.Apply;
+using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
 #endif
-using UnityEngine;
 
 namespace MainSpace.SkillCommandSpace
 {
@@ -22,16 +19,29 @@ namespace MainSpace.SkillCommandSpace
 
     }
 
-    //public class SkillSystem
-    //{
-    //    public readonly Dictionary<SkillType, SkillBaseCommand> skillsList;
+    public class SkillSystem
+    {
+        private Dictionary<SkillType, SkillBaseCommand> skillsList;
 
-    //    public SkillSystem()
-    //    {
-    //        skillsList = new Dictionary<SkillType, SkillBaseCommand>();
-    //        skillsList.Add(SkillType.初级火球术,new FireBall1SkillCommand());
-    //    }
-    //}
+        public SkillSystem()
+        {
+            skillsList = new Dictionary<SkillType, SkillBaseCommand>();
+            skillsList.Add(SkillType.焰火冲击术, new FireBall1SkillCommand());
+
+            //SkillRangeCommand temp =GetSkillClassBySkillType(SkillType.焰火冲击术) as SkillRangeCommand;
+        }
+
+        public SkillBaseCommand GetSkillClassBySkillType(SkillType _type)
+        {
+            if (skillsList.ContainsKey(_type))
+            {
+                return skillsList[_type];
+            }
+
+            return null;
+        }
+    }
+
 #if UNITY_EDITOR
     public class SkillSelectionEditorWindows : EditorWindow
     {
