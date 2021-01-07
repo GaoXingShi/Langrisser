@@ -67,7 +67,9 @@ namespace MainSpace
         public void AttackFighting(ActivitiesUnit _initiativeUnit, ActivitiesUnit _passivityUnit, Action _callBack)
         {
             // 主动、被动、回调
-
+           // Vector2Int AtDp = Vector2Int.zero;
+            RefrainValue(_initiativeUnit, _passivityUnit, out Vector2Int AtDp);
+            
         }
 
         public void SkillFighting(ActivitiesUnit _caster, ActivitiesUnit[] _affected)
