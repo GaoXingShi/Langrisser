@@ -44,6 +44,7 @@ namespace MainSpace
             AddElement(FightType.步兵, FightType.枪兵, 5, 1);
             AddElement(FightType.枪兵, FightType.骑兵, 8, 8);
             AddElement(FightType.骑兵, FightType.步兵, 3, 5);
+            AddElement(FightType.弓兵, FightType.飞兵, 8, 0);
         }
 
         /// <summary>

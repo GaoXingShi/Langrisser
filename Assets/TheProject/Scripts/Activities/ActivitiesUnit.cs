@@ -16,6 +16,7 @@ namespace MainSpace.Activities
         骑兵,
         枪兵,
         僧侣,
+        弓兵,
         飞兵,
         水兵,
         灵体,
