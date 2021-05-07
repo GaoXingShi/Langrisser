@@ -87,6 +87,8 @@ namespace MainSpace
                 player2DF += AtDp.y;
             }
 
+            // 可能需要根据动画决定最后的伤害数值
+            // 根据每一次接触来衡量伤害的问题，还会有一个闪避性的隐藏数值。
 
         }
 
@@ -96,7 +98,7 @@ namespace MainSpace
         }
 
         /// <summary>
-        /// 克制数值增长
+        /// 兵种克制数值增长
         /// </summary>
         /// <param name="_unit1">左Unit</param>
         /// <param name="_unit2">右Unit</param>

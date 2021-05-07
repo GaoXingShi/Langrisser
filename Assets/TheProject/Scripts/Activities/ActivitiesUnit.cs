@@ -40,7 +40,7 @@ namespace MainSpace.Activities
     {
         [Header("Wait Init Base Data")]
         public Vector3Int currentPos ;
-        public int[] healthValue, magicValue, moveRangeValue,attackRangeValue,skillRangeValue, attackValue, defenseValue;        // 索引0为当前，索引1为总量
+        public int[] healthValue, magicValue, moveRangeValue,attackRangeValue,skillRangeValue, attackValue, defenseValue;        // 索引0为当前(当前受状态或技能影响可能更高或更低)，索引1为原值(进入关卡时初始的值)
         public ActivityConfig activityConfig;
         public TerrainActionType movingType;
         public Sprite affiliationSprite;
