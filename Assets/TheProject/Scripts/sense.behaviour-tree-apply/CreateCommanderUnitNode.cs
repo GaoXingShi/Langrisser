@@ -20,8 +20,8 @@ namespace Sense.BehaviourTree.Apply
         public ActivityConfig activityConfig;
         public string unitName, managerKeyName;
         //public RoleType roleType;
-        [Range(1, 10)] public int levelValue = 1;
-        public int levelSliderValue, levelSliderUpgradeValue, attackValue, attackDistanceValue = 1, skillRangeValue = 1, skillPowerValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
+        [Range(1, 50)] public int levelValue = 1;
+        public int attackValue, attackDistanceValue = 1, skillRangeValue = 1, skillPowerValue = 1, defenseValue, moveValue, healthValue, magicValue, commandRangeValue, correctedAttackValue, correctedDefenseValue;
         public Vector3Int showPos;
 
         // 携带佣兵与数量
@@ -59,22 +59,29 @@ namespace Sense.BehaviourTree.Apply
             commanderTemplate = Resources.Load<CommanderUnit>("Prefabs/CommanderUnitTemplate");
             CommanderUnit temp = Instantiate(commanderTemplate);
             temp.NodeInitData();
-            // int[]
-            temp.SetIntArrayData(ref temp.healthValue, healthValue);
-            temp.SetIntArrayData(ref temp.magicValue, magicValue);
-            temp.SetIntArrayData(ref temp.commandRangeValue, commandRangeValue);
-            temp.SetIntArrayData(ref temp.correctedAttack, correctedAttackValue);
-            temp.SetIntArrayData(ref temp.correctedDefense, correctedDefenseValue);
-            temp.SetIntArrayData(ref temp.attackValue, attackValue);
-            temp.SetIntArrayData(ref temp.attackRangeValue, attackDistanceValue);
-            temp.SetIntArrayData(ref temp.defenseValue, defenseValue);
-            temp.SetIntArrayData(ref temp.moveRangeValue, moveValue);
-            temp.SetIntArrayData(ref temp.skillRangeValue, skillRangeValue);
+
+            {
+                temp.curProperty.healthValue = temp.originProperty.healthValue = healthValue;
+                temp.curProperty.magicValue = temp.originProperty.magicValue = magicValue;
+//                temp.curProperty.armorValue = temp.originProperty.armorValue = armorValue;
+                temp.curProperty.moveRangeValue = temp.originProperty.moveRangeValue = moveValue;
+                temp.curProperty.attackRangeValue = temp.originProperty.attackRangeValue = attackDistanceValue;
+                temp.curProperty.skillRangeValue = temp.originProperty.skillRangeValue = skillRangeValue;
+                temp.curProperty.attackPowerValue = temp.originProperty.attackPowerValue = attackValue;
+                temp.curProperty.defensePowerValue = temp.originProperty.defensePowerValue = defenseValue;
+                temp.curProperty.skillPowerValue = temp.originProperty.skillPowerValue = skillPowerValue;
+
+                temp.curProperty.commandRangeValue = temp.originProperty.commandRangeValue = commandRangeValue;
+                temp.curProperty.correctedAttack = temp.originProperty.correctedAttack = correctedAttackValue;
+                temp.curProperty.correctedDefense = temp.originProperty.correctedDefense = correctedDefenseValue;
+            }
+
 
             // int
             temp.levelValue = levelValue;
-            temp.levelSliderValue = levelSliderValue;
-            temp.levelSliderUpgradeValue = levelSliderUpgradeValue;
+            //            temp.levelSliderValue = levelSliderValue;
+            // 每10级需要提升
+            temp.levelSliderUpgradeValue = ((levelValue + 10) / 10) * 100;
 
             // string
             temp.unitName = unitName;
@@ -104,7 +111,6 @@ namespace Sense.BehaviourTree.Apply
 
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);
-            temp.transform.position = calculateValue;
             temp.currentPos = calculateValue;
 
             // other
@@ -126,17 +132,23 @@ namespace Sense.BehaviourTree.Apply
                     SoliderUnit temp = Instantiate(soliderTemplate);
 
                     temp.NodeInitData();
+                    {
+                        temp.curProperty.healthValue = temp.originProperty.healthValue = healthValue;
+                        temp.curProperty.magicValue = temp.originProperty.magicValue = magicValue;
+                        //                temp.curProperty.armorValue = temp.originProperty.armorValue = armorValue;
+                        temp.curProperty.moveRangeValue = temp.originProperty.moveRangeValue = moveValue;
+                        temp.curProperty.attackRangeValue = temp.originProperty.attackRangeValue = attackDistanceValue;
+                        temp.curProperty.skillRangeValue = temp.originProperty.skillRangeValue = skillRangeValue;
+                        temp.curProperty.attackPowerValue = temp.originProperty.attackPowerValue = attackValue;
+                        temp.curProperty.defensePowerValue = temp.originProperty.defensePowerValue = defenseValue;
+                        temp.curProperty.skillPowerValue = temp.originProperty.skillPowerValue = skillPowerValue;
+
+                        temp.curProperty.commandRangeValue = temp.originProperty.commandRangeValue = commandRangeValue;
+                        temp.curProperty.correctedAttack = temp.originProperty.correctedAttack = correctedAttackValue;
+                        temp.curProperty.correctedDefense = temp.originProperty.correctedDefense = correctedDefenseValue;
+                    }
 
                     SoliderConfig data = troops[i];
-
-                    // int[]
-                    temp.SetIntArrayData(ref temp.healthValue, data.healthValue);
-                    temp.SetIntArrayData(ref temp.magicValue, data.magicValue);
-                    temp.SetIntArrayData(ref temp.attackValue, data.attackValue);
-                    temp.SetIntArrayData(ref temp.attackRangeValue, data.attackDistanceValue);
-                    temp.SetIntArrayData(ref temp.defenseValue, data.defenseValue);
-                    temp.SetIntArrayData(ref temp.moveRangeValue, data.moveValue);
-                    temp.SetIntArrayData(ref temp.skillRangeValue, data.skillRangeValue);
 
                     temp.affiliationName = campData.campType.ToString();
                     temp.managerKeyName = managerKeyName;
@@ -163,7 +175,6 @@ namespace Sense.BehaviourTree.Apply
                     // pos
                     Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(showPos);
                     calculateValue.z = -1;
-                    temp.transform.position = calculateValue;
                     temp.currentPos = calculateValue;
 
                     temp.mineCommanderUnit = cacheCommanderUnit;
@@ -220,11 +231,11 @@ namespace Sense.BehaviourTree.Apply
 
             GUILayout.Label(new GUIContent("等级数值"), style);
             EditorGUILayout.BeginHorizontal();
-            GUILayout.Label(new GUIContent("经验条最大值"));
-            editorTarget.levelSliderUpgradeValue = EditorGUILayout.IntField(editorTarget.levelSliderUpgradeValue);
+//            GUILayout.Label(new GUIContent("经验条最大值"));
+//            editorTarget.levelSliderUpgradeValue = EditorGUILayout.IntField(editorTarget.levelSliderUpgradeValue);
             //editorTarget.levelSliderValue = 0;
             GUILayout.Label(new GUIContent("等级"));
-            editorTarget.levelValue = EditorGUILayout.IntSlider(editorTarget.levelValue, 1, 10);
+            editorTarget.levelValue = EditorGUILayout.IntSlider(editorTarget.levelValue, 1, 50);
             EditorGUILayout.EndHorizontal();
 
             GUILayout.Label(new GUIContent("基础数值"), style);

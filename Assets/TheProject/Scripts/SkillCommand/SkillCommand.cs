@@ -121,7 +121,7 @@ namespace MainSpace.SkillCommandSpace
         // 第一步 技能施法范围显示
         protected void StartCommand()
         {
-            TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(cacheSelfUnit.currentPos, cacheSelfUnit.skillRangeValue[0] + skillIncrement1);
+            TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(cacheSelfUnit.currentPos, cacheSelfUnit.curProperty.skillRangeValue + skillIncrement1);
             tileMapManager.ShowCustomActionGrid(tileData);
             commandEventQueue.AddStepEvent(cacheSelfUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerClick, () =>
                {
@@ -135,7 +135,7 @@ namespace MainSpace.SkillCommandSpace
             //if (cacheSelfUnit.currentPos.Vector3IntRangeValue(_cellPos) <= cacheSelfUnit.moveRangeValue[0])
 
             skillPos = _cellPos;
-            TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(_cellPos, cacheSelfUnit.skillRangeValue[0] + skillIncrement1);
+            TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(_cellPos, cacheSelfUnit.curProperty.skillRangeValue + skillIncrement1);
             tileMapManager.ShowCustomActionGrid(tileData);
             commandEventQueue.AddStepEvent(cacheSelfUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerSureClick, () =>
             {
@@ -175,7 +175,7 @@ namespace MainSpace.SkillCommandSpace
         {
             // 技能第一二阶段增量
             skillIncrement1 = 0;
-            skillIncrement2 = -cacheSelfUnit.skillRangeValue[0] + 1;
+            skillIncrement2 = -cacheSelfUnit.curProperty.skillRangeValue + 1;
         }
 
         protected override void PlayMoving()

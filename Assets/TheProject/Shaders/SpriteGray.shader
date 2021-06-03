@@ -73,8 +73,8 @@ Shader "Sprites/Gray"
 					c.rgb *= c.a;
 					if(GrayLone == 1)
 					{
-					float gray = dot(c.xyz, float3(0.299, 0.587, 0.114));
-					c.xyz = float3(gray, gray, gray);
+						float gray = dot(c.xyz, float3(0.299, 0.587, 0.114));
+						c.xyz = float3(gray, gray, gray);
 					}
 					return c;
 				}

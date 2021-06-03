@@ -25,3 +25,4 @@ MonoBehaviour:
   magicValue: 0
   skillRangeValue: 1
   skillPowerValue: 1
+  skillTypes: 

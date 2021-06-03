@@ -75,10 +75,10 @@ namespace MainSpace
                 uiPropertyInspectors[_index].levelSlider.maxValue = commanderUnit.levelSliderUpgradeValue;
                 uiPropertyInspectors[_index].levelSlider.value = commanderUnit.levelSliderValue;
 
-                uiPropertyInspectors[_index].attackText.text = string.Concat("AT:", commanderUnit.attackValue[0]);
-                uiPropertyInspectors[_index].defenseText.text = string.Concat("DF:", commanderUnit.defenseValue[0]);
-                uiPropertyInspectors[_index].healthPointText.text = string.Concat("HP:", commanderUnit.healthValue[0], " / ", commanderUnit.healthValue[1]);
-                uiPropertyInspectors[_index].magicPointText.text = string.Concat("MP:", commanderUnit.magicValue[0], " / ", commanderUnit.magicValue[1]);
+                uiPropertyInspectors[_index].attackText.text = string.Concat("AT:", commanderUnit.curProperty.attackPowerValue);
+                uiPropertyInspectors[_index].defenseText.text = string.Concat("DF:", commanderUnit.curProperty.defensePowerValue);
+                uiPropertyInspectors[_index].healthPointText.text = string.Concat("HP:", commanderUnit.curProperty.healthValue, " / ", commanderUnit.originProperty.healthValue);
+                uiPropertyInspectors[_index].magicPointText.text = string.Concat("MP:", commanderUnit.curProperty.magicValue, " / ", commanderUnit.originProperty.magicValue);
             }
             else if (localUnit.GetType() == typeof(SoliderUnit))
             {
@@ -95,12 +95,12 @@ namespace MainSpace
                 uiPropertyInspectors[_index].levelSlider.maxValue = (soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.levelSliderUpgradeValue : 0);
                 uiPropertyInspectors[_index].levelSlider.value = (soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.levelSliderValue : 0);
 
-                uiPropertyInspectors[_index].attackText.text = string.Concat("AT:", soliderUnit.attackValue[0], "\t+",
-                    soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.correctedAttack[0] : 0);
-                uiPropertyInspectors[_index].defenseText.text = string.Concat("DF:", soliderUnit.defenseValue[0], "\t+",
-                    soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.correctedDefense[0] : 0);
-                uiPropertyInspectors[_index].healthPointText.text = string.Concat("HP:", soliderUnit.healthValue[0], " / ", soliderUnit.healthValue[1]);
-                uiPropertyInspectors[_index].magicPointText.text = string.Concat("MP:", soliderUnit.magicValue[0], " / ", soliderUnit.healthValue[1]);
+                uiPropertyInspectors[_index].attackText.text = string.Concat("AT:", soliderUnit.curProperty.attackPowerValue, "\t+",
+                    soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.curProperty.correctedAttack : 0);
+                uiPropertyInspectors[_index].defenseText.text = string.Concat("DF:", soliderUnit.curProperty.defensePowerValue, "\t+",
+                    soliderUnit.isInMineCommanderRange ? soliderUnit.mineCommanderUnit.curProperty.correctedDefense : 0);
+                uiPropertyInspectors[_index].healthPointText.text = string.Concat("HP:", soliderUnit.curProperty.healthValue, " / ", soliderUnit.originProperty.healthValue);
+                uiPropertyInspectors[_index].magicPointText.text = string.Concat("MP:", soliderUnit.curProperty.magicValue, " / ", soliderUnit.originProperty.healthValue);
             }
 
 

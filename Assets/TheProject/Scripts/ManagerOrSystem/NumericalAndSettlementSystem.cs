@@ -71,10 +71,10 @@ namespace MainSpace
            // Vector2Int AtDp = Vector2Int.zero;
             int refrainValue = RefrainValue(_initiativeUnit, _passivityUnit, out Vector2Int AtDp);
 
-            int player1AT = _initiativeUnit.attackValue[0];
-            int player2AT = _passivityUnit.attackValue[0];
-            int player1DF = _initiativeUnit.defenseValue[0];
-            int player2DF = _passivityUnit.defenseValue[0];
+            int player1AT = _initiativeUnit.curProperty.attackPowerValue;
+            int player2AT = _passivityUnit.curProperty.attackPowerValue;
+            int player1DF = _initiativeUnit.curProperty.defensePowerValue;
+            int player2DF = _passivityUnit.curProperty.defensePowerValue;
 
             if (refrainValue == 1)
             {

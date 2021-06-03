@@ -102,7 +102,7 @@ namespace MainSpace
             {
                 // attack
                 // 不是相同的队伍 && 符合攻击范围
-                if (!gameManager.VerifySameTroop(currentSelectionUnit, _unit) && currentSelectionUnit.currentPos.Vector3IntRangeValue(_unit.currentPos) <= currentSelectionUnit.attackRangeValue[0])
+                if (!gameManager.VerifySameTroop(currentSelectionUnit, _unit) && currentSelectionUnit.currentPos.Vector3IntRangeValue(_unit.currentPos) <= currentSelectionUnit.curProperty.attackRangeValue)
                 {
                     // 此处应当进入计算环节，鼠标失效，所有单位无动画 无指挥圈 ， 计算完成后 是否毁灭单位 之后回复正常。
                     commandEventQueue.FinishStepEvent(false);
@@ -254,7 +254,7 @@ namespace MainSpace
                 tileMapManager.HideCommanderCircleGrid();
                 SetActivityAnim(cacheRangeUnit, false);
             }
-            tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.commandRangeValue[0], _unit.campColor);
+            tileMapManager.ShowCommanderCircleGrid(_unit.currentPos, _unit.curProperty.commandRangeValue, _unit.campColor);
             SetActivityAnim(_unit, true);
 
             cacheRangeUnit = _unit;

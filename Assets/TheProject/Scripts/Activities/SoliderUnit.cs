@@ -12,7 +12,7 @@ namespace MainSpace.Activities
 
         public bool isInMineCommanderRange =>
             currentPos.Vector3IntRangeValue(mineCommanderUnit.currentPos) <=
-            mineCommanderUnit.commandRangeValue[0];
+            mineCommanderUnit.curProperty.commandRangeValue;
     }
 }
 

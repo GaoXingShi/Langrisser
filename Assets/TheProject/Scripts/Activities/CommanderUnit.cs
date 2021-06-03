@@ -9,7 +9,6 @@ namespace MainSpace.Activities
     public class CommanderUnit : ActivitiesUnit
     {
         [Header("Wait Init Command Data")] public bool commandData;
-        public int[] commandRangeValue, correctedAttack, correctedDefense;
         public int levelValue, levelSliderValue, levelSliderUpgradeValue;
         public Sprite unitFaceSprite;
         public string unitName;
@@ -19,7 +18,6 @@ namespace MainSpace.Activities
         public override void NodeInitData()
         {
             base.NodeInitData();
-            commandRangeValue = correctedAttack = correctedDefense = new int[2];
         }
 
         public void AddSoliderUnits(SoliderUnit _unit)

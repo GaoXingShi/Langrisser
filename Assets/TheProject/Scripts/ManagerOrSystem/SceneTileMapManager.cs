@@ -108,7 +108,7 @@ namespace MainSpace.Grid
                 v.InitAliasName();
             }
             // 抓取部分数据
-            List<TileSaveData> cacheData = tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.moveRangeValue[0]).ToList();
+            List<TileSaveData> cacheData = tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.curProperty.moveRangeValue).ToList();
 
             int tempIndex = 1;
             // 地形移动力消耗值
@@ -137,27 +137,27 @@ namespace MainSpace.Grid
 
             if (_unit.movingType != TerrainActionType.瞬行)
             {
-                PressureAlgorithm(currentSaveData.widthHeighValue, _unit.moveRangeValue[0]);
+                PressureAlgorithm(currentSaveData.widthHeighValue, _unit.curProperty.moveRangeValue);
 
-                while (cacheData.Any(x => x.pixelValue[0] < _unit.moveRangeValue[0] && x.pixelValue[0] > 0 && x.isChange))
+                while (cacheData.Any(x => x.pixelValue[0] < _unit.curProperty.moveRangeValue && x.pixelValue[0] > 0 && x.isChange))
                 {
                     foreach (var v in cacheData.Where(x =>
-                        x.pixelValue[0] < _unit.moveRangeValue[0] && x.pixelValue[0] > 0 && x.isChange))
+                        x.pixelValue[0] < _unit.curProperty.moveRangeValue && x.pixelValue[0] > 0 && x.isChange))
                     {
-                        PressureAlgorithm(v.widthHeighValue, _unit.moveRangeValue[0]);
+                        PressureAlgorithm(v.widthHeighValue, _unit.curProperty.moveRangeValue);
                     }
 
                 }
 
                 // 去除所有数值低于移动力的方格 与没计算过的方格.
                 cacheSaveData = cacheData.Where(x =>
-                    x.pixelValue[0] <= _unit.moveRangeValue[0] && x.isChange).ToArray();
+                    x.pixelValue[0] <= _unit.curProperty.moveRangeValue && x.isChange).ToArray();
 
 
             }
             else
             {
-                cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.moveRangeValue[0]).ToArray();
+                cacheSaveData = cacheData.Where(x => x.pixelValue[0] <= _unit.curProperty.moveRangeValue).ToArray();
             }
 
             // 去除所有 已有单位的方格
@@ -259,7 +259,7 @@ namespace MainSpace.Grid
 
             // 以30毫秒的速度延迟显示
             int ms = 30;
-            int moveValue = _unit.moveRangeValue[0];
+            int moveValue = _unit.curProperty.moveRangeValue;
             for (int i = 0; i <= moveValue; i++)
             {
                 if (cacheSaveData == null || !asyncBoolValue)
@@ -308,7 +308,7 @@ namespace MainSpace.Grid
                 v.activitiesAllowUnit.SetMoveGrid(true);
             }
 
-            ActivitiesUnit[] aroundUnitArray = activitiesManager.GetActivitiesUnit(_unit.currentPos, _unit.attackRangeValue[0]);
+            ActivitiesUnit[] aroundUnitArray = activitiesManager.GetActivitiesUnit(_unit.currentPos, _unit.curProperty.attackRangeValue);
 
             ActivitiesUnit[] enemyArray = aroundUnitArray.Where(x =>
                 gameManager.GetCampData(x.managerKeyName).troopType !=
@@ -317,13 +317,13 @@ namespace MainSpace.Grid
             var stackValue = new List<TileSaveData>();
             if (enemyArray.Length != 0)
             {
-                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.attackRangeValue[0]))
+                foreach (var v in tileList.Where(x => x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.curProperty.attackRangeValue))
                 {
                     v.activitiesAllowUnit.SetMoveGrid(false);
                 }
 
                 stackValue = tileList.Where(x =>
-                    x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.attackRangeValue[0]).ToList();
+                    x.widthHeighValue.Vector3IntRangeValue(_unit.currentPos) <= _unit.curProperty.attackRangeValue).ToList();
             }
             else
             {
@@ -359,7 +359,6 @@ namespace MainSpace.Grid
                 }
 
                 _stepInfo.unit.currentPos = _stepInfo.unitCurrentPos;
-                _stepInfo.unit.transform.position = _stepInfo.unitCurrentPos;
                 for (int i = 0; i < _stepInfo.tileCommand.Length; i++)
                 {
                     TileSaveData temp = tileList.FirstOrDefault(x =>
@@ -472,12 +471,12 @@ namespace MainSpace.Grid
             if (_unit.GetType() == typeof(CommanderUnit))
             {
                 var commandUnit = ((CommanderUnit)_unit);
-                ShowCommanderCircleGrid(commandUnit.currentPos, commandUnit.commandRangeValue[0], commandUnit.campColor);
+                ShowCommanderCircleGrid(commandUnit.currentPos, commandUnit.curProperty.commandRangeValue, commandUnit.campColor);
             }
             else if (_unit.GetType() == typeof(SoliderUnit))
             {
                 var soliderUnit = ((SoliderUnit)_unit);
-                ShowCommanderCircleGrid(soliderUnit.mineCommanderUnit.currentPos, soliderUnit.mineCommanderUnit.commandRangeValue[0], soliderUnit.campColor);
+                ShowCommanderCircleGrid(soliderUnit.mineCommanderUnit.currentPos, soliderUnit.mineCommanderUnit.curProperty.commandRangeValue, soliderUnit.campColor);
             }
         }
 

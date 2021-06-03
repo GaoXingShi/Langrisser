@@ -26,17 +26,19 @@ namespace Sense.BehaviourTree.Apply
             SoliderUnit temp = Instantiate(template);
 
             temp.NodeInitData();
+            {
+                temp.curProperty.healthValue = temp.originProperty.healthValue = soliderConfig.healthValue;
+                temp.curProperty.magicValue = temp.originProperty.magicValue = soliderConfig.magicValue;
+                //                temp.curProperty.armorValue = temp.originProperty.armorValue = soliderConfig.armorValue;
+                temp.curProperty.moveRangeValue = temp.originProperty.moveRangeValue = soliderConfig.moveValue;
+                temp.curProperty.attackRangeValue = temp.originProperty.attackRangeValue = soliderConfig.attackDistanceValue;
+                temp.curProperty.skillRangeValue = temp.originProperty.skillRangeValue = soliderConfig.skillRangeValue;
+                temp.curProperty.attackPowerValue = temp.originProperty.attackPowerValue = soliderConfig.attackValue;
+                temp.curProperty.defensePowerValue = temp.originProperty.defensePowerValue = soliderConfig.defenseValue;
+                temp.curProperty.skillPowerValue = temp.originProperty.skillPowerValue = soliderConfig.skillPowerValue;
+            }
 
             SoliderConfig data = soliderConfig;
-            
-            // int[]
-            temp.SetIntArrayData(ref temp.healthValue, data.healthValue);
-            temp.SetIntArrayData(ref temp.magicValue, data.magicValue);
-            temp.SetIntArrayData(ref temp.attackValue, data.attackValue);
-            temp.SetIntArrayData(ref temp.attackRangeValue, data.attackDistanceValue);
-            temp.SetIntArrayData(ref temp.defenseValue, data.defenseValue);
-            temp.SetIntArrayData(ref temp.moveRangeValue, data.moveValue);
-            temp.SetIntArrayData(ref temp.skillRangeValue,data.skillRangeValue);
 
             temp.affiliationName = followCommander.GetCampData().campType.ToString();
             temp.managerKeyName = followCommander.managerKeyName;
@@ -58,7 +60,6 @@ namespace Sense.BehaviourTree.Apply
             // pos
             Vector3Int calculateValue = LoadInfo.Instance.sceneTileMapManager.GetUnitSpacePos(followCommander.showPos);
             calculateValue.z = -1;
-            temp.transform.position = calculateValue;
             temp.currentPos = calculateValue;
 
             temp.mineCommanderUnit = followCommander.GetCacheCommanderUnit();
