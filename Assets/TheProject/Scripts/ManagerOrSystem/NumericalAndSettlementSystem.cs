@@ -97,7 +97,8 @@ namespace MainSpace
 
             int m = 5; // 数值膨胀出现的系数
             int player1Damage = 0;
-            // 针对_initiativeUnit
+            int player2Damage = 0;
+            // _passivityUnit 的攻击结算
             {
                 // 按照当前生命值的百分比造成伤害，按100计算。
                 float healthValue = 1;
@@ -117,9 +118,31 @@ namespace MainSpace
                 int absolute = RandomManager.Instance.Probability(3, 10) ? 10 : 0;
                 player1Damage = player1Damage <= 0 ? absolute : player1Damage;
             }
+            
+            // _initiativeUnit 的攻击结算
+            {
+                // 按照当前生命值的百分比造成伤害，按100计算。
+                float healthValue = 1;
+                // 低Hp惩罚
+                if (_initiativeUnit.curProperty.healthValue < 100)
+                {
+                    healthValue = _initiativeUnit.curProperty.healthValue / 100.0f;
+                    // 指挥官不会低于0.4
+                    if (player1isCommander && _initiativeUnit.curProperty.healthValue <= 40)
+                    {
+                        healthValue = 0.4f;
+                    }
+                }
+                
+                int propertyPool = player1AT - player2DF < 0 ? 0 : player1AT - player2DF;
+                player2Damage = (int)((propertyPool * m + Random.Range(-10, 0)) * healthValue);
+                int absolute = RandomManager.Instance.Probability(3, 10) ? 10 : 0;
+                player2Damage = player2Damage <= 0 ? absolute : player2Damage;
+            }
 
             
             _initiativeUnit.SetPropertyChange(-player1Damage);
+            _passivityUnit.SetPropertyChange(-player2Damage);
         }
 
         public void SkillFighting(ActivitiesUnit _caster, ActivitiesUnit[] _affected)
