@@ -147,6 +147,32 @@ namespace MainSpace.Activities
             isPlayingAnim = _enabled;
         }
 
+        public void SetPropertyChange(int _hpChange)
+        {
+            if (_hpChange < 0)
+            {
+                _hpChange = Mathf.Abs(_hpChange);
+                if (_hpChange >= curProperty.armorValue)
+                {
+                    curProperty.armorValue = 0;
+                    if (_hpChange - curProperty.armorValue >= curProperty.healthValue)
+                    {
+                        // dead
+                        curProperty.healthValue = 0;
+                    }
+                    else
+                    {
+                        curProperty.healthValue -= _hpChange - curProperty.armorValue;
+                    }
+                }
+                else
+                {
+                    curProperty.armorValue -= _hpChange;
+                }
+            }
+
+        }
+
         ///// <summary>
         ///// 获取iCon是否激活
         ///// </summary>

@@ -123,10 +123,7 @@ namespace MainSpace.SkillCommandSpace
         {
             TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(cacheSelfUnit.currentPos, cacheSelfUnit.curProperty.skillRangeValue + skillIncrement1);
             tileMapManager.ShowCustomActionGrid(tileData);
-            commandEventQueue.AddStepEvent(cacheSelfUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerClick, () =>
-               {
-
-               });
+            commandEventQueue.AddStepEvent(cacheSelfUnit, tileData, ActionScopeType.AllUnit, SkillTriggerClick);
         }
 
         // 第二步 技能计算范围显示
@@ -137,10 +134,7 @@ namespace MainSpace.SkillCommandSpace
             skillPos = _cellPos;
             TileSaveData[] tileData = tileMapManager.GetRoundTileSaveData(_cellPos, cacheSelfUnit.curProperty.skillRangeValue + skillIncrement1);
             tileMapManager.ShowCustomActionGrid(tileData);
-            commandEventQueue.AddStepEvent(cacheSelfUnit, tileData, ActionScopeType.AllUnit, null, SkillTriggerSureClick, () =>
-            {
-
-            });
+            commandEventQueue.AddStepEvent(cacheSelfUnit, tileData, ActionScopeType.AllUnit, SkillTriggerSureClick);
 
         }
 

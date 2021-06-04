@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MainSpace.Activities;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MainSpace
 {
@@ -76,6 +77,9 @@ namespace MainSpace
             int player1DF = _initiativeUnit.curProperty.defensePowerValue;
             int player2DF = _passivityUnit.curProperty.defensePowerValue;
 
+            bool player1isCommander = _initiativeUnit as CommanderUnit;
+            bool player2isCommander = _initiativeUnit as CommanderUnit;
+            
             if (refrainValue == 1)
             {
                 player1AT += AtDp.x;
@@ -87,9 +91,35 @@ namespace MainSpace
                 player2DF += AtDp.y;
             }
 
-            // 可能需要根据动画决定最后的伤害数值
-            // 根据每一次接触来衡量伤害的问题，还会有一个闪避性的隐藏数值。
+            // todo 后期方向可能需要根据动画决定最后的伤害数值
+            // 目前先直接计算
+            // 其实仔细一想，原版士兵与指挥官的攻击模式并不相同
 
+            int m = 5; // 数值膨胀出现的系数
+            int player1Damage = 0;
+            // 针对_initiativeUnit
+            {
+                // 按照当前生命值的百分比造成伤害，按100计算。
+                float healthValue = 1;
+                // 低Hp惩罚
+                if (_passivityUnit.curProperty.healthValue < 100)
+                {
+                    healthValue = _passivityUnit.curProperty.healthValue / 100.0f;
+                    // 指挥官不会低于0.4
+                    if (player2isCommander && _passivityUnit.curProperty.healthValue <= 40)
+                    {
+                        healthValue = 0.4f;
+                    }
+                }
+                
+                int propertyPool = player2AT - player1DF < 0 ? 0 : player2AT - player1DF;
+                player1Damage = (int)((propertyPool * m + Random.Range(-10, 0)) * healthValue);
+                int absolute = RandomManager.Instance.Probability(3, 10) ? 10 : 0;
+                player1Damage = player1Damage <= 0 ? absolute : player1Damage;
+            }
+
+            
+            _initiativeUnit.SetPropertyChange(-player1Damage);
         }
 
         public void SkillFighting(ActivitiesUnit _caster, ActivitiesUnit[] _affected)

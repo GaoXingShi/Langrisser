@@ -446,8 +446,7 @@ namespace MainSpace
             if (_ctrlType == CtrlType.Player)
             {
                 // 加入栈事件 无任务、
-                commandEventQueue.AddStepEvent(null, null, ActionScopeType.None, null, null,
-                    () => { dotweenSequence.Kill(true); });
+                commandEventQueue.AddStepEvent( ActionScopeType.None,() => { dotweenSequence.Kill(true); });
             }
 
             dotweenSequence = DOTween.Sequence();

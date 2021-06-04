@@ -245,7 +245,7 @@ namespace MainSpace.Grid
         public async void ShowCanMoveCorrelationGrid(ActivitiesUnit _unit, bool _isAsync)
         {
             // 问题出在这了，底下的方格还没显示完就注册了。
-            commandEventQueue.AddStepEvent(_unit, cacheSaveData,ActionScopeType.NoActivitiesUnit,null, activitiesManager.ClickTilePos,
+            commandEventQueue.AddStepEvent(_unit, cacheSaveData,ActionScopeType.NoActivitiesUnit,activitiesManager.ClickTilePos,
                 () =>
                 {
                     asyncBoolValue = false;
@@ -340,10 +340,7 @@ namespace MainSpace.Grid
 
             LoadInfo.Instance.sceneWindowsCanvas.RefreshActivitiesData(_unit,0);
 
-            commandEventQueue.AddStepEvent(_unit, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.StandByOrOtherActionGridCallBack, null,
-                () =>
-                {
-                });
+            commandEventQueue.AddStepEvent(_unit, stackValue.ToArray(), ActionScopeType.MeAndEnemy,activitiesManager.StandByOrOtherActionGridCallBack);
         }
         /// <summary>
         /// 根据数据加载相关方格

@@ -37,16 +37,16 @@ namespace MainSpace
             activitiesManager = LoadInfo.Instance.activitiesManager;
             cursor = LoadInfo.Instance.gameCursor;
         }
-
+        
         private Stack<StepInfo> stepInfoStack = new Stack<StepInfo>();
         /// <summary>
-        /// 
+        /// 添加行动事件
         /// </summary>
         /// <param name="_unit">角色信息</param>
         /// <param name="_tile">瓦片存储信息,比如角色移动后又撤销了，需要把之前存储过可移动的瓦片信息再次显示出来</param>
         /// <param name="_actionScopeType">可操作类型</param>
-        /// <param name="_activitiesAction"> 鼠标左键触发的事件 </param>
-        /// <param name="_clickTilePosAction"> 鼠标左键触发的事件 </param>
+        /// <param name="_activitiesAction"> 鼠标左键点击Unit触发的事件 </param>
+        /// <param name="_clickTilePosAction"> 鼠标左键点击任意地面触发的事件 </param>
         /// <param name="_cancelAction"> 鼠标右键触发的事件 </param>
         public void AddStepEvent(ActivitiesUnit _unit, TileSaveData[] _tile, ActionScopeType _actionScopeType, Action<ActivitiesUnit> _activitiesAction, Action<Vector3Int> _clickTilePosAction, Action _cancelAction)
         {
@@ -80,9 +80,26 @@ namespace MainSpace
             stepInfoStack.Push(temp);
         }
 
+        public void AddStepEvent(ActivitiesUnit _unit, TileSaveData[] _tile, ActionScopeType _actionScopeType,
+            Action<ActivitiesUnit> _activitiesAction, Action _cancelAction = null)
+        {
+            AddStepEvent(_unit, _tile, _actionScopeType, _activitiesAction, null, _cancelAction);
+        }
+        
+        public void AddStepEvent(ActivitiesUnit _unit, TileSaveData[] _tile, ActionScopeType _actionScopeType,
+            Action<Vector3Int> _clickTilePosAction, Action _cancelAction = null)
+        {
+            AddStepEvent(_unit, _tile, _actionScopeType, null, _clickTilePosAction, _cancelAction);
+        }
+      
+        public void AddStepEvent(ActionScopeType _actionScopeType,Action _cancelAction = null)
+        {
+            AddStepEvent(null, null, _actionScopeType, null, null, _cancelAction);
+        }
+
 
         /// <summary>
-        /// 完成该步骤，清理状态
+        /// 完成流程，清理所有步骤
         /// </summary>
         public void FinishStepEvent(bool _isCancel)
         {
@@ -145,6 +162,9 @@ namespace MainSpace
 
         }
 
+        /// <summary>
+        /// 将流程回退一次步骤
+        /// </summary>
         public void RemoveStepEvent()
         {
             // 如果，栈里有数据，则使用栈的取消方法。
@@ -158,18 +178,22 @@ namespace MainSpace
             else
             {
                 StepInfo temp = stepInfoStack.Pop();
-                temp.cancelAction();
+                if (temp.cancelAction !=null)
+                {
+                    temp.cancelAction();
+                }
                 while (stepInfoStack.Count != 0 && stepInfoStack.Peek().actionScopeType == ActionScopeType.None)
                 {
                     var whileValue = stepInfoStack.Pop();
-                    whileValue.cancelAction();
+                    if (whileValue.cancelAction !=null)
+                        whileValue.cancelAction();
                 }
                 CancelStepEvent();
             }
         }
 
         /// <summary>
-        /// 取消当前步骤
+        /// 使用栈顶的取消指令
         /// </summary>
         private void CancelStepEvent()
         {
